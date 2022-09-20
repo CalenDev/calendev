@@ -1,0 +1,60 @@
+components:
+  schemas:
+    User:
+      type: object
+      required: -email
+        -name
+      properties:
+        user_email:
+          type: string
+        user_nickname:
+          type: string
+paths:
+  /users:
+    get:
+      tags:
+        - users
+      description: 모든 사용자 조회
+      produces:
+        - application/x-www-form-urlencoded:
+      responses:
+        200:
+          description: 유저 조회 성공.
+  /users/check-email:
+    post:
+      tags:
+        - users
+      description: 특정 이메일로 사용자 조회
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_email:
+                  type: string
+                user_nickname:
+                  type: string
+              example:
+                user_email: example@gmail.com
+                user_nickname: ddddd
+
+      responses:
+        '200':
+          description: Success to find target User!
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user_email:
+                    type: string
+                  user_nickname:
+                    type: string
+            application/xml:
+              schema:
+
+        '404':
+          description: Target User not found.
+
+      security:
