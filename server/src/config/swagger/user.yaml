@@ -58,3 +58,90 @@ paths:
           description: Target User not found.
 
       security:
+
+  /users/signup:
+    post:
+      tags:
+        - users
+      description: 유저 회원가입
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_email:
+                  type: string
+                user_nickname:
+                  type: string
+                user_password:
+                  type: string
+              example:
+                user_email: example@gmail.com
+                user_nickname: ddddd
+                user_password: example!2321
+
+      responses:
+        '200':
+          description: Success to create user!
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user_email:
+                    type: string
+                  user_nickname:
+                    type: string
+            application/xml:
+              schema:
+
+        '404':
+          description: Target User not found.
+
+      security:
+
+  /users/check-dup:
+    post:
+      tags:
+        - users
+      description: 유저 중복체크
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_email:
+                  type: string
+                user_nickname:
+                  type: string
+                user_password:
+                  type: string
+                verification_type:
+                  type: string
+              example:
+                user_email: example@gmail.com
+                user_nickname: ddddd
+                user_password: example!2321
+                verification_type: user_email
+
+      responses:
+        '200':
+          description: Success to create user!
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user_email:
+                    type: string
+                  user_nickname:
+                    type: string
+            application/xml:
+              schema:
+
+        '404':
+          description: Target User not found.
+
+      security:
