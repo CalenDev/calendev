@@ -16,4 +16,4 @@ const CustomPaper = styled(Paper)(({ theme }) => {
   }
 })
 
-export default CustomPaper
+export default CustomPaper 
