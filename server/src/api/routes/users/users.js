@@ -19,63 +19,31 @@ router.get('/', async function (req, res, next) {
 });
 
 router.post('/check-dup', async function (req, res, next) {
-  const { verification_type, user_email, user_nickname } = req.body;
+  const { target, user_email, user_nickname } = req.body;
 
   try {
-    const value =
-      verification_type === 'user_email' ? user_email : user_nickname;
+    const value = target === 'user_email' ? user_email : user_nickname;
 
-    const isExist = await knex2.findOne(verification_type, value);
-    console.log(verification_type);
+    const isExist = await knex2.findOne(target, value);
+    console.log(target);
     res.send(isExist);
   } catch (err) {
     next(err);
   }
 });
 
-/* POST list target user */
-router.post('/check-email', async function (req, res, next) {
-  const { user_email } = req.body;
-  console.log(user_email);
-  try {
-    const isExist = await knex2.findTargetUserByEmail(user_email);
-    if (!isExist[0]) {
-      res.status(404).send('Target User does not exists!');
-    } else {
-      res.send(isExist);
-    }
-  } catch (err) {
-    console.log('error catch!!');
-    next(err);
-  }
-});
-
-router.post('/check-nickname', async function (req, res, next) {
-  const { user_nickname } = req.body;
-  try {
-    const isExist = await knex2.findOne('user_nickname', user_nickname);
-    if (!isExist) {
-      res.status('400').send('Target User does not exists!');
-    } else {
-      res.send(isExist);
-    }
-  } catch (err) {
-    console.log('error catch');
-    next(err);
-  }
-});
-
 router.post('/signup', async function (req, res, next) {
   const { user_email, user_nickname, user_password } = req.body;
-  const userDto = req.body;
+  // const userDto = req.body;
   try {
     //TODO: validate if input user is not duplicate.
-    const hashedPassword = await crypto.createHashedPassword(user_password);
-    userDto.user_password = hashedPassword.hashedPassword;
+    // const hashedPassword = await crypto.createHashedPassword(user_password);
+    // userDto.user_password = hashedPassword.hashedPassword;
 
     //TODO: create JWT token Provider and save to database
     const currentTime = dttm();
-    userDto.created_at_dttm = currentTime;
+    req.body.created_at_dttm = currentTime;
+    console.log(req.body);
     const result = await knex2.save(req.body);
     //
     res.send(result);
