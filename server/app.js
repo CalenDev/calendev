@@ -21,7 +21,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-console.log(process.env.PORT);
 const port = normalizePort(process.env.PORT || '8000');
 app.set('port', port);
 

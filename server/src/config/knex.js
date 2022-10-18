@@ -24,8 +24,8 @@ module.exports = require('knex')({
   client: 'mysql2',
   connection: {
     host: 'localhost',
-    user: 'root', // 실제 서비스에서는 root 계정을 사용하지 않는 것이 좋습니다.
-    password: 'ansekgns421!',
+    user: 'calendevuser@localhost', // 실제 서비스에서는 root 계정을 사용하지 않는 것이 좋습니다.
+    password: 'calendev!@#',
     database: 'calendev',
   },
 });

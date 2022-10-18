@@ -11,21 +11,17 @@ router.get('/', async function (req, res, next) {
   // const list = await knex('user').select('*').then(console.log);
   try {
     const list = await knex2.getAllUsers();
-    console.log(list);
     res.send(list);
   } catch (err) {
     next(err);
   }
 });
-
 router.post('/check-dup', async function (req, res, next) {
   const { target, user_email, user_nickname } = req.body;
 
   try {
     const value = target === 'user_email' ? user_email : user_nickname;
-
     const isExist = await knex2.findOne(target, value);
-    console.log(target);
     res.send(isExist);
   } catch (err) {
     next(err);
@@ -43,8 +39,12 @@ router.post('/signup', async function (req, res, next) {
     //TODO: create JWT token Provider and save to database
     const currentTime = dttm();
     req.body.created_at_dttm = currentTime;
-    console.log(req.body);
+    // userDto.created_at_dttm = currentTime;
+
+    console.log(userDto);
     const result = await knex2.save(req.body);
+    // const result = await knex2.save(userDto);
+
     //
     res.send(result);
   } catch (err) {

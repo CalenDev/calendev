@@ -12,6 +12,7 @@ async function findOne(column_name, value) {
 
 async function save(body) {
   //TODO: mysql이 insert한 객체를 리턴하는 함수를 지원하지 않음. success하면 어떻게 리턴할지고민해야함.
+
   return await knex('user').insert(body);
 }
 async function findTargetUserByEmail(user_email) {
