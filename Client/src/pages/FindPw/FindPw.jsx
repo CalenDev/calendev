@@ -8,7 +8,7 @@ import styled from '@emotion/styled';
 import { Alert } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-// import Paper from '@mui/material/Paper';
+import Paper from '@mui/material/Paper';
 // import { postFindPw } from '../../api';
 import { validateEmail } from '../../utils';
 
@@ -22,7 +22,7 @@ import { validateEmail } from '../../utils';
 
 진행중
 - 사용자가 이메일을 입력 하였을 시, 해당 이메일을 가진 회원이 존재한다면 그 이메일로 해당 사용자의 비밀번호 초기화를 위한 링크를 보내주어야 한다
-  - server에서 처리
+  - server에서 처리 => 일단 임시적인 변수값으로 처리 분리
 */
 function FindPw() {
   const [alertMessageStatus, setAlertMessageStatus] = useState('');
@@ -53,47 +53,46 @@ function FindPw() {
   };
 
   return (
-    <StyledFindPwContainer component="main" maxWidth="md">
-      <Typography varient="h5">비밀번호 찾기</Typography>
-      <Box component="form" onSubmit={handleSubmit}>
-        <TextField
-          margin="normal"
-          fullWidth
-          id="email"
-          label="이메일"
-          name="email"
-          autoFocus
-          inputProps={{
-            maxLength: 20,
-          }}
-        />
+    <StyledFindPwContainer component="main" maxWidth="sm">
+      <CustomPaper>
+        <Typography varient="h5">비밀번호 찾기</Typography>
+        <Box component="form" onSubmit={handleSubmit}>
+          <TextField
+            margin="normal"
+            fullWidth
+            id="email"
+            label="이메일"
+            name="email"
+            autoFocus
+            inputProps={{
+              maxLength: 20,
+            }}
+          />
 
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          sx={{ mt: 3, mb: 2 }}
-        >
-          비밀번호 찾기
-        </Button>
-      </Box>
-      <FindPwAlert
-        alertMessageObj={alertMessageObj}
-        alertMessageStatus={alertMessageStatus}
-      />
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+          >
+            비밀번호 찾기
+          </Button>
+        </Box>
+        <FindPwAlert
+          alertMessageObj={alertMessageObj}
+          alertMessageStatus={alertMessageStatus}
+        />
+      </CustomPaper>
     </StyledFindPwContainer>
   );
 }
 
-/*
 const CustomPaper = styled(Paper)`
   display: flex;
   flex-direction: column;
-  align-items: center;
-  width: auto;
-  padding: ${(props) => props.theme.spacing(4, 2)};
-  margin: ${(props) => props.theme.spacing(12, 1, 'auto')};
-`; */
+  width: 100%;
+  padding: ${(props) => props.theme.spacing(6)};
+`;
 
 function FindPwAlert(props) {
   const { alertMessageStatus, alertMessageObj } = props;
