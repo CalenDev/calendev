@@ -1,3 +1,3 @@
-import { validateEmail, validatePassword } from "./validationCheck";
+import { validateEmail } from './validationCheck';
 
-export { validateEmail, validatePassword };
+export { validateEmail };
