@@ -6,14 +6,15 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styled from '@emotion/styled';
+//import styled from '@emotion/styled';
 import { validateEmail, validatePassword } from '../../utils';
-import { postUserSignIn } from '../../api/auth';
+//import { postUserSignIn } from '../../api/auth';
 import { useTheme } from '@mui/material';
+import { styled } from '@mui/system';
 
 function SignIn() {
-    const theme = useTheme();
     const navigate = useNavigate();
+    const theme = useTheme();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [emailHelpText, setEmailHelpText] = useState('');
@@ -82,59 +83,6 @@ function SignIn() {
         }
     };
 
-    function SignInTextField(props) {
-        return (
-            <TextField
-                margin="normal"
-                fullWidth
-                id={props.fieldName}
-                label={props.label}
-                name={props.fieldName}
-                autoComplete={props.autoComplate}
-                autoFocus
-                inputProps={{
-                    maxLength: parseInt(props.maxLength),
-                }}
-                error={props.helpText ? true : false}
-                helperText={props.helpText}
-                defaultValue={props.defaultValue}
-            />
-        );
-    }
-
-    const StyledSignInContainer = styled(Container)`
-        width: 100vw;
-        height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    `;
-
-    const StyledSignInBottomContainer = styled(Box)`
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    `;
-
-    function SignInClickedText(props) {
-        return (
-            <Typography
-                variant={props.variant}
-                onClick={() => {
-                    navigate(props.path);
-                }}
-                className="SignInClickedText"
-            >
-                {props.value}
-            </Typography>
-        );
-    }
-    const StyledSignInClickedText = styled(SignInClickedText)`
-        & .SignInClickedText {
-            cursor: pointer;
-        }
-    `;
-
     return (
         <StyledSignInContainer component="main" maxWidth="xs">
             <Box
@@ -188,6 +136,59 @@ function SignIn() {
                 </Box>
             </Box>
         </StyledSignInContainer>
+    );
+}
+
+const StyledSignInContainer = styled(Container)`
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`;
+
+const StyledSignInBottomContainer = styled(Box)`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`;
+
+function SignInTextField(props) {
+    return (
+        <TextField
+            margin="normal"
+            fullWidth
+            id={props.fieldName}
+            label={props.label}
+            name={props.fieldName}
+            autoComplete={props.autoComplate}
+            autoFocus
+            inputProps={{
+                maxLength: parseInt(props.maxLength),
+            }}
+            error={props.helpText ? true : false}
+            helperText={props.helpText}
+            defaultValue={props.defaultValue}
+        />
+    );
+}
+
+function StyledSignInClickedText(props) {
+    const navigate = useNavigate();
+    const SignInClickedText = styled(Typography)(({ theme }) => ({
+        cursor: 'pointer',
+    }));
+
+    return (
+        <SignInClickedText
+            variant={props.variant}
+            onClick={() => {
+                navigate(props.path);
+            }}
+            className="SignInClickedText"
+        >
+            {props.value}
+        </SignInClickedText>
     );
 }
 
