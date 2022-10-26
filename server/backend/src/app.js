@@ -13,13 +13,7 @@ dotenv.config();
 
 const app = express();
 
-import knex from './global/config/knexConfig.js';
-import userRouter from './domain/user/api/index.js';
-try {
-  const result = await knex('user').select('test');
-} catch (err) {
-  console.log('database connected!');
-}
+import userRouter from './domain/user/routes/userRoutes.js';
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -38,7 +32,6 @@ app.get('/', (req, res) => {
   res.send('backend server on!');
 });
 app.use('/users', userRouter);
-app.use('/auth', authRouter);
 
 /**
  * Normalize a port into a number, string, or false.
