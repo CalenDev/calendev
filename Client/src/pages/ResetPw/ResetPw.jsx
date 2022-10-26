@@ -9,7 +9,7 @@ import Button from '@mui/material/Button';
 import { useTheme } from '@mui/material';
 import { validatePassword } from '../../utils';
 
-function ChangePw() {
+function ResetPw() {
   const theme = useTheme();
   const [newPasswordHelpText, setNewPasswordHelpText] = useState('');
   const [checkingPasswordHelpText, setCheckingPasswordHelpText] = useState('');
@@ -42,7 +42,7 @@ function ChangePw() {
       setCheckingPasswordHelpText('');
     }
 
-    // 2. request to change new password
+    // 2. request to reset new password
     if (
       newPasswordHelpText.length === 0 &&
       checkingPasswordHelpText.length === 0 &&
@@ -52,7 +52,7 @@ function ChangePw() {
   };
 
   return (
-    <StyledChangePwContainer component="main" maxWidth="sm">
+    <StyledResetPwContainer component="main" maxWidth="sm">
       <CustomPaper>
         <Typography variant="h5">비밀번호 변경</Typography>
         <Box
@@ -100,17 +100,18 @@ function ChangePw() {
           </Button>
         </Box>
       </CustomPaper>
-    </StyledChangePwContainer>
+    </StyledResetPwContainer>
   );
 }
 
-const StyledChangePwContainer = styled(Container)`
+const StyledResetPwContainer = styled(Container)`
   width: 100vw;
   height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
 `;
+
 const CustomPaper = styled(Paper)`
   display: flex;
   justify-content: center;
@@ -119,4 +120,4 @@ const CustomPaper = styled(Paper)`
   padding: ${(props) => props.theme.spacing(6)};
 `;
 
-export default ChangePw;
+export default ResetPw;
