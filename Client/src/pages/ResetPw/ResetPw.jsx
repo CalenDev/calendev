@@ -7,14 +7,35 @@ import Container from '@mui/material/Container';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { useTheme } from '@mui/material';
+import { useLocation, useNavigate } from 'react-router-dom';
+import queryString from 'query-string';
 import { validatePassword } from '../../utils';
+// import { putResetPw } from '../../api';
 
+/*
+  진행 중
+  - 초반 렌더링 시 토큰의 만료시간 확인및 그에 따른 분기처리 고려 (useEffect에서 api 1회 호출 또는 대비 x 고려)
+  - newPassword, checkingPassword의 validation 이후, request 시 response.status에 따른 분기 처리고려
+
+  진행 완료
+  - newPassword, checkingPassword Validation
+  - validation에 따른 경고문구 출력
+  - 스타일링 구성
+ */
 function ResetPw() {
   const theme = useTheme();
   const [newPasswordHelpText, setNewPasswordHelpText] = useState('');
   const [checkingPasswordHelpText, setCheckingPasswordHelpText] = useState('');
+  const searchParams = useLocation().search;
+  const navigate = useNavigate();
+  const queryStringObj = queryString.parse(searchParams);
 
-  const handleSubmit = (e) => {
+  // query String 내에 token이 존재하지 않을 시, 정상적인 주소가 아님을 확인. 메인 페이지로 강제이동.
+  if (!queryStringObj.token) {
+    navigate('/');
+  }
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
     const newPassword = data.get('new_password');
@@ -42,12 +63,26 @@ function ResetPw() {
       setCheckingPasswordHelpText('');
     }
 
-    // 2. request to reset new password
     if (
-      newPasswordHelpText.length === 0 &&
-      checkingPasswordHelpText.length === 0 &&
-      newPassword === checkingPassword
+      newPasswordHelpText.length !== 0 ||
+      checkingPasswordHelpText.length !== 0 ||
+      newPassword !== checkingPassword
     ) {
+      return;
+    }
+
+    // 2. request to reset new password
+    // const apiRes = await putResetPw(token, newPassword);
+    const apiRes = { status: 'success' };
+    switch (apiRes.status) {
+      case 'success':
+        navigate('/');
+        break;
+      case 'failure':
+        console.log('token 제한시간 초과'); // 필요 처리고려.
+        break;
+      default:
+      // 필요처리 고려.
     }
   };
 
