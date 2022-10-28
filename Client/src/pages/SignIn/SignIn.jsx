@@ -20,66 +20,38 @@ function SignIn() {
     const [emailHelpText, setEmailHelpText] = useState('');
     const [passwordHelpText, setPasswordHelpText] = useState('');
 
-    const setStateObj = {
-        email: (text) => setEmail(text),
-        password: (text) => setPassword(text),
-    };
-
-    const setHelpTextStateObj = {
-        email: (helpText) => setEmailHelpText(helpText),
-        password: (helpText) => setPasswordHelpText(helpText),
-    };
-
-    function validateSignInTextField(curTextField) {
-        switch (curTextField.id) {
-            case 'email':
-                return validateEmail(curTextField.value)
-                    ? ''
-                    : '잘못된 이메일을 입력하였습니다.';
-            case 'password':
-                return validatePassword(curTextField.value)
-                    ? ''
-                    : '잘못된 비밀번호를 입력하였습니다.';
-            default:
-                return '잘못된 입력값입니다.';
-        }
-    }
-
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const SignInTextFieldArr = e.target.querySelectorAll('input');
-        let textFieldValidation = true;
         const data = new FormData(e.currentTarget);
+        const curEmail = data.get('email');
+        const curPassword = data.get('password');
 
-        SignInTextFieldArr.forEach((curTextField) => {
-            const validationResult = validateSignInTextField(curTextField);
-
-            textFieldValidation = textFieldValidation && !validationResult;
-            setStateObj[`${curTextField.id}`](
-                validationResult ? '' : curTextField.value,
-            );
-            setHelpTextStateObj[`${curTextField.id}`](validationResult);
-        });
-
-        if (!textFieldValidation) {
+        //1. check id, password length
+        if (curEmail.length === 0) {
+            setEmailHelpText('이메일을 입력해주세요.');
+            return;
+        }
+        if (curPassword.length === 0) {
+            setPasswordHelpText('비밀번호를 입력해주세요.');
             return;
         }
 
+        //2. request signIn
         //const apiRes = await postUserSignIn(data.get("email"), data.get("password"));
 
         const apiRes = {
-            status: 403,
+            status: 'success',
         };
 
-        //추가적인 Response status에 따른 처리 고려가 필요함.
-        if (apiRes.status === 200) {
+        if (apiRes.status === 'success') {
             navigate('/');
-        } else if (apiRes.status === 403) {
-            SignInTextFieldArr.forEach((curTextField) => {
-                setHelpTextStateObj[`${curTextField.id}`](
-                    '아이디 또는 비밀번호가 맞지 않습니다. 다시 확인해주세요.',
-                );
-            });
+        } else if (apiRes.status === 'failure') {
+            setEmailHelpText(
+                '아이디 또는 비밀번호가 맞지 않습니다. 다시 확인해주세요.',
+            );
+            setPasswordHelpText(
+                '아이디 또는 비밀번호가 맞지 않습니다. 다시 확인해주세요.',
+            );
         }
     };
 
@@ -120,14 +92,14 @@ function SignIn() {
                     >
                         로그인
                     </Button>
-                    <StyledSignInBottomContainer sx={{ gap: theme.spacing(1) }}>
-                        <StyledSignInClickedText
+                    <StyledSignInBottomContainer>
+                        <SignInBottomButton
                             variant="subtitle2"
                             path="/signUp"
                             value="회원가입"
                         />
                         <Typography variant="subtitle2">|</Typography>
-                        <StyledSignInClickedText
+                        <SignInBottomButton
                             variant="subtitle2"
                             path="/findPW"
                             value="비밀번호 찾기"
@@ -151,6 +123,9 @@ const StyledSignInBottomContainer = styled(Box)`
     display: flex;
     justify-content: center;
     align-items: center;
+    & > .SignInBottomButton {
+        cursor: pointer;
+    }
 `;
 
 function SignInTextField(props) {
@@ -173,22 +148,19 @@ function SignInTextField(props) {
     );
 }
 
-function StyledSignInClickedText(props) {
+function SignInBottomButton(props) {
     const navigate = useNavigate();
-    const SignInClickedText = styled(Typography)(({ theme }) => ({
-        cursor: 'pointer',
-    }));
 
     return (
-        <SignInClickedText
+        <Button
             variant={props.variant}
             onClick={() => {
                 navigate(props.path);
             }}
-            className="SignInClickedText"
+            className="SignInBottomButton"
         >
             {props.value}
-        </SignInClickedText>
+        </Button>
     );
 }
 
