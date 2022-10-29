@@ -22,6 +22,7 @@ import { validatePassword } from '../../utils';
   - validation에 따른 경고문구 출력
   - 스타일링 구성
  */
+// fix : 모달창이나 별도의 페이지를 통해 토큰 유효기간 관리
 function ResetPw() {
   const theme = useTheme();
   const [newPasswordHelpText, setNewPasswordHelpText] = useState('');
@@ -29,8 +30,11 @@ function ResetPw() {
   const searchParams = useLocation().search;
   const navigate = useNavigate();
   const queryStringObj = queryString.parse(searchParams);
+  // Fix : query string 대체 방법이 있다면 추가해보자! 없다면 필요한 이유 명세
 
   // query String 내에 token이 존재하지 않을 시, 정상적인 주소가 아님을 확인. 메인 페이지로 강제이동.
+  // Fix : 처음 request로 token 검사, 마지막에 server에 할때도 ...
+
   if (!queryStringObj.token) {
     navigate('/');
   }
@@ -42,6 +46,17 @@ function ResetPw() {
     const checkingPassword = data.get('checking_password');
 
     // 1. validation check
+    /*
+    1. 8자 이상이여야한다
+    2. 20자 이하여야한다
+    3. 영문자를 포함한다
+    4. 숫자를 포함해야 한다
+    5. 특수문자를 포함해야 한다
+    6. !@#$%^&*?_~를 제외한 특수문자는 입력할 수 없다.
+    7. 비밀번호에 공백을 사용하면 안 된다.
+    8. 일련번호를 사용하면 안 된다. (이 때 abc 같은 연속도 포함)
+    9. 이메일 앞부분과 일치하면 안 된다.
+    */
     if (newPassword.length === 0) {
       setNewPasswordHelpText('새 비밀번호 칸을 입력해주세요.');
     } else if (!validatePassword(newPassword)) {
@@ -79,6 +94,9 @@ function ResetPw() {
         navigate('/');
         break;
       case 'failure':
+        // 정석은 별도의 페이지를 만들어서 Oops 오류가 발생했습니다.
+        // 고객센터에 문의주세요. -> 오류 페이지는 공통 컴포넌트로 처리 404
+        // Fix : 공통 페이지로 404 페이지 추가.
         console.log('token 제한시간 초과'); // 필요 처리고려.
         break;
       default:
@@ -86,6 +104,8 @@ function ResetPw() {
     }
   };
 
+  // fix : container 제거.
+  // fix : custompaper에서 내부 간격 설정 가능. 적용하기.
   return (
     <StyledResetPwContainer component="main" maxWidth="sm">
       <CustomPaper>
