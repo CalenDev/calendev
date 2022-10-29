@@ -1,5 +1,5 @@
-import themes from './themes'
+import themes from './themes';
 
-const config = {themes}
+const config = { themes };
 
-export default config
+export default config;

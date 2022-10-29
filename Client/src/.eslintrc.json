@@ -1,9 +1,10 @@
 {
-    "extends": ["airbnb"],
-    "rules": {
-        "react/prop-types": "off",
-        "import/prefer-default-export": "off",
-        "operator-linebreak": "off",
-        "no-undef": "off"
-    }
+  "extends": ["airbnb"],
+  "rules": {
+    "react/prop-types": "off",
+    "import/prefer-default-export": "off",
+    "operator-linebreak": "off",
+    "no-undef": "off",
+    "react/destructuring-assignment": "off"
+  }
 }

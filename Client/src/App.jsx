@@ -1,11 +1,12 @@
-import _config from "./config";
-import { Route, Routes } from "react-router-dom";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import Home from "./pages/Home/Home";
-import SignIn from "./pages/SignIn/SignIn";
+import React from 'react';
+import { Route, Routes } from 'react-router-dom';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { config } from './config';
+import Home from './pages/Home/Home';
+import SignIn from './pages/SignIn/SignIn';
 
 function App() {
-  const theme = createTheme(_config.themes);
+  const theme = createTheme(config.themes);
   return (
     <ThemeProvider theme={theme}>
       <Routes>

@@ -1,22 +1,21 @@
 import axios from 'axios';
 
-const postUserSignIn = async (user_email, user_password) => {
-    const API_END_POINT = `${process.env.REACT_APP_SERVER_URL}/api/v1/auth/login`;
+const postUserSignIn = async (userEmail, userPassword) => {
+  const API_END_POINT = `${process.env.REACT_APP_SERVER_URL}/api/v1/auth/login`;
 
-    try {
-        const res = await axios.post(API_END_POINT, {
-            user_email,
-            user_password,
-        });
+  try {
+    const { data } = await axios.post(API_END_POINT, {
+      user_email: userEmail,
+      user_password: userPassword,
+    });
 
-        return {
-            status: res.status,
-        };
-    } catch (e) {
-        return {
-            status: e.response.status,
-        };
-    }
+    return data;
+  } catch (e) {
+    return {
+      error: e,
+      ...data,
+    };
+  }
 };
 
 export { postUserSignIn };
