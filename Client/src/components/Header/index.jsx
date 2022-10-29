@@ -29,11 +29,12 @@ import Logo from '../../assets/images/CalendevLogo.png';
  - 기본적인 Header Component 구현
 
 진행해야 할 것
-- JWT Token을 통한 Header의 로그인 상태 변화 또는 전역 스토어를 통한 로그인 상태 관리
+- JWT Token을 통한 Header의 로그인 상태 변화 또는 전역 스토어를 통한 로그인 상태 관리 -> 로그인 상태 리덕스로 관리
 - 각 버튼을 실제 페이지와 연결
 - 추가적인 기능 달기
 */
-
+// fix : jwt 주기적인 expire date 확인 로직 필요.
+// fix : 전역 스토어 고려 필요.
 const StyledHeaderLogo = styled(Box)`
   * {
     margin-right: 16px;
@@ -63,6 +64,12 @@ function MenuListItem(props) {
     </MenuItem>
   );
 }
+
+/*
+1. SPA의 경우, 모든 기본적인 Font, COlor의 경우 상속을 받을 수 있도록 공통된 상위 폴더에 들어가 있어야 한다.
+2. 스타일을 따로 지정의 경우 Header에만 따로 해두건 Ok
+3. 규격화된 스타일링...
+*/
 const MenuListItemWrapper = styled(Box)(
   ({ theme }) => `
   .MenuListItemIcon {
@@ -71,6 +78,7 @@ const MenuListItemWrapper = styled(Box)(
   }
 `,
 );
+// Fix : topdown css 지양.
 
 function Header() {
   const theme = useTheme();
