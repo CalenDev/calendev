@@ -9,7 +9,7 @@ import { Alert } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import Paper from '@mui/material/Paper';
-// import { postFindPw } from '../../api';
+import { postFindPw } from '../../api';
 import { validateEmail } from '../../utils';
 
 /*
@@ -24,6 +24,17 @@ import { validateEmail } from '../../utils';
 - 사용자가 이메일을 입력 하였을 시, 해당 이메일을 가진 회원이 존재한다면 그 이메일로 해당 사용자의 비밀번호 초기화를 위한 링크를 보내주어야 한다
   - server에서 처리 => 일단 임시적인 변수값으로 처리 분리
 */
+/**
+ * 1. util 파일
+ * lfn_msg(msg_code, type, arg1, arg2){
+ * type이 S면 성공, A면 경고...
+ *  msg_code라는 config 값을 기반으로 메시지 문구를 생성해서 반환한다.
+ * }
+ * 2. 어쩌구_msg 파일
+ * const MSG_1234 = `${arg1}가 없습니다. 다시 입력해주세요.`
+ * const MSG_1000 = `${arg1}이 없으므로 ${arg2}를 추가해서 보완해주세요.`
+ */
+
 function FindPw() {
   const [alertMessageStatus, setAlertMessageStatus] = useState('');
   const alertMessageObj = {
@@ -33,6 +44,7 @@ function FindPw() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // data.get으로 처리?
     const EmailTextField = e.target.querySelector('input');
     const EmailValidationResult = validateEmail(EmailTextField.value);
 
@@ -43,15 +55,14 @@ function FindPw() {
     }
 
     // 2. request
-    /* const apiRes = await postFindPw(EmailTextField.value);
-    if (apiRes.status === 200) {
+    const apiRes = await postFindPw(EmailTextField.value);
+    if (apiRes.status === 'success') {
       setAlertMessageStatus('success');
-    } else if (apiRes.status === 400) {
+    } else if (apiRes.status === 'failure') {
       setAlertMessageStatus('error');
-    } */
-    setAlertMessageStatus('success');
+    }
   };
-
+  // fix : Container 삭제
   return (
     <StyledFindPwContainer component="main" maxWidth="sm">
       <CustomPaper>
