@@ -57,6 +57,7 @@ function ResetPw() {
     8. 일련번호를 사용하면 안 된다. (이 때 abc 같은 연속도 포함)
     9. 이메일 앞부분과 일치하면 안 된다.
     */
+
     if (newPassword.length === 0) {
       setNewPasswordHelpText('새 비밀번호 칸을 입력해주세요.');
     } else if (!validatePassword(newPassword)) {
@@ -67,6 +68,8 @@ function ResetPw() {
       setNewPasswordHelpText('');
     }
 
+    // fix : keyup event를 통한 실시간 처리 고려
+    // fix : useEffect를 통한 최적화 고려.
     if (checkingPassword.length === 0) {
       setCheckingPasswordHelpText('비밀번호 확인 칸을 입력해주세요.');
     } else if (
@@ -83,7 +86,7 @@ function ResetPw() {
       checkingPasswordHelpText.length !== 0 ||
       newPassword !== checkingPassword
     ) {
-      return;
+      return 1;
     }
 
     // 2. request to reset new password
@@ -102,10 +105,12 @@ function ResetPw() {
       default:
       // 필요처리 고려.
     }
+    return 'Test';
   };
 
   // fix : container 제거.
   // fix : custompaper에서 내부 간격 설정 가능. 적용하기.
+  // fix : error message Handling을 위한 modal 구현 고민...
   return (
     <StyledResetPwContainer component="main" maxWidth="sm">
       <CustomPaper>
