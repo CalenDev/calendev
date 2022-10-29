@@ -31,14 +31,14 @@ function SignIn() {
     }
 
     // 2. request signIn
-    // const apiRes = await postUserSignIn(data.get("email"), data.get("password"));
+    const apiRes = await postUserSignIn(
+      data.get('email'),
+      data.get('password'),
+    );
 
-    const apiRes = {
-      status: 'failure',
-    };
-
+    // fixme : 공통적인 에러처리 알람 줄 필요.
     if (apiRes.status === 'success') {
-      navigate('/');
+      navigate('/'); // fixme : redirect 고려...
     } else if (apiRes.status === 'failure') {
       setEmailHelpText(
         '아이디 또는 비밀번호가 맞지 않습니다. 다시 확인해주세요.',
