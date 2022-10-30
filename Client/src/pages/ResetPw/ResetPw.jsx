@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import styled from '@emotion/styled';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
