@@ -45,8 +45,9 @@ function FindPw() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     // data.get으로 처리?
-    const EmailTextField = e.target.querySelector('input');
-    const EmailValidationResult = validateEmail(EmailTextField.value);
+    const data = new FormData(e.currentTarget);
+    const curEmail = data.get('email');
+    const EmailValidationResult = validateEmail(curEmail);
 
     // 1. validate email check
     if (!EmailValidationResult) {
@@ -55,7 +56,7 @@ function FindPw() {
     }
 
     // 2. request
-    const apiRes = await postFindPw(EmailTextField.value);
+    const apiRes = await postFindPw(curEmail);
     if (apiRes.status === 'success') {
       setAlertMessageStatus('success');
     } else if (apiRes.status === 'failure') {
