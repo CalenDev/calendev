@@ -4,4 +4,4 @@ function validatePassword(password) {
   return reg.test(password);
 }
 
-export { validatePassword };
+export default validatePassword;

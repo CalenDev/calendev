@@ -9,7 +9,7 @@ import Button from '@mui/material/Button';
 import { useTheme } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import queryString from 'query-string';
-import { validatePassword } from '../../utils';
+import validatePassword from '../../utils';
 // import { putResetPw } from '../../api';
 
 /*
@@ -72,21 +72,18 @@ function ResetPw() {
     // fix : useEffect를 통한 최적화 고려.
     if (checkingPassword.length === 0) {
       setCheckingPasswordHelpText('비밀번호 확인 칸을 입력해주세요.');
-    } else if (
-      newPassword.length !== checkingPassword.length ||
-      newPassword !== checkingPassword
-    ) {
+    } else if (newPassword !== checkingPassword) {
       setCheckingPasswordHelpText('암호가 일치하지 않습니다.');
     } else if (newPassword === checkingPassword) {
       setCheckingPasswordHelpText('');
     }
 
     if (
-      newPasswordHelpText.length !== 0 ||
-      checkingPasswordHelpText.length !== 0 ||
-      newPassword !== checkingPassword
+      newPassword !== checkingPassword ||
+      newPassword.length === 0 ||
+      checkingPassword.length === 0
     ) {
-      return 1;
+      return;
     }
 
     // 2. request to reset new password
@@ -105,7 +102,6 @@ function ResetPw() {
       default:
       // 필요처리 고려.
     }
-    return 'Test';
   };
 
   // fix : container 제거.
