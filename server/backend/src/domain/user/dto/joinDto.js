@@ -38,7 +38,38 @@ class JoinReq {
     this.salt = salt;
   }
 }
+class DuplicateValidationReq {
+  target;
+  authType;
+
+  constructor() {}
+  get getTarget() {
+    return this.target;
+  }
+  get getAuthType() {
+    return this.authType;
+  }
+  set setTarget(target) {
+    this.target = target;
+  }
+  set setAuthType(authType) {
+    this.authType = authType;
+  }
+}
 
 class JoinRes {
   constructor() {}
+}
+
+class DuplicateValidationRes {
+  isUserUnique;
+
+  constructor() {}
+
+  get getIsUserUnique() {
+    return this.isUserUnique;
+  }
+  set setIsUserUnique(isUserUnique) {
+    this.isUserUnique = isUserUnique;
+  }
 }
