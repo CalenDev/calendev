@@ -4,6 +4,7 @@ class JoinReq {
   userPassword;
   userRoleCd;
   salt;
+  createdAtDttm;
 
   constructor() {}
 
@@ -22,6 +23,9 @@ class JoinReq {
   get getSalt() {
     return this.salt;
   }
+  get getCreatedAtDttm() {
+    return this.createdAtDttm;
+  }
   set setUserEmail(userEmail) {
     this.userEmail = userEmail;
   }
@@ -36,6 +40,9 @@ class JoinReq {
   }
   set setSalt(salt) {
     this.salt = salt;
+  }
+  set setCreatedAtDttm(createdAtDttm) {
+    this.createdAtDttm = createdAtDttm;
   }
 }
 class DuplicateValidationReq {
