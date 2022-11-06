@@ -1,5 +1,7 @@
 /* GET users listing. */
 import userJoinService from '../service/userJoinService.js';
+import objectMapper from '../../../global/utils/objectMapper.js';
+import UserJoinDto from '../dto/joinDto.js';
 
 const getAllUsers = async (req, res, next) => {
   try {
@@ -22,13 +24,36 @@ const getAllUsers = async (req, res, next) => {
 
 //TODO:
 const signupUser = async function (req, res, next) {
-  res.send('signupuser');
+  try {
+    const signupReq = new UserJoinDto.JoinReq();
+    objectMapper.map(req.body, signupReq);
+
+    const signupRes = userJoinService.create(signupReq);
+
+    res.status(201).send('signup success');
+  } catch (error) {
+    next(error);
+  }
 };
 
 const checkDuplicate = async function (req, res, next) {
-  res.send('checkduplicate');
-};
+  try {
+    const duplicateValidationReq = new UserJoinDto.DuplicateValidationReq();
+    objectMapper.map(req.body, duplicateValidationReq);
 
-const signinUser = async (req, res, next) => {};
+    const duplicateValidationRes = await userJoinService.checkDuplicate(
+      duplicateValidationReq,
+    );
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        duplicateValidationRes,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 export default { getAllUsers, signupUser, checkDuplicate };
