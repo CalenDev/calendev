@@ -73,3 +73,10 @@ class DuplicateValidationRes {
     this.isUserUnique = isUserUnique;
   }
 }
+
+export default {
+  JoinReq,
+  JoinRes,
+  DuplicateValidationReq,
+  DuplicateValidationRes,
+};
