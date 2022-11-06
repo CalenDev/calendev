@@ -1,4 +1,4 @@
-class UserDto {
+class UserUpdateReq {
   userEmail;
   userNickname;
   userRoleCd;
