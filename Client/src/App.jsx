@@ -1,8 +1,8 @@
 import { Route, Routes } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { config } from './config';
+import config from './config';
 import Home from './pages/Home/Home';
-import { Header } from './components';
+import Header from './components';
 import SignIn from './pages/SignIn/SignIn';
 import SignUp from './pages/SignUp/SignUp';
 

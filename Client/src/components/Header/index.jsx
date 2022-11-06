@@ -11,6 +11,7 @@ import StarIcon from '@mui/icons-material/Star';
 import PeopleIcon from '@mui/icons-material/People';
 import EditIcon from '@mui/icons-material/Edit';
 import LockIcon from '@mui/icons-material/Lock';
+import PropTypes from 'prop-types';
 
 import {
   Divider,
@@ -35,35 +36,6 @@ import Logo from '../../assets/images/CalendevLogo.png';
 */
 // fix : jwt 주기적인 expire date 확인 로직 필요.
 // fix : 전역 스토어 고려 필요.
-const StyledHeaderLogo = styled(Box)`
-  * {
-    margin-right: 16px;
-  }
-  img {
-    width: theme.spacing(6);
-    height: theme.spacing(6);
-  }
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  cursor: pointer;
-`;
-
-const StyledToolbar = styled(Toolbar)`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-function MenuListItem(props) {
-  const { variant, text } = props;
-  return (
-    <MenuItem>
-      <props.icon className="MenuListItemIcon" />
-      <Typography variant={variant}>{text}</Typography>
-    </MenuItem>
-  );
-}
 
 /*
 1. SPA의 경우, 모든 기본적인 Font, COlor의 경우 상속을 받을 수 있도록 공통된 상위 폴더에 들어가 있어야 한다.
@@ -187,4 +159,41 @@ function Header() {
     </AppBar>
   );
 }
+
+const StyledHeaderLogo = styled(Box)`
+  * {
+    margin-right: 16px;
+  }
+  img {
+    width: theme.spacing(6);
+    height: theme.spacing(6);
+  }
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  cursor: pointer;
+`;
+
+const StyledToolbar = styled(Toolbar)`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+function MenuListItem({ variant, text, icon }) {
+  const IconComponent = icon;
+  return (
+    <MenuItem>
+      <IconComponent className="MenuListItemIcon" />
+      <Typography variant={variant}>{text}</Typography>
+    </MenuItem>
+  );
+}
+
+MenuListItem.propTypes = {
+  variant: PropTypes.string.isRequired,
+  text: PropTypes.string.isRequired,
+  icon: PropTypes.node.isRequired,
+};
+
 export default Header;
