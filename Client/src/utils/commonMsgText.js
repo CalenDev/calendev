@@ -8,6 +8,7 @@
  */
 function commonMsgText(code, arg1) {
   const textScript = {
+    0: ``,
     100: ``,
     110: `사용 가능한 ${arg1}입니다.`,
     101: `${arg1}을 입력해주세요.`,
