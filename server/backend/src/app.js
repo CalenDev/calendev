@@ -15,6 +15,9 @@ const app = express();
 
 import userRouter from './domain/user/routes/userRoutes.js';
 import authRouter from './domain/user/routes/authRoutes.js';
+import { resolveSoa } from 'dns';
+import AppError from './global/utils/appError.js';
+import globalErrorHandler from './domain/user/controllers/errorController.js';
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -22,12 +25,14 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// import mongoose from './global/config/mongoConfig.js';
-// mongoose();
+import mongoose from './global/config/mongoConfig.js';
+mongoose();
 
 const port = normalizePort(process.env.PORT || '8000');
 app.set('port', port);
-app.listen(port);
+const server = app.listen(port, () => {
+  console.log(`App running on port ${port}`);
+});
 app.on('error', onError);
 app.on('listening', onListening);
 
@@ -45,9 +50,20 @@ app.use('/users', userRouter);
 app.use('/auth', authRouter);
 
 app.all('*', (req, res, next) => {
-  res.status(404).json({
-    status: 'fail',
-    message: `Can't find ${req.originalUrl} on this server!`,
+  // res.status(404).json({
+  //   status: 'fail',
+  //   message: `Can't find ${req.originalUrl} on this server!`,
+  // });
+  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+});
+
+app.use(globalErrorHandler);
+
+process.on('unhandledRejection', (err) => {
+  console.log(err.name, err.message);
+  console.log('UNHANDLED REJECTION! ❌ Shutting Down...');
+  server.close(() => {
+    process.exit(1);
   });
 });
 
@@ -113,12 +129,12 @@ function onListening() {
 //   next(createError(404));
 // });
 
-app.use(function (err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+// app.use(function (err, req, res, next) {
+//   // set locals, only providing error in development
+//   res.locals.message = err.message;
+//   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.send('error!');
-});
+//   // render the error page
+//   res.status(err.status || 500);
+//   res.send('error!');
+// });
