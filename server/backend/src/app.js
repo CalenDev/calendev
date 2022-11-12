@@ -11,6 +11,12 @@ import { rmSync } from 'fs';
 import dotenv from 'dotenv';
 dotenv.config();
 
+process.on('uncaughtException', (err) => {
+  console.log('UNCAUGHT EXCEPTION! ❌ Shutting Down...');
+  console.log(err.name, err.message);
+  process.exit(1);
+});
+
 const app = express();
 
 import userRouter from './domain/user/routes/userRoutes.js';
@@ -18,7 +24,6 @@ import authRouter from './domain/user/routes/authRoutes.js';
 import { resolveSoa } from 'dns';
 import AppError from './global/utils/appError.js';
 import globalErrorHandler from './domain/user/controllers/errorController.js';
-
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -60,8 +65,8 @@ app.all('*', (req, res, next) => {
 app.use(globalErrorHandler);
 
 process.on('unhandledRejection', (err) => {
-  console.log(err.name, err.message);
   console.log('UNHANDLED REJECTION! ❌ Shutting Down...');
+  console.log(err.name, err.message);
   server.close(() => {
     process.exit(1);
   });
@@ -122,19 +127,3 @@ function onListening() {
   var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
-
-// // catch 404 and forward to error handler
-// app.use(function (req, res, next) {
-//   //현재 view가 없어서 error생김. react 연동하면 해결될듯.
-//   next(createError(404));
-// });
-
-// app.use(function (err, req, res, next) {
-//   // set locals, only providing error in development
-//   res.locals.message = err.message;
-//   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-//   // render the error page
-//   res.status(err.status || 500);
-//   res.send('error!');
-// });
