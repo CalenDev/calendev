@@ -43,3 +43,5 @@ class UserLoginRes {
     this.userRoleCd = userRoleCd;
   }
 }
+
+export default { UserLoginReq, UserLoginRes };
