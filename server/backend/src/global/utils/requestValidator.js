@@ -11,7 +11,7 @@ const validateNickname = (nickName) => {
 };
 
 const validatePassword = (password) => {
-  //MDN : new RegExp(...)로 하면 안됨. 이유는 모른다.
+  // MDN : new RegExp(...)로 하면 안됨. 이유는 모른다.
   const reg = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
   return reg.test(password);
 };
@@ -29,6 +29,8 @@ const validateReq = (req, serviceName) => {
         validateNickname(req.getUserNickname) &&
         validatePassword(req.getUserPassword)
       );
+    default:
+      return false;
   }
 };
 

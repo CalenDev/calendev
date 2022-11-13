@@ -19,7 +19,8 @@ export default {
     });
   }),
 
-  signupUser: catchAsync(async function (req, res, next) {
+  signupUser: catchAsync(async (req, res, next) => {
+    // eslint-disable-next-line no-console
     const signupReq = new UserJoinDto.JoinReq();
     objectMapper.map(req.body, signupReq);
 
@@ -32,9 +33,10 @@ export default {
     const signupRes = await userJoinService.create(signupReq);
 
     res.status(201).send('signup success');
+    return 0;
   }),
 
-  checkDuplicate: catchAsync(async function (req, res, next) {
+  checkDuplicate: catchAsync(async (req, res, next) => {
     const duplicateValidationReq = new UserJoinDto.DuplicateValidationReq();
     objectMapper.map(req.body, duplicateValidationReq);
     const duplicateValidationRes = await userJoinService.checkDuplicate(

@@ -3,8 +3,8 @@ import jwt from 'jsonwebtoken';
 
 dotenv.config({ path: './.env' });
 
-const ACCESS_TOKEN_SECRET_KEY = process.env.ACCESS_TOKEN_SECRET_KEY;
-const REFRESH_TOKEN_SECRET_KEY = process.env.REFRESH_TOKEN_SECRET_KEY;
+const { ACCESS_TOKEN_SECRET_KEY } = process.env;
+const { REFRESH_TOKEN_SECRET_KEY } = process.env;
 
 export default {
   /**
@@ -18,7 +18,7 @@ export default {
     };
     return jwt.sign(payload, ACCESS_TOKEN_SECRET_KEY, {
       algorithm: 'HS256',
-      expiresIn: '1h', //유효기간
+      expiresIn: '1h', // 유효기간
     });
   },
   /**
@@ -26,12 +26,12 @@ export default {
    * refreshtoken은 payload에 아무것도 들어가지 않음
    * @returns refreshToken
    */
-  generateRefreshToken: () => {
-    return jwt.sign({}, REFRESH_TOKEN_SECRET_KEY, {
+  generateRefreshToken: () =>
+    // eslint-disable-next-line implicit-arrow-linebreak
+    jwt.sign({}, REFRESH_TOKEN_SECRET_KEY, {
       algorithm: 'HS256',
-      expiresIn: '3h', //유효기간
-    });
-  },
+      expiresIn: '3h', // 유효기간
+    }),
 
   verifyAccessToken: (token) => {
     let decoded = null;
@@ -48,13 +48,14 @@ export default {
       };
     }
   },
-  //TODO: redis 적용 후
+  // TODO: redis 적용 후
   verifyRefreshToken: (token) => {},
   resolveToken: (req) => {
     let bearerToken = req.headers.authorization;
 
     if (bearerToken.length) {
-      bearerToken = bearerToken.split('Bearer: ')[1];
+      const refreshToken = bearerToken.split('Bearer: ')[1];
+      bearerToken = refreshToken;
     }
     return bearerToken;
   },

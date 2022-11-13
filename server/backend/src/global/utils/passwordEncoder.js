@@ -1,4 +1,4 @@
-import encrypt from '../utils/encrypt.js';
+import encrypt from './encrypt.js';
 
 const matches = async (plainPassword, salt, userPassword) => {
   const hashedPassword = await encrypt.createHashedPasswordBySalt(

@@ -1,6 +1,6 @@
 import User from '../models/user.js';
 
-import loginDto from '../dto/loginDto.js';
+import UserLoginDto from '../dto/loginDto.js';
 
 import encrypt from '../../../global/utils/encrypt.js';
 
@@ -20,7 +20,7 @@ const findUserByEmail = async (userEmail) => {
 const findUserByEmailAndPassword = async (userLogInReq) => {
   const user = await findUserByEmail(userLogInReq.getUserEmail);
 
-  if (user.length == 0) {
+  if (user.length === 0) {
     return null;
   }
   const { userPassword, salt } = user[0];
@@ -35,6 +35,22 @@ const findUserByEmailAndPassword = async (userLogInReq) => {
   return isUserValid ? user : null;
 };
 
+const authenticate = async (user) => {
+  if (user === null) {
+    return new AppError('Incorrect Email or Password!', 401);
+  }
+  const accessToken = TokenProvider.generateAccessToken(user);
+  const refreshToken = TokenProvider.generateRefreshToken();
+
+  // TODO: feature: save refresh token to redis
+
+  const userLoginRes = new UserLoginDto.UserLoginRes();
+  userLoginRes.setAccessToken = accessToken;
+  userLoginRes.setRefreshToken = refreshToken;
+
+  return userLoginRes;
+};
+
 const authorize = async (userLogInReq) => {
   const { userEmail, userPassword } = userLogInReq;
 
@@ -43,23 +59,6 @@ const authorize = async (userLogInReq) => {
   const userLoginRes = authenticate(user);
 
   return userLoginRes;
-};
-
-const authenticate = async (user) => {
-  if (user === null) {
-    return new AppError('Incorrect Email or Password!', 401);
-  } else {
-    const accessToken = TokenProvider.generateAccessToken(user);
-    const refreshToken = TokenProvider.generateRefreshToken();
-
-    //TODO: feature: save refresh token to redis
-
-    const userLoginRes = new loginDto.UserLoginRes();
-    userLoginRes.setAccessToken = accessToken;
-    userLoginRes.setRefreshToken = refreshToken;
-
-    return userLoginRes;
-  }
 };
 
 export default { authorize };

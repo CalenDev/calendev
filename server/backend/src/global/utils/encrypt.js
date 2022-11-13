@@ -12,14 +12,14 @@ const createSalt = async () => {
   return buf.toString('base64');
 };
 
-/** 유저 비밀번호를 salt와 함께 암호화 후 salt와 hashedPassword 리턴 
+/** 유저 비밀번호를 salt와 함께 암호화 후 salt와 hashedPassword 리턴
  * password > create salt, hash > salt hash
-*/
+ */
 const createHashedPassword = async (password) => {
   const salt = await createSalt();
   const key = await pbkdf2Promise(password, salt, 104906, 64, 'sha512');
   const hashedPassword = key.toString('base64');
-  
+
   return { hashedPassword, salt };
 };
 

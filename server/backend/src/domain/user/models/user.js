@@ -1,7 +1,8 @@
 import knex from '../../../global/config/knexConfig.js';
 
 async function getAllUsers() {
-  return await knex('user').select('*');
+  const users = await knex('user').select('*');
+  return users;
 }
 
 async function findOne(value, columnName) {
@@ -10,15 +11,20 @@ async function findOne(value, columnName) {
 }
 
 async function save(body) {
-  //TODO: mysql이 insert한 객체를 리턴하는 함수를 지원하지 않음. success하면 어떻게 리턴할지고민해야함.
-
-  return await knex('user').insert(body);
+  const res = await knex('user').insert(body);
+  return res;
 }
-async function findTargetUserByEmail(user_email) {
+async function findTargetUserByEmail(userEmail) {
   const targetUser = await knex('user')
     .select('*')
-    .where('userEmail', user_email);
+    .where('userEmail', userEmail);
 
   return targetUser;
 }
-export default { getAllUsers, findTargetUserByEmail, findOne, save };
+
+export default {
+  getAllUsers,
+  findTargetUserByEmail,
+  findOne,
+  save,
+};

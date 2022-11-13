@@ -1,6 +1,7 @@
 import express from 'express';
+
 const router = express.Router();
 
-router.get('/', async function (res, req, next) {
+router.get('/', async (res, req, next) => {
   res.send('index page of users');
 });

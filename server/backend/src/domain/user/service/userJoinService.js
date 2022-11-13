@@ -1,10 +1,10 @@
+/* eslint-disable no-param-reassign */
 import User from '../models/user.js';
 
 import encrypt from '../../../global/utils/encrypt.js';
 
 import dttmBuilder from '../utils/dttmBuilder.js';
-
-import JoinDto from '../dto/joinDto.js';
+import UserJoinDto from '../dto/joinDto.js';
 
 const findAll = async function () {
   const usrs = await User.getAllUsers();
@@ -18,7 +18,7 @@ const checkDuplicate = async (duplicateValidationReq) => {
     duplicateValidationReq.getAuthType,
   );
 
-  const validateDuplicateRes = new JoinDto.DuplicateValidationRes();
+  const validateDuplicateRes = new UserJoinDto.DuplicateValidationRes();
   validateDuplicateRes.setIsUserUnique = targetUser.length ? 'false' : 'true';
 
   return validateDuplicateRes;

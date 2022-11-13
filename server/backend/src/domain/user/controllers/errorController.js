@@ -1,17 +1,18 @@
+/* eslint-disable no-param-reassign */
 import AppError from '../../../global/utils/appError.js';
 
 const handleCastErrorDB = (err) => {
   const message = `Invalid ${err.path}: ${err.value}.`;
   return new AppError(message, 400);
 };
-const handleDuplicateFieldDB = (err) => {
-  const value = err.errmsg.match(/(["'])(\\?.)*?\1/)[0];
-  console.log(value);
-};
-const handleDuplicateEntryDB = (err) => {
-  const message = `Duplicate Entry exists!`;
-  return new AppError(message, 401);
-};
+// const handleDuplicateFieldDB = (err) => {
+//   const value = err.errmsg.match(/(["'])(\\?.)*?\1/)[0];
+//   console.log(value);
+// };
+// const handleDuplicateEntryDB = (err) => {
+//   const message = `Duplicate Entry exists!`;
+//   return new AppError(message, 401);
+// };
 
 const sendErrorDev = (err, res) => {
   res.status(err.statusCode).json({
@@ -23,19 +24,18 @@ const sendErrorDev = (err, res) => {
 };
 
 const sendErrorProd = (err, res) => {
-  //Operational, trusted error: 클라이언트에게 표시
+  // Operational, trusted error: 클라이언트에게 표시
   if (err.isOperational) {
     res.status(err.statusCode).json({
       status: err.status,
       message: err.message,
     });
-  }
-  // Programming error or unknown error : 클라이언트에게 미표시
-  else {
-    //1) log error
+  } else {
+    // Programming error or unknown error : 클라이언트에게 미표시
+    // 1) log error
     console.error('ERROR!! ❌', err);
 
-    //2) Send generic message
+    // 2) Send generic message
     res.status(500).json({
       status: 'error',
       message: 'Something went wrong!',
