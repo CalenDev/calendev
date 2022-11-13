@@ -23,22 +23,18 @@ const checkDuplicate = async (duplicateValidationReq) => {
 
   return validateDuplicateRes;
 };
-const controlParams = async (req) => {
+const controlParams = async (signupReq) => {
   const { hashedPassword, salt } = await encrypt.createHashedPassword(
-    req.body.user_password,
+    signupReq.getUserPassword,
   );
-
-  req.body.user_password = hashedPassword;
-  return salt;
+  signupReq.userPassword = hashedPassword;
+  signupReq.salt = salt;
 };
 
-const create = async (req, res) => {
-  const salt = await controlParams(req, res);
-  req.body.salt = salt;
-  req.body.created_dttm = dttmBuilder();
-  await User.save(req.body);
-
-  // save and redirect
+const create = async (signupReq) => {
+  await controlParams(signupReq);
+  signupReq.createdAtDttm = dttmBuilder();
+  await User.save(signupReq);
 };
 
 export default { findAll, checkDuplicate, create };
