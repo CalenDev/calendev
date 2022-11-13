@@ -2,9 +2,12 @@
 import userJoinService from '../service/userJoinService.js';
 import objectMapper from '../../../global/utils/objectMapper.js';
 import UserJoinDto from '../dto/joinDto.js';
+import catchAsync from '../../../global/utils/catchAsync.js';
+import validator from '../../../global/utils/requestValidator.js';
+import AppError from '../../../global/utils/appError.js';
 
-const getAllUsers = async (req, res, next) => {
-  try {
+export default {
+  getAllUsers: catchAsync(async (req, res, next) => {
     const users = await userJoinService.findAll();
 
     res.status(200).json({
@@ -14,33 +17,26 @@ const getAllUsers = async (req, res, next) => {
         users,
       },
     });
-  } catch (error) {
-    res.status('404').json({
-      status: 'failed',
-      message: 'error',
-    });
-  }
-};
+  }),
 
-//TODO:
-const signupUser = async function (req, res, next) {
-  try {
+  signupUser: catchAsync(async function (req, res, next) {
     const signupReq = new UserJoinDto.JoinReq();
     objectMapper.map(req.body, signupReq);
 
-    const signupRes = userJoinService.create(signupReq);
+    if (!validator.validateReq(signupReq, 'signup')) {
+      return next(
+        new AppError('Please provide valid Email, NickName, Password!!'),
+      );
+    }
+
+    const signupRes = await userJoinService.create(signupReq);
 
     res.status(201).send('signup success');
-  } catch (error) {
-    next(error);
-  }
-};
+  }),
 
-const checkDuplicate = async function (req, res, next) {
-  try {
+  checkDuplicate: catchAsync(async function (req, res, next) {
     const duplicateValidationReq = new UserJoinDto.DuplicateValidationReq();
     objectMapper.map(req.body, duplicateValidationReq);
-
     const duplicateValidationRes = await userJoinService.checkDuplicate(
       duplicateValidationReq,
     );
@@ -51,9 +47,5 @@ const checkDuplicate = async function (req, res, next) {
         duplicateValidationRes,
       },
     });
-  } catch (error) {
-    next(error);
-  }
+  }),
 };
-
-export default { getAllUsers, signupUser, checkDuplicate };

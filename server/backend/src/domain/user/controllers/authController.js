@@ -1,11 +1,10 @@
 import userLogInDto from '../dto/loginDto.js';
-
 import userLogInService from '../service/userLogInService.js';
-
 import objectMapper from '../../../global/utils/objectMapper.js';
 import catchAsync from '../../../global/utils/catchAsync.js';
 import AppError from '../../../global/utils/appError.js';
 import tokenProvider from '../../../global/security/jwt.js';
+import validator from '../../../global/utils/requestValidator.js';
 
 export default {
   authJWT: (req, res, next) => {
@@ -23,11 +22,17 @@ export default {
       }
     }
   },
-
   userLogIn: catchAsync(async (req, res, next) => {
     const userLogInReq = new userLogInDto.UserLoginReq();
 
     objectMapper.map(req.body, userLogInReq);
+
+    if (!validator.validateReq(userLogInReq, 'login')) {
+      return next(
+        new AppError('Please provide valid email and password!', 401),
+      );
+    }
+
     const userLogInRes = await userLogInService.authorize(userLogInReq);
 
     // userLogInRes가 UserLoginRes object가 아니면 AppError이 리턴된 경우이므로 next(err)로 넘겨준다.
