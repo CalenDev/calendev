@@ -1,12 +1,17 @@
 export default () => {
   const currentDate = new Date();
-  const currentDay = currentDate.getDate();
-  const currentMonth = currentDate.getMonth() + 1;
-  const currentYear = currentDate.getFullYear();
+  const utc =
+    currentDate.getTime() + currentDate.getTimezoneOffset() * 60 * 1000;
 
-  const currentHour = currentDate.getHours();
-  const currentMin = currentDate.getMinutes();
-  const currentSec = currentDate.getSeconds();
+  const KR_TIME_DIFF = 9 * 60 * 60 * 1000;
+  const currentDateKR = new Date(utc + KR_TIME_DIFF);
 
-  return `${currentYear}-${currentMonth}-${currentDay} ${currentHour}:${currentMin}:${currentSec}`;
+  const currentDayKR = currentDateKR.getDate();
+  const currentMonthKR = currentDateKR.getMonth() + 1;
+  const currentYearKR = currentDateKR.getFullYear();
+  const currentHourKR = currentDateKR.getHours();
+  const currentMinKR = currentDateKR.getMinutes();
+  const currentSecKR = currentDateKR.getSeconds();
+
+  return `${currentYearKR}-${currentMonthKR}-${currentDayKR} ${currentHourKR}:${currentMinKR}:${currentSecKR}`;
 };
