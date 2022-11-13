@@ -47,7 +47,7 @@ const authorize = async (userLogInReq) => {
 
 const authenticate = async (user) => {
   if (user === null) {
-    return new AppError('Email or Password is invalid!', 404);
+    return new AppError('Incorrect Email or Password!', 401);
   } else {
     const accessToken = TokenProvider.generateAccessToken(user);
     const refreshToken = TokenProvider.generateRefreshToken();
