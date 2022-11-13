@@ -5,3 +5,5 @@ const connection = mysql.createConnection({
   user: 'root',
   database: 'calendev',
 });
+
+export default connection;

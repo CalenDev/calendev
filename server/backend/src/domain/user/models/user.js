@@ -1,11 +1,11 @@
 import knex from '../../../global/config/knexConfig.js';
 
 async function getAllUsers() {
-  return await knex('user').select('user_email');
+  return await knex('user').select('*');
 }
 
-async function findOne(column_name, value) {
-  const user = await knex('user').select('*').where(column_name, value);
+async function findOne(value, columnName) {
+  const user = await knex('user').select('*').where(columnName, value);
   return user;
 }
 
@@ -15,11 +15,10 @@ async function save(body) {
   return await knex('user').insert(body);
 }
 async function findTargetUserByEmail(user_email) {
-  console.log(user_email);
   const targetUser = await knex('user')
     .select('*')
-    .where('user_email', user_email);
+    .where('userEmail', user_email);
 
   return targetUser;
 }
-module.exports = { getAllUsers, findTargetUserByEmail, findOne, save };
+export default { getAllUsers, findTargetUserByEmail, findOne, save };
