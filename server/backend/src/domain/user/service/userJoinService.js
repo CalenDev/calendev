@@ -6,7 +6,7 @@ import encrypt from '../../../global/utils/encrypt.js';
 import dttmBuilder from '../utils/dttmBuilder.js';
 import UserJoinDto from '../dto/joinDto.js';
 
-const findAll = async function () {
+const findAll = async () => {
   const usrs = await User.getAllUsers();
 
   return usrs;

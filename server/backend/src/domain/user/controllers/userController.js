@@ -5,14 +5,14 @@ import UserJoinDto from '../dto/joinDto.js';
 import catchAsync from '../../../global/utils/catchAsync.js';
 import validator from '../../../global/utils/requestValidator.js';
 import AppError from '../../../global/utils/appError.js';
+import dttmBuilder from '../utils/dttmBuilder.js';
 
 export default {
   getAllUsers: catchAsync(async (req, res, next) => {
     const users = await userJoinService.findAll();
 
-    res.status(200).json({
+    return res.status(200).json({
       status: 'success',
-      results: users.length,
       data: {
         users,
       },
@@ -30,10 +30,9 @@ export default {
       );
     }
 
-    const signupRes = await userJoinService.create(signupReq);
+    await userJoinService.create(signupReq);
 
-    res.status(201).send('signup success');
-    return 0;
+    return res.status(201).send('signup success');
   }),
 
   checkDuplicate: catchAsync(async (req, res, next) => {
@@ -43,7 +42,7 @@ export default {
       duplicateValidationReq,
     );
 
-    res.status(200).json({
+    return res.status(200).json({
       status: 'success',
       data: {
         duplicateValidationRes,

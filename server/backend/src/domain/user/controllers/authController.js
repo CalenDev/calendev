@@ -20,6 +20,8 @@ export default {
           message: result.message,
         });
       }
+    } else {
+      // 헤더에 아무 내용없으면 로그인페이지로 이동하게끔 res 내려준다.
     }
   },
   userLogIn: catchAsync(async (req, res, next) => {
@@ -40,12 +42,11 @@ export default {
       return next(userLogInRes);
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       status: 'success',
       data: {
         userLogInRes,
       },
     });
-    return 0;
   }),
 };
