@@ -1,3 +1,4 @@
+import CustomTextField from './CustomTextField';
 import Header from './Header';
 
-export default Header;
+export { CustomTextField, Header };
