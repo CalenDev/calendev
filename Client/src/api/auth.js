@@ -13,9 +13,8 @@ const postUserSignIn = async (userEmail, userPassword) => {
   } catch (e) {
     return {
       error: e,
-      ...data,
     };
   }
 };
 
-export { postUserSignIn };
+export default postUserSignIn;
