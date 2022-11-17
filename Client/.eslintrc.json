@@ -1,0 +1,13 @@
+{
+  "extends": [
+      "react-app",
+      "react-app/jest",
+      "airbnb",
+      "plugin:react/jsx-runtime"
+    ],
+  "rules": {
+    "react/jsx-props-no-spreading": ["error", {
+      "custom": "ignore"
+    }]
+  }
+}
