@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 // import { postUserSignIn } from '../../api/auth';
+import { PropTypes } from 'prop-types';
 
 function SignIn() {
   const navigate = useNavigate();
@@ -30,10 +31,14 @@ function SignIn() {
     }
 
     // 2. request signIn
-    const apiRes = await postUserSignIn(
+    /* const apiRes = await postUserSignIn(
       data.get('email'),
       data.get('password'),
-    );
+    ); */
+
+    const apiRes = {
+      status: 'success',
+    };
 
     // fixme : 공통적인 에러처리 알람 줄 필요.
     if (apiRes.status === 'success') {
@@ -118,23 +123,26 @@ const StyledSignInBottomContainer = styled(Box)`
 `;
 
 function SignInTextField(props) {
+  const { fieldName, label, autoComplate, helpText } = props;
   return (
     <TextField
       margin="normal"
       fullWidth
-      id={props.fieldName}
-      label={props.label}
-      name={props.fieldName}
-      autoComplete={props.autoComplate}
+      id={fieldName}
+      label={label}
+      name={fieldName}
+      autoComplete={autoComplate}
       autoFocus
       inputProps={{
         maxLength: 20,
       }}
-      error={!!props.helpText}
-      helperText={props.helpText}
+      error={!!helpText}
+      helperText={helpText}
     />
   );
 }
+
+PropTypes;
 
 function SignInBottomButton(props) {
   const navigate = useNavigate();

@@ -1,11 +1,11 @@
 import { Route, Routes } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { config } from './config';
+import themes from './styles/themes';
 import Home from './pages/Home/Home';
 import SignIn from './pages/SignIn/SignIn';
 
 function App() {
-  const theme = createTheme(config.themes);
+  const theme = createTheme(themes);
   return (
     <ThemeProvider theme={theme}>
       <Routes>
