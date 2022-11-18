@@ -62,7 +62,7 @@ function Header() {
               </IconButton>
             </Tooltip>
             <Menu
-              sx={{ mt: theme.spacing(6) }}
+              sx={{ mt: theme.spacing(5) }}
               id="menu-appbar"
               anchorEl={anchorEl}
               anchorOrigin={{
@@ -77,17 +77,17 @@ function Header() {
               open={Boolean(anchorEl)}
               onClose={handleCloseUserMenu}
             >
-              <MenuItem>
-                <StyledMenuProfileWrapper>
-                  <Typography variant="body1">
+              <StyledMenuItem>
+                <Stack>
+                  <Typography noWrap variant="body1">
                     {mockUserInfo.nickname}
                   </Typography>
                   <Typography variant="body2" noWrap sx={{ opacity: '0.6' }}>
                     {mockUserInfo.email}
                   </Typography>
-                </StyledMenuProfileWrapper>
+                </Stack>
                 <StyledEditIcon />
-              </MenuItem>
+              </StyledMenuItem>
               <Divider />
               <StyledMenuListItemWrapper>
                 <MenuListItem icon={StarIcon} text="즐겨찾기" />
@@ -121,16 +121,12 @@ export default Header;
 const StyledMenuListItemWrapper = styled(Stack)`
   .MenuListItemIcon {
     opacity: 0.54;
-    margin-right: 4vw;
+    margin-right: ${(props) => props.theme.spacing(6)};
   }
 `;
 
 const StyledWhiteTypography = styled(Typography)`
   color: #fff;
-`;
-
-const StyledMenuProfileWrapper = styled(Stack)`
-  width: ${(props) => props.theme.spacing(15)};
 `;
 
 const StyledButtonWrapper = styled(Stack)`
@@ -140,7 +136,6 @@ const StyledButtonWrapper = styled(Stack)`
   flex-direction: row;
 `;
 const StyledAppBar = styled(AppBar)`
-  width: 100%;
   min-width: 350px;
   display: flex;
   justify-content: space-between;
@@ -151,7 +146,11 @@ const StyledLogoIconButton = styled(IconButton)`
   justify-content: center;
   align-items: center;
   flex-direction: row;
-  gap: 1vw;
+  gap: 4%;
+`;
+
+const StyledMenuItem = styled(MenuItem)`
+  gap: ${(props) => props.theme.spacing(2)};
 `;
 
 const StyledEditIcon = styled(EditIcon)`
