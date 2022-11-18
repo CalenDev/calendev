@@ -90,9 +90,9 @@ function Header() {
               </MenuItem>
               <Divider />
               <StyledMenuListItemWrapper>
-                <MenuListItem icon={StarIcon} variant="body2" text="즐겨찾기" />
-                <MenuListItem icon={PeopleIcon} variant="body2" text="주최자" />
-                <MenuListItem icon={LockIcon} variant="body2" text="개인정보" />
+                <MenuListItem icon={StarIcon} text="즐겨찾기" />
+                <MenuListItem icon={PeopleIcon} text="주최자" />
+                <MenuListItem icon={LockIcon} text="개인정보" />
               </StyledMenuListItemWrapper>
               <Divider />
               <MenuItem>
@@ -163,7 +163,7 @@ function MenuListItem({ variant, text, icon }) {
   return (
     <MenuItem>
       <IconComponent className="MenuListItemIcon" />
-      <Typography variant={variant}>{text}</Typography>
+      <Typography variant="body2">{text}</Typography>
     </MenuItem>
   );
 }
