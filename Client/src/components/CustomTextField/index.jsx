@@ -1,11 +1,12 @@
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
-import TextField from '@mui/material';
+import TextField from '@mui/material/TextField';
 import commonMsgText from '../../utils/commonMsgText';
 
 export default function CustomTextField(props) {
   const { helpermsgobj } = props;
-  const textHelperMsgObj = helpermsgobj === undefined ? { code: 0 } : helpermsgobj;
+  const textHelperMsgObj =
+    helpermsgobj === undefined ? { code: 0 } : helpermsgobj;
 
   return (
     <StyledTextField
