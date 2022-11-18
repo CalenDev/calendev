@@ -1,13 +1,13 @@
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
-// import { postUserSignIn } from '../../api/auth';
-import { PropTypes } from 'prop-types';
+import PropTypes from 'prop-types';
+import postUserSignIn from '../../api/auth';
 
 function SignIn() {
   const navigate = useNavigate();
@@ -31,14 +31,10 @@ function SignIn() {
     }
 
     // 2. request signIn
-    /* const apiRes = await postUserSignIn(
-      data.get('email'),
-      data.get('password'),
-    ); */
-
-    const apiRes = {
-      status: 'success',
-    };
+    const apiRes = await postUserSignIn({
+      email: data.get(curEmail),
+      password: data.get(curPassword),
+    });
 
     // fixme : 공통적인 에러처리 알람 줄 필요.
     if (apiRes.status === 'success') {
@@ -54,63 +50,70 @@ function SignIn() {
   };
 
   return (
-    <StyledSignInContainer component="main" maxWidth="xs">
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-      >
+    <StyledSignInContainer>
+      <StyledStack>
         <Typography component="h1" variant="h4">
           로그인
         </Typography>
-        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
-          <SignInTextField
-            fieldName="email"
-            autoComplate="email"
-            label="이메일"
-            helpText={emailHelpText}
-          />
-          <SignInTextField
-            fieldName="password"
-            autoComplete="current-password"
-            label="비밀번호"
-            helpText={passwordHelpText}
-          />
+      </StyledStack>
+      <StyledStackForm component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+        <SignInTextField
+          name="email"
+          autoComplate="email"
+          label="이메일"
+          helperText={emailHelpText}
+        />
+        <SignInTextField
+          name="password"
+          autoComplete="current-password"
+          label="비밀번호"
+          helperText={passwordHelpText}
+        />
 
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
-          >
-            로그인
-          </Button>
-          <StyledSignInBottomContainer>
-            <SignInBottomButton
-              variant="subtitle2"
-              path="/signUp"
-              value="회원가입"
-            />
-            <Typography variant="subtitle2">|</Typography>
-            <SignInBottomButton
-              variant="subtitle2"
-              path="/findPW"
-              value="비밀번호 찾기"
-            />
-          </StyledSignInBottomContainer>
-        </Box>
-      </Box>
+        <StyledSignInButton
+          type="submit"
+          fullWidth
+          variant="contained"
+          sx={{ mt: 3, mb: 2 }}
+        >
+          로그인
+        </StyledSignInButton>
+        <StyledSignInBottomContainer>
+          <SignInBottomButton
+            variant="subtitle2"
+            path="/signUp"
+            value="회원가입"
+          />
+          <Typography variant="subtitle2">|</Typography>
+          <SignInBottomButton
+            variant="subtitle2"
+            path="/findPW"
+            value="비밀번호 찾기"
+          />
+        </StyledSignInBottomContainer>
+      </StyledStackForm>
     </StyledSignInContainer>
   );
 }
 
-const StyledSignInContainer = styled(Container)`
+const StyledSignInContainer = styled(Stack)`
   width: 100vw;
   height: 100vh;
-  display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
+`;
+
+const StyledStackForm = styled(Stack)`
+  width: 60vw;
+`;
+const StyledStack = styled(Stack)`
+  width: 60vw;
+  justify-content: left;
+`;
+const StyledSignInButton = styled(Button)`
+  margin-top: ${(props) => props.theme.spacing(3)};
+  margin-bottom: ${(props) => props.theme.spacing(2)};
 `;
 
 const StyledSignInBottomContainer = styled(Box)`
@@ -123,41 +126,63 @@ const StyledSignInBottomContainer = styled(Box)`
 `;
 
 function SignInTextField(props) {
-  const { fieldName, label, autoComplate, helpText } = props;
+  const { name, helperText } = props;
   return (
     <TextField
       margin="normal"
       fullWidth
-      id={fieldName}
-      label={label}
-      name={fieldName}
-      autoComplete={autoComplate}
+      id={name}
       autoFocus
       inputProps={{
         maxLength: 20,
       }}
-      error={!!helpText}
-      helperText={helpText}
+      error={!!helperText}
+      helperText={helperText}
+      {...props}
     />
   );
 }
 
-PropTypes;
+SignInTextField.defaultProps = {
+  name: '',
+  label: '',
+  autoComplate: '',
+  helperText: '',
+};
+
+SignInTextField.propTypes = {
+  name: PropTypes.string,
+  label: PropTypes.string,
+  autoComplate: PropTypes.string,
+  helperText: PropTypes.string,
+};
 
 function SignInBottomButton(props) {
   const navigate = useNavigate();
-
+  const { path, value } = props;
   return (
     <Button
-      variant={props.variant}
       onClick={() => {
-        navigate(props.path);
+        navigate(path);
       }}
       className="SignInBottomButton"
+      {...props}
     >
-      {props.value}
+      {value}
     </Button>
   );
 }
+
+SignInBottomButton.defaultProps = {
+  variant: 'subtitle2',
+  path: '/',
+  value: '완료',
+};
+
+SignInBottomButton.propTypes = {
+  variant: PropTypes.string,
+  path: PropTypes.string,
+  value: PropTypes.string,
+};
 
 export default SignIn;
