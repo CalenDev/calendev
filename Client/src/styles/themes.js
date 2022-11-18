@@ -10,9 +10,6 @@ const themes = {
     secondary: {
       main: red[300],
     },
-    white: {
-      main: 'white',
-    },
   },
   breakpoints: {
     values: {

@@ -52,13 +52,13 @@ function Header() {
       </StyledLogoIconButton>
       <StyledButtonWrapper>
         <IconButton>
-          <DateRangeIcon color="white" fontSize="large" />
+          <DateRangeIcon sx={{ color: '#ffffff' }} fontSize="large" />
         </IconButton>
         {isLogin ? (
           <>
             <Tooltip title="프로필 보기">
               <IconButton onClick={handleOpenUserMenu} size="large">
-                <AccountCircleIcon color="white" fontSize="large" />
+                <AccountCircleIcon sx={{ color: '#ffffff' }} fontSize="large" />
               </IconButton>
             </Tooltip>
             <Menu
@@ -96,7 +96,7 @@ function Header() {
               </StyledMenuListItemWrapper>
               <Divider />
               <MenuItem>
-                <Typography variant="button">로그아웃</Typography>
+                <Button color="inherit">로그아웃</Button>
               </MenuItem>
             </Menu>
           </>
@@ -158,7 +158,8 @@ const StyledEditIcon = styled(EditIcon)`
   margin: theme.spacing(1.5);
   opacity: 0.54;
 `;
-function MenuListItem({ variant, text, icon }) {
+
+function MenuListItem({ text, icon }) {
   const IconComponent = icon;
   return (
     <MenuItem>
@@ -169,7 +170,6 @@ function MenuListItem({ variant, text, icon }) {
 }
 
 MenuListItem.propTypes = {
-  variant: PropTypes.string.isRequired,
   text: PropTypes.string.isRequired,
   icon: PropTypes.elementType.isRequired,
 };
