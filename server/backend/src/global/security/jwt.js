@@ -1,5 +1,8 @@
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
+import { promisify } from 'util';
+import catchAsync from '../utils/catchAsync.js';
+import redis from '../config/redisCofig.js';
 
 dotenv.config({ path: './.env' });
 
@@ -14,7 +17,7 @@ export default {
    */
   generateAccessToken: (user) => {
     const payload = {
-      email: user.userEmail,
+      userEmail: user.userEmail,
     };
     return jwt.sign(payload, ACCESS_TOKEN_SECRET_KEY, {
       algorithm: 'HS256',
@@ -48,8 +51,22 @@ export default {
       };
     }
   },
-  // TODO: redis 적용 후
-  verifyRefreshToken: (token) => {},
+  verifyRefreshToken: async (token, userInfo) => {
+    const { redisClient } = redis;
+
+    const data = await redisClient.get(userInfo);
+
+    if (token === data) {
+      try {
+        jwt.verify(token, REFRESH_TOKEN_SECRET_KEY);
+        return true;
+      } catch (err) {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  },
   resolveToken: (req) => {
     let bearerToken = req.headers.authorization;
 
