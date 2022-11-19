@@ -12,11 +12,15 @@ import catchAsync from '../../../global/utils/catchAsync.js';
 
 import TokenProvider from '../../../global/security/jwt.js';
 
+import redis from '../../../global/config/redisCofig.js';
+
 const findUserByEmail = async (userEmail) => {
+  // kenx를 이용하여 일치하는 사용자 정보를 배열의 형태로 리턴받는다.
   const user = await User.findTargetUserByEmail(userEmail);
   return user;
 };
 
+// request 정보와 일치하는 유저 한명을 찾는다.
 const findUserByEmailAndPassword = async (userLogInReq) => {
   const user = await findUserByEmail(userLogInReq.getUserEmail);
 
@@ -32,7 +36,8 @@ const findUserByEmailAndPassword = async (userLogInReq) => {
     userPassword,
   );
 
-  return isUserValid ? user : null;
+  // user가 배열의 형태로 주어지므로 다음과 같이 리턴한다.
+  return isUserValid ? user[0] : null;
 };
 
 const authenticate = async (user) => {
@@ -42,7 +47,7 @@ const authenticate = async (user) => {
   const accessToken = TokenProvider.generateAccessToken(user);
   const refreshToken = TokenProvider.generateRefreshToken();
 
-  // TODO: feature: save refresh token to redis
+  await redis.redisClient.set(user.userEmail, refreshToken);
 
   const userLoginRes = new UserLoginDto.UserLoginRes();
   userLoginRes.setAccessToken = accessToken;
