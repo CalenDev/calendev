@@ -12,6 +12,7 @@ import authRouter from './domain/user/routes/authRoutes.js';
 import AppError from './global/utils/appError.js';
 import globalErrorHandler from './domain/user/controllers/errorController.js';
 import mongoose from './global/config/mongoConfig.js';
+import redis from './global/config/redisCofig.js';
 
 const dirname = path.resolve();
 
@@ -24,6 +25,7 @@ process.on('uncaughtException', (err) => {
 });
 
 mongoose();
+redis.connect();
 
 const app = express();
 app.use(logger('dev'));
