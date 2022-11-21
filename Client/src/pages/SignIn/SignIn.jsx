@@ -1,119 +1,124 @@
 import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
+import Stack from '@mui/material/Stack';
+import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import postUserSignIn from '../../api/auth';
+import CustomPaper from '../../components/CustomPaper/index';
+import { validateEmail, validatePassword } from '../../utils/validationCheck';
+import CustomTextField from '../../components/CustomTextField';
 
 function SignIn() {
   const navigate = useNavigate();
-  const [emailHelpText, setEmailHelpText] = useState('');
-  const [passwordHelpText, setPasswordHelpText] = useState('');
+  const [emailMsgObj, setEmailMsgObj] = useState({ code: 0, arg1: '' });
+  const [passwordMsgObj, setPasswordMsgObj] = useState({ code: 0, arg1: '' });
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  const handleClickShowConfirmPassword = () => {
+    setShowConfirmPassword((prev) => !prev);
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
     const curEmail = data.get('email');
     const curPassword = data.get('password');
 
-    // 1. check id, password length
     if (curEmail.length === 0) {
-      setEmailHelpText('이메일을 입력해주세요.');
+      setEmailMsgObj({ code: 101, arg1: '이메일' });
+      return;
+    }
+    if (!validateEmail(curEmail)) {
+      setEmailMsgObj({ code: 107, arg1: '' });
       return;
     }
     if (curPassword.length === 0) {
-      setPasswordHelpText('비밀번호를 입력해주세요.');
+      setPasswordMsgObj({ code: 101, arg1: '비밀번호' });
+      return;
+    }
+    if (!validatePassword(curPassword)) {
+      setPasswordMsgObj({ code: 113, arg1: '' });
       return;
     }
 
-    // 2. request signIn
     const apiRes = await postUserSignIn({
-      email: data.get(curEmail),
-      password: data.get(curPassword),
+      userEmail: data.get(curEmail),
+      userPassword: data.get(curPassword),
     });
 
-    // fixme : 공통적인 에러처리 알람 줄 필요.
     if (apiRes.status === 'success') {
-      navigate('/'); // fixme : redirect 고려...
+      navigate('/', { replace: true });
     } else if (apiRes.status === 'failure') {
-      setEmailHelpText(
-        '아이디 또는 비밀번호가 맞지 않습니다. 다시 확인해주세요.',
-      );
-      setPasswordHelpText(
-        '아이디 또는 비밀번호가 맞지 않습니다. 다시 확인해주세요.',
-      );
+      setEmailMsgObj({ code: 112, arg1: '' });
+      setPasswordMsgObj({ code: 112, arg1: '' });
     }
   };
 
   return (
-    <StyledSignInContainer>
-      <StyledStack>
-        <Typography component="h1" variant="h4">
-          로그인
-        </Typography>
+    <CustomPaper>
+      <StyledTitle sx={{ fontWeight: 'bold' }} variant="h4">
+        로그인
+      </StyledTitle>
+      <StyledStack component="form" onSubmit={handleSubmit} spacing={2}>
+        <Stack spacing={1}>
+          <StyledSignInTextField
+            name="email"
+            autoComplate="email"
+            placeholder="이메일"
+            helpermsgobj={emailMsgObj}
+          />
+          <StyledSignInTextField
+            name="password"
+            autoComplete="current-password"
+            placeholder="비밀번호"
+            helpermsgobj={passwordMsgObj}
+            type={showConfirmPassword ? 'text' : 'password'}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    name="showConfirmPassword"
+                    onClick={handleClickShowConfirmPassword}
+                    edge="end"
+                  >
+                    {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+        </Stack>
+        <Stack spacing={1}>
+          <Button type="submit" fullWidth variant="contained">
+            로그인
+          </Button>
+          <StyledSignInBottomContainer>
+            <SignInBottomButton
+              variant="subtitle2"
+              path="/signUp"
+              value="회원가입"
+            />
+            <SignInBottomButton
+              variant="subtitle2"
+              path="/findPW"
+              value="비밀번호 찾기"
+            />
+          </StyledSignInBottomContainer>
+        </Stack>
       </StyledStack>
-      <StyledStackForm component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
-        <SignInTextField
-          name="email"
-          autoComplate="email"
-          label="이메일"
-          helperText={emailHelpText}
-        />
-        <SignInTextField
-          name="password"
-          autoComplete="current-password"
-          label="비밀번호"
-          helperText={passwordHelpText}
-        />
-
-        <StyledSignInButton
-          type="submit"
-          fullWidth
-          variant="contained"
-          sx={{ mt: 3, mb: 2 }}
-        >
-          로그인
-        </StyledSignInButton>
-        <StyledSignInBottomContainer>
-          <SignInBottomButton
-            variant="subtitle2"
-            path="/signUp"
-            value="회원가입"
-          />
-          <Typography variant="subtitle2">|</Typography>
-          <SignInBottomButton
-            variant="subtitle2"
-            path="/findPW"
-            value="비밀번호 찾기"
-          />
-        </StyledSignInBottomContainer>
-      </StyledStackForm>
-    </StyledSignInContainer>
+    </CustomPaper>
   );
 }
 
-const StyledSignInContainer = styled(Stack)`
-  width: 100vw;
-  height: 100vh;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-`;
-
-const StyledStackForm = styled(Stack)`
-  width: 60vw;
-`;
-const StyledStack = styled(Stack)`
-  width: 60vw;
-  justify-content: left;
-`;
-const StyledSignInButton = styled(Button)`
-  margin-top: ${(props) => props.theme.spacing(3)};
-  margin-bottom: ${(props) => props.theme.spacing(2)};
+const StyledTitle = styled(Typography)`
+  margin: ${(props) => props.theme.spacing(2)};
 `;
 
 const StyledSignInBottomContainer = styled(Box)`
@@ -125,37 +130,20 @@ const StyledSignInBottomContainer = styled(Box)`
   }
 `;
 
-function SignInTextField(props) {
-  const { name, helperText } = props;
-  return (
-    <TextField
-      margin="normal"
-      fullWidth
-      id={name}
-      autoFocus
-      inputProps={{
-        maxLength: 20,
-      }}
-      error={!!helperText}
-      helperText={helperText}
-      {...props}
-    />
-  );
-}
+const StyledStack = styled(Stack)`
+  width: 100%;
+`;
 
-SignInTextField.defaultProps = {
-  name: '',
-  label: '',
-  autoComplate: '',
-  helperText: '',
-};
-
-SignInTextField.propTypes = {
-  name: PropTypes.string,
-  label: PropTypes.string,
-  autoComplate: PropTypes.string,
-  helperText: PropTypes.string,
-};
+const StyledSignInTextField = styled(CustomTextField)`
+  & .MuiInputBase-input {
+    padding: ${(props) => props.theme.spacing(0.5, 2)};
+    font-size: 0.9rem;
+  }
+  & .MuiFormHelperText-root {
+    margin-left: 7px;
+    margin-right: 0;
+  }
+`;
 
 function SignInBottomButton(props) {
   const navigate = useNavigate();
