@@ -1,4 +1,5 @@
-import CustomTextField from './CustomTextField';
 import Header from './Header';
+import CommonPaper from './CommonPaper';
+import CustomTextField from './CustomTextField';
 
-export { CustomTextField, Header };
+export { Header, CommonPaper, CustomTextField };

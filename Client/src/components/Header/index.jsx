@@ -52,17 +52,17 @@ function Header() {
       </StyledLogoIconButton>
       <StyledButtonWrapper>
         <IconButton>
-          <DateRangeIcon color="white" fontSize="large" />
+          <DateRangeIcon sx={{ color: '#ffffff' }} fontSize="large" />
         </IconButton>
         {isLogin ? (
           <>
             <Tooltip title="프로필 보기">
               <IconButton onClick={handleOpenUserMenu} size="large">
-                <AccountCircleIcon color="white" fontSize="large" />
+                <AccountCircleIcon sx={{ color: '#ffffff' }} fontSize="large" />
               </IconButton>
             </Tooltip>
             <Menu
-              sx={{ mt: theme.spacing(6) }}
+              sx={{ mt: theme.spacing(5) }}
               id="menu-appbar"
               anchorEl={anchorEl}
               anchorOrigin={{
@@ -77,26 +77,26 @@ function Header() {
               open={Boolean(anchorEl)}
               onClose={handleCloseUserMenu}
             >
-              <MenuItem>
-                <StyledMenuProfileWrapper>
-                  <Typography variant="body1">
+              <StyledMenuItem>
+                <Stack>
+                  <Typography noWrap variant="body1">
                     {mockUserInfo.nickname}
                   </Typography>
                   <Typography variant="body2" noWrap sx={{ opacity: '0.6' }}>
                     {mockUserInfo.email}
                   </Typography>
-                </StyledMenuProfileWrapper>
+                </Stack>
                 <StyledEditIcon />
-              </MenuItem>
+              </StyledMenuItem>
               <Divider />
               <StyledMenuListItemWrapper>
-                <MenuListItem icon={StarIcon} variant="body2" text="즐겨찾기" />
-                <MenuListItem icon={PeopleIcon} variant="body2" text="주최자" />
-                <MenuListItem icon={LockIcon} variant="body2" text="개인정보" />
+                <MenuListItem icon={StarIcon} text="즐겨찾기" />
+                <MenuListItem icon={PeopleIcon} text="주최자" />
+                <MenuListItem icon={LockIcon} text="개인정보" />
               </StyledMenuListItemWrapper>
               <Divider />
               <MenuItem>
-                <Typography variant="button">로그아웃</Typography>
+                <Button color="inherit">로그아웃</Button>
               </MenuItem>
             </Menu>
           </>
@@ -121,16 +121,12 @@ export default Header;
 const StyledMenuListItemWrapper = styled(Stack)`
   .MenuListItemIcon {
     opacity: 0.54;
-    margin-right: 4vw;
+    margin-right: ${(props) => props.theme.spacing(6)};
   }
 `;
 
 const StyledWhiteTypography = styled(Typography)`
   color: #fff;
-`;
-
-const StyledMenuProfileWrapper = styled(Stack)`
-  width: ${(props) => props.theme.spacing(15)};
 `;
 
 const StyledButtonWrapper = styled(Stack)`
@@ -140,7 +136,6 @@ const StyledButtonWrapper = styled(Stack)`
   flex-direction: row;
 `;
 const StyledAppBar = styled(AppBar)`
-  width: 100%;
   min-width: 350px;
   display: flex;
   justify-content: space-between;
@@ -151,25 +146,29 @@ const StyledLogoIconButton = styled(IconButton)`
   justify-content: center;
   align-items: center;
   flex-direction: row;
-  gap: 1vw;
+  gap: 4%;
+`;
+
+const StyledMenuItem = styled(MenuItem)`
+  gap: ${(props) => props.theme.spacing(2)};
 `;
 
 const StyledEditIcon = styled(EditIcon)`
   margin: theme.spacing(1.5);
   opacity: 0.54;
 `;
-function MenuListItem({ variant, text, icon }) {
+
+function MenuListItem({ text, icon }) {
   const IconComponent = icon;
   return (
     <MenuItem>
       <IconComponent className="MenuListItemIcon" />
-      <Typography variant={variant}>{text}</Typography>
+      <Typography variant="body2">{text}</Typography>
     </MenuItem>
   );
 }
 
 MenuListItem.propTypes = {
-  variant: PropTypes.string.isRequired,
   text: PropTypes.string.isRequired,
   icon: PropTypes.elementType.isRequired,
 };
