@@ -5,8 +5,8 @@ const postUserSignIn = async (userEmail, userPassword) => {
 
   try {
     const { data } = await axios.post(API_END_POINT, {
-      user_email: userEmail,
-      user_password: userPassword,
+      userEmail,
+      userPassword,
     });
 
     return data;
