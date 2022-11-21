@@ -48,8 +48,8 @@ function SignIn() {
     }
 
     const apiRes = await postUserSignIn({
-      userEmail: data.get(curEmail),
-      userPassword: data.get(curPassword),
+      userEmail: curEmail,
+      userPassword: curPassword,
     });
 
     if (apiRes.status === 'success') {
