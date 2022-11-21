@@ -1,5 +1,5 @@
 export function validateEmail(email) {
-  const reg = /^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$/;
+  const reg = /^.+@.{2,}..{2,}$/;
   return reg.test(email);
 }
 
