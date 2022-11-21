@@ -69,7 +69,7 @@ function SignIn() {
         <Stack spacing={1}>
           <StyledSignInTextField
             name="email"
-            autoComplate="email"
+            autoComplete="email"
             placeholder="이메일"
             helpermsgobj={emailMsgObj}
           />
