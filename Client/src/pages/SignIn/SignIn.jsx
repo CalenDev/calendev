@@ -100,16 +100,8 @@ function SignIn() {
             로그인
           </Button>
           <StyledSignInBottomContainer>
-            <SignInBottomButton
-              variant="subtitle2"
-              path="/signup"
-              value="회원가입"
-            />
-            <SignInBottomButton
-              variant="subtitle2"
-              path="/findpw"
-              value="비밀번호 찾기"
-            />
+            <SignInBottomButton path="/signup" value="회원가입" />
+            <SignInBottomButton path="/findpw" value="비밀번호 찾기" />
           </StyledSignInBottomContainer>
         </Stack>
       </StyledStack>
@@ -154,6 +146,7 @@ function SignInBottomButton(props) {
         navigate(path);
       }}
       className="SignInBottomButton"
+      variant="subtitle2"
       {...props}
     >
       {value}
@@ -161,16 +154,9 @@ function SignInBottomButton(props) {
   );
 }
 
-SignInBottomButton.defaultProps = {
-  variant: 'subtitle2',
-  path: '/',
-  value: '완료',
-};
-
 SignInBottomButton.propTypes = {
-  variant: PropTypes.string,
-  path: PropTypes.string,
-  value: PropTypes.string,
+  path: PropTypes.string.isRequired,
+  value: PropTypes.string.isRequired,
 };
 
 export default SignIn;
