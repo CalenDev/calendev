@@ -1,3 +1,3 @@
-import { postUserSignIn } from './auth';
+import postUserSignIn from './auth';
 
 export default postUserSignIn;
