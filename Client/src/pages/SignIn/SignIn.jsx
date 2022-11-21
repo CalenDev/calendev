@@ -1,8 +1,8 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
 import Stack from '@mui/material/Stack';
@@ -11,9 +11,9 @@ import IconButton from '@mui/material/IconButton';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import postUserSignIn from '../../api/auth';
-import CustomPaper from '../../components/CustomPaper/index';
 import { validateEmail, validatePassword } from '../../utils/validationCheck';
 import CustomTextField from '../../components/CustomTextField';
+import CommonPaper from '../../components/CommonPaper/index';
 
 function SignIn() {
   const navigate = useNavigate();
@@ -61,7 +61,7 @@ function SignIn() {
   };
 
   return (
-    <CustomPaper>
+    <CommonPaper>
       <StyledTitle sx={{ fontWeight: 'bold' }} variant="h4">
         로그인
       </StyledTitle>
@@ -105,7 +105,7 @@ function SignIn() {
           </StyledSignInBottomContainer>
         </Stack>
       </StyledStack>
-    </CustomPaper>
+    </CommonPaper>
   );
 }
 
