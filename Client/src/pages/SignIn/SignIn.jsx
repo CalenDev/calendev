@@ -102,12 +102,12 @@ function SignIn() {
           <StyledSignInBottomContainer>
             <SignInBottomButton
               variant="subtitle2"
-              path="/signUp"
+              path="/signup"
               value="회원가입"
             />
             <SignInBottomButton
               variant="subtitle2"
-              path="/findPW"
+              path="/findpw"
               value="비밀번호 찾기"
             />
           </StyledSignInBottomContainer>
