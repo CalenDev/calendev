@@ -1,14 +1,14 @@
 import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 import Alert from '@mui/material/Alert';
-import TextField from '@mui/material/TextField';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { PropTypes } from 'prop-types';
+import styled from '@emotion/styled';
 import { postFindPw } from '../../api';
-import { validateEmail } from '../../utils';
-import { CommonPaper } from '../../components';
+import validateEmail from '../../utils';
+import { CommonPaper, CustomTextField } from '../../components';
 import commonMsgText from '../../utils/commonMsgText';
 
 /*
@@ -36,7 +36,6 @@ import commonMsgText from '../../utils/commonMsgText';
 
 function FindPw() {
   const [alertMsgObj, setAlertMsgObj] = useState({ code: 100, arg1: '' });
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
@@ -59,47 +58,57 @@ function FindPw() {
   // fix : Container 삭제
   return (
     <CommonPaper>
-      <Typography varient="h5">비밀번호 찾기</Typography>
-      <Box component="form" onSubmit={handleSubmit}>
-        <TextField
-          margin="normal"
-          fullWidth
-          id="email"
-          label="이메일"
-          name="email"
-          autoFocus
-          inputProps={{
-            maxLength: 20,
-          }}
-        />
+      <StyledTitle variant="h5" sx={{ fontWeight: 'bold' }}>
+        비밀번호 찾기
+      </StyledTitle>
+      <StyledStack spacing={3}>
+        <Stack component="form" onSubmit={handleSubmit} spacing={1}>
+          <CustomTextField
+            id="email"
+            placeholder="이메일"
+            name="email"
+            autoFocus
+            inputProps={{
+              maxLength: 20,
+            }}
+          />
 
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          sx={{ mt: 3, mb: 2 }}
-        >
-          비밀번호 찾기
-        </Button>
-      </Box>
-      <FindPwAlert alertMsgObj={alertMsgObj} />
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+          >
+            비밀번호 찾기
+          </Button>
+        </Stack>
+        <FindPwAlert alertMsgObj={alertMsgObj} />
+      </StyledStack>
     </CommonPaper>
   );
 }
 
+const StyledTitle = styled(Typography)`
+  margin: ${(props) => props.theme.spacing(2)};
+`;
+
+const StyledStack = styled(Stack)`
+  width: 100%;
+`;
+
 function FindPwAlert(props) {
   const { alertMsgObj } = props;
-
+  const isValidEmail = alertMsgObj.code % 10 === 0;
   return (
     <Alert
-      severity={alertMsgObj.code % 10 === 0 ? 'success' : 'error'}
+      severity={isValidEmail ? 'success' : 'error'}
       variant="outlined"
       iconMapping={{
         success: <CheckCircleOutlineIcon fontSize="inherit" />,
       }}
-      color={alertMsgObj.code % 10 === 0 ? 'primary' : 'error'}
+      color={isValidEmail ? 'primary' : 'error'}
       sx={{
-        visibility: `${alertMsgObj.code % 10 === 0 ? 'hidden' : 'visible'}`,
+        visibility: `${isValidEmail ? 'hidden' : 'visible'}`,
       }}
     >
       {commonMsgText(alertMsgObj.code, alertMsgObj.arg1)}
