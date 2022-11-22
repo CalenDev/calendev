@@ -1,4 +1,3 @@
-import * as React from 'react';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -44,7 +43,6 @@ function FindPw() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // data.get으로 처리?
     const data = new FormData(e.currentTarget);
     const curEmail = data.get('email');
     const EmailValidationResult = validateEmail(curEmail);
