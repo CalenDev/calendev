@@ -1,16 +1,15 @@
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
 import { useState } from 'react';
-import styled from '@emotion/styled';
-import { Alert } from '@mui/material';
+import Alert from '@mui/material/Alert';
 import TextField from '@mui/material/TextField';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { PropTypes } from 'prop-types';
 import { postFindPw } from '../../api';
 import { validateEmail } from '../../utils';
 import { CommonPaper } from '../../components';
+import commonMsgText from '../../utils/commonMsgText';
 
 /*
 진행 완료
@@ -37,25 +36,6 @@ import { CommonPaper } from '../../components';
 
 function FindPw() {
   const [alertMsgObj, setAlertMsgObj] = useState({ code: 100, arg1: '' });
-  /* const alertMessageObj = {
-    success: '비밀번호 초기화 링크를 이메일 주소로 전달했습니다.',
-    error: '존재하지 않는 이메일입니다. 다시 한번 확인해주세요.',
-
-      const textScript = {
-    0: '',
-    100: '',
-    110: `사용 가능한 ${arg1}입니다.`,
-    101: `${arg1}을 입력해주세요.`,
-    102: `${arg1}자 미만으로 입력해주세요.`,
-    103: `${arg1}를 포함해서 입력해주세요.`,
-    104: '중복 확인을 해주세요.',
-    105: `사용 중인 ${arg1}입니다.`,
-    106: '비밀번호를 8자 이상 입력해주세요.',
-    107: '이메일 양식에 맞춰 입력하세요.',
-    108: '특수문자는 다음 특수문자만 입력 가능합니다. (!, @, #, $, %, ^, &, *, ?, _, ~)',
-    109: '비밀번호와 일치하지 않습니다.',
-    111: '이용약관과 개인정보 수집 및 이용에 대한 안내 모두 동의해주세요.',
-  }; */
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -71,44 +51,39 @@ function FindPw() {
     // 2. request
     const apiRes = await postFindPw(curEmail);
     if (apiRes.status === 'success') {
-      setAlertMessageStatus('success');
+      setAlertMsgObj({ code: 115, arg1: '' });
     } else if (apiRes.status === 'failure') {
-      setAlertMessageStatus('error');
+      setAlertMsgObj({ code: 116, arg1: '이메일' });
     }
   };
   // fix : Container 삭제
   return (
-    <StyledFindPwContainer component="main" maxWidth="sm">
-      <CommonPaper>
-        <Typography varient="h5">비밀번호 찾기</Typography>
-        <Box component="form" onSubmit={handleSubmit}>
-          <TextField
-            margin="normal"
-            fullWidth
-            id="email"
-            label="이메일"
-            name="email"
-            autoFocus
-            inputProps={{
-              maxLength: 20,
-            }}
-          />
-
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
-          >
-            비밀번호 찾기
-          </Button>
-        </Box>
-        <FindPwAlert
-          alertMessageObj={alertMessageObj}
-          alertMessageStatus={alertMessageStatus}
+    <CommonPaper>
+      <Typography varient="h5">비밀번호 찾기</Typography>
+      <Box component="form" onSubmit={handleSubmit}>
+        <TextField
+          margin="normal"
+          fullWidth
+          id="email"
+          label="이메일"
+          name="email"
+          autoFocus
+          inputProps={{
+            maxLength: 20,
+          }}
         />
-      </CommonPaper>
-    </StyledFindPwContainer>
+
+        <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          sx={{ mt: 3, mb: 2 }}
+        >
+          비밀번호 찾기
+        </Button>
+      </Box>
+      <FindPwAlert alertMsgObj={alertMsgObj} />
+    </CommonPaper>
   );
 }
 
@@ -117,17 +92,17 @@ function FindPwAlert(props) {
 
   return (
     <Alert
-      severity={alertMsgObj.code % 10 !== 0 ? 'error' : 'success'}
+      severity={alertMsgObj.code % 10 === 0 ? 'success' : 'error'}
       variant="outlined"
       iconMapping={{
         success: <CheckCircleOutlineIcon fontSize="inherit" />,
       }}
-      color={alertMessageStatus === 'success' ? 'primary' : 'error'}
+      color={alertMsgObj.code % 10 === 0 ? 'primary' : 'error'}
       sx={{
-        visibility: `${alertMessage ? 'visible' : 'hidden'}`,
+        visibility: `${alertMsgObj.code % 10 === 0 ? 'hidden' : 'visible'}`,
       }}
     >
-      {alertMessageObj[alertMessageStatus]}
+      {commonMsgText(alertMsgObj.code, alertMsgObj.arg1)}
     </Alert>
   );
 }
@@ -146,12 +121,4 @@ FindPwAlert.defaultProps = {
   },
 };
 
-const StyledFindPwContainer = styled(Container)`
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-`;
 export default FindPw;
