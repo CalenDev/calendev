@@ -3,4 +3,4 @@ function validateEmail(email) {
   return reg.test(email);
 }
 
-export { validateEmail };
+export default validateEmail;
