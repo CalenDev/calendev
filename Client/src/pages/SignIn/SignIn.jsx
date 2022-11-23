@@ -16,10 +16,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 // import api
 import postUserSignIn from '../../api/auth';
 // import utils
-import {
-  validateRegexEmail,
-  validateRegexPassword,
-} from '../../utils/validationCheck';
+import { validateRegexEmail, validateRegexPassword } from '../../utils';
 // import components
 import { CustomTextField, CommonPaper } from '../../components';
 
