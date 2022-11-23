@@ -6,7 +6,6 @@ import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
 // import MUI Component
 import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
@@ -70,7 +69,7 @@ function SignIn() {
       <StyledTitle sx={{ fontWeight: 'bold' }} variant="h4">
         로그인
       </StyledTitle>
-      <StyledStack component="form" onSubmit={handleSubmit} spacing={2}>
+      <Stack component="form" onSubmit={handleSubmit} spacing={2}>
         <Stack spacing={1}>
           <CustomTextField
             name="email"
@@ -104,28 +103,18 @@ function SignIn() {
           <Button type="submit" fullWidth variant="contained">
             로그인
           </Button>
-          <StyledSignInBottomContainer>
+          <Stack justifyContent="center" direction="row">
             <SignInBottomButton path="/signup" value="회원가입" />
             <SignInBottomButton path="/findpw" value="비밀번호 찾기" />
-          </StyledSignInBottomContainer>
+          </Stack>
         </Stack>
-      </StyledStack>
+      </Stack>
     </CommonPaper>
   );
 }
 
 const StyledTitle = styled(Typography)`
   margin: ${(props) => props.theme.spacing(2)};
-`;
-
-const StyledSignInBottomContainer = styled(Box)`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const StyledStack = styled(Stack)`
-  width: 100%;
 `;
 
 function SignInBottomButton(props) {
