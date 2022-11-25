@@ -53,9 +53,7 @@ function Header() {
         className="headerLogoIconButton"
       >
         <img src={Logo} alt="logPicture" />
-        <StyledWhiteTypography sx={{ typography: { xs: 'h7', mobile: 'h6' } }}>
-          CalenDev
-        </StyledWhiteTypography>
+        <StyledWhiteTypography variant="h6">CalenDev</StyledWhiteTypography>
       </StyledLogoIconButton>
       <StyledButtonWrapper>
         <IconButton className="headerIconButton">
@@ -87,18 +85,14 @@ function Header() {
             >
               <StyledMenuItem>
                 <Stack className="headerProfileTitle">
-                  <Typography
-                    className="headerMainText"
-                    noWrap
-                    sx={{ typography: { xs: 'body2', mobile: 'body1' } }}
-                  >
+                  <Typography className="headerMainText" noWrap variant="body1">
                     {mockUserInfo.nickname}
                   </Typography>
                   <Typography
                     noWrap
+                    variant="body2"
                     sx={{
                       opacity: '0.6',
-                      typography: { xs: 'body3', mobile: 'body2' },
                     }}
                   >
                     {mockUserInfo.email}
@@ -127,11 +121,7 @@ function Header() {
               />
               <Divider />
               <StyledMenuItem>
-                <Typography
-                  sx={{ typography: { xs: 'caption', mobile: 'button' } }}
-                >
-                  로그아웃
-                </Typography>
+                <Typography variant="button">로그아웃</Typography>
               </StyledMenuItem>
             </StyledMenu>
           </>
@@ -255,9 +245,7 @@ function CustomMenuListItem(props) {
   return (
     <StyledMenuListItem onClick={(e) => handleClick(e, path)}>
       <IconComponent className="MenuListItemIcon" />
-      <Typography sx={{ typography: { xs: 'body3', mobile: 'body2' } }}>
-        {text}
-      </Typography>
+      <Typography variant="body2">{text}</Typography>
     </StyledMenuListItem>
   );
 }
