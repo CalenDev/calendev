@@ -1,13 +1,11 @@
-import axios from 'axios';
+import instance from './instance';
 
 const postUserSignIn = async (userEmail, userPassword) => {
-  const API_END_POINT = `${process.env.REACT_APP_SERVER_URL}/api/v1/auth/login`;
   try {
-    const { data } = await axios.post(API_END_POINT, {
+    const { data } = await instance.post('/api/v1/auth/signin', {
       userEmail,
       userPassword,
     });
-
     return data;
   } catch (e) {
     return {
@@ -16,4 +14,15 @@ const postUserSignIn = async (userEmail, userPassword) => {
   }
 };
 
-export default postUserSignIn;
+const postUserLogout = async () => {
+  try {
+    const { data } = await instance.post('/api/v1/auth/logout');
+    return data;
+  } catch (e) {
+    return {
+      error: e,
+    };
+  }
+};
+
+export { postUserSignIn, postUserLogout };
