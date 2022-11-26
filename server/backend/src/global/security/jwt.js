@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import { promisify } from 'util';
 import catchAsync from '../utils/catchAsync.js';
 import redis from '../config/redisCofig.js';
+import AppError from '../utils/appError.js';
 
 dotenv.config({ path: './.env' });
 
@@ -47,21 +48,27 @@ export default {
     } catch (error) {
       return {
         ok: false,
+        name: error.name,
         message: error.message,
+        type: 'error',
       };
     }
   },
   verifyRefreshToken: async (token, userInfo) => {
-    const { redisClient } = redis;
-
-    const data = await redisClient.get(userInfo);
+    const { redisCli } = redis;
+    const data = await redisCli.get(userInfo);
 
     if (token === data) {
       try {
         jwt.verify(token, REFRESH_TOKEN_SECRET_KEY);
         return true;
-      } catch (err) {
-        return false;
+      } catch (error) {
+        return {
+          ok: false,
+          name: error.name,
+          message: error.message,
+          type: 'error',
+        };
       }
     } else {
       return false;

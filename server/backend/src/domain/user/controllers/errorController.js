@@ -13,6 +13,14 @@ const handleCastErrorDB = (err) => {
 //   const message = `Duplicate Entry exists!`;
 //   return new AppError(message, 401);
 // };
+const handleJsonWebTokenError = (err) => {
+  const message = `JsonWebTokenError : ${err.detail}`;
+  return new AppError(message, 400);
+};
+const handleNotBeforeError = (err) => {
+  const message = `NotBeforeError: ${err.message} | ${err.date}`;
+  return new AppError(message, 400);
+};
 
 const sendErrorDev = (err, res) => {
   res.status(err.statusCode).json({
@@ -50,7 +58,19 @@ export default (err, req, res, next) => {
     sendErrorDev(err, res);
   } else if (process.env.NODE_ENV === 'production') {
     let error = { ...err };
-    if (error.name === 'CastError') error = handleCastErrorDB(error);
+
+    switch (err.message) {
+      case 'CastError':
+        error = handleCastErrorDB(error);
+        break;
+      case 'JsonWebTokenError':
+        error = handleJsonWebTokenError(error);
+        break;
+      case 'NotBeforeError':
+        error = handleNotBeforeError(error);
+        break;
+      default:
+    }
 
     sendErrorProd(error, res);
   }
