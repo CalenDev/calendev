@@ -56,14 +56,14 @@ const authenticate = async (user) => {
   return userLoginRes;
 };
 
-const authorize = async (userLogInReq) => {
-  const { userEmail, userPassword } = userLogInReq;
+export default {
+  authorize: async (userLogInReq) => {
+    const { userEmail, userPassword } = userLogInReq;
 
-  const user = await findUserByEmailAndPassword(userLogInReq);
+    const user = await findUserByEmailAndPassword(userLogInReq);
 
-  const userLoginRes = authenticate(user);
+    const userLoginRes = authenticate(user);
 
-  return userLoginRes;
+    return userLoginRes;
+  },
 };
-
-export default { authorize };
