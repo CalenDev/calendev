@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import AppError from '../../../global/utils/appError.js';
+import objectMapper from '../../../global/utils/objectMapper.js';
 
 const handleCastErrorDB = (err) => {
   const message = `Invalid ${err.path}: ${err.value}.`;
@@ -58,6 +59,7 @@ export default (err, req, res, next) => {
     sendErrorDev(err, res);
   } else if (process.env.NODE_ENV === 'production') {
     let error = { ...err };
+    error.message = err.message;
 
     switch (err.message) {
       case 'CastError':
