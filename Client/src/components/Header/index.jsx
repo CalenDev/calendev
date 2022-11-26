@@ -19,6 +19,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import Stack from '@mui/material/Stack';
 import Logo from '../../assets/images/CalendevLogo.png';
+import { postUserLogout } from '../../api/auth';
 
 /*
 추후 구현 사항
@@ -96,7 +97,14 @@ function Header() {
               </StyledMenuListItemWrapper>
               <Divider />
               <MenuItem>
-                <Button color="inherit">로그아웃</Button>
+                <Button
+                  color="inherit"
+                  onClick={async () => {
+                    await postUserLogout();
+                  }}
+                >
+                  로그아웃
+                </Button>
               </MenuItem>
             </Menu>
           </>
