@@ -1,6 +1,7 @@
 // import react
 import { useState } from 'react';
 // import module
+import jwtDecode from 'jwt-decode';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
@@ -13,7 +14,7 @@ import Typography from '@mui/material/Typography';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 // import api
-import postUserSignIn from '../../api/auth';
+import { postUserSignIn } from '../../api';
 // import utils
 import { validateRegexEmail, validateRegexPassword } from '../../utils';
 // import components
@@ -48,7 +49,6 @@ function SignIn() {
     }
     if (!validateRegexPassword(curPassword)) {
       setPasswordMsgObj({ code: 113, arg1: '' });
-      return;
     }
 
     const apiRes = await postUserSignIn({
@@ -57,6 +57,9 @@ function SignIn() {
     });
 
     if (apiRes.status === 'success') {
+      sessionStorage.setItem('accessToken', apiRes.accessToken);
+      const payload = jwtDecode(apiRes.accessToken);
+      console.log(payload); // 상태값으로 저장예정.
       navigate('/', { replace: true });
     } else if (apiRes.status === 'failure') {
       setEmailMsgObj({ code: 112, arg1: '' });
