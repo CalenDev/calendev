@@ -7,12 +7,6 @@ import UserLoginDto from '../../domain/user/dto/loginDto.js';
 
 dotenv.config({ path: './.env' });
 
-const jwtErrorHandler = (tokenInfo, req, res, next) => {
-  const error = new AppError(tokenInfo.name, 400);
-  error.detail = tokenInfo.message;
-  return next(error);
-};
-
 export default {
   refreshJWT: async (req, res, next) => {
     const accessToken = tokenProvider.resolveToken(req);
@@ -26,35 +20,28 @@ export default {
       // jwt가 만료되지 않은 경우
       return next(new AppError('AccessToken is not expired!', 401));
     }
-    if (isAccessTokenExpired.type === 'error') {
-      // jwt 토큰자체가 잘못된 경우.
-      jwtErrorHandler(isAccessTokenExpired, req, res, next);
-    }
     const decodedUserInfo = jwt.decode(accessToken);
 
-    // 유저 정보가 포함되지 않은 토큰은 권한이 없음으로 판단.
+    // 유저 정보가 포함되지 않은 토큰은 권한이 없음으로 판단. 이때 유효하지 않은 토큰들도 걸러진다.
     if (decodedUserInfo === null) {
       return next(new AppError('Not Authorized! : no decoded data', 401));
     }
-
+    console.log(decodedUserInfo);
     // 위에서 얻은 유저 정보로 refreshtoken을 redis에서 조회 및 검증
-    const isRefreshTokenExpired = !(await tokenProvider.verifyRefreshToken(
+    const isRefreshTokenExpired = await tokenProvider.verifyRefreshToken(
       refreshToken,
       decodedUserInfo.userEmail,
-    ));
-    if (isRefreshTokenExpired.type === 'error') {
-      // jwt 토큰 자체가 잘못된경우
-      jwtErrorHandler(isRefreshTokenExpired, req, res, next);
-    }
-
-    // 1. accessToken : expired / refreshToken : expired => 다시 로그인
-    if (isRefreshTokenExpired === true) {
+    );
+    if (!isRefreshTokenExpired.ok) {
+      // 1. accessToken : expired / refreshToken : expired => 다시 로그인
       return res.status(401).json({
         ok: false,
         message: 'Not Authorized! : LogIn Again!!!',
       });
     }
     // 2. accessToken : expired / refreshToken : alive => 재발급
+
+    // 위에서 decode한 payload의 유저정보로 토큰을 재발급 받는다.
     const refreshedAccessToken =
       tokenProvider.generateAccessToken(decodedUserInfo);
 

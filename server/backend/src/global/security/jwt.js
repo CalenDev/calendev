@@ -13,7 +13,7 @@ const { REFRESH_TOKEN_SECRET_KEY } = process.env;
 export default {
   /**
    * 유저 이메일 정보만 payload에 담은 access token 발급
-   * @param {user} User obj
+   * @param {userInfo} : 유저 정보를 담고있는 객체
    * @returns accessToken
    */
   generateAccessToken: (user) => {
@@ -36,7 +36,11 @@ export default {
       algorithm: 'HS256',
       expiresIn: '3h', // 유효기간
     }),
-
+  /**
+   *
+   * @param { accessToken } token
+   * @returns {Obj} : accessToken의 유효성을 검증하고 결과내용을 담은 객체를 반환
+   */
   verifyAccessToken: (token) => {
     let decoded = null;
     try {
@@ -50,10 +54,15 @@ export default {
         ok: false,
         name: error.name,
         message: error.message,
-        type: 'error',
       };
     }
   },
+  /**
+   *
+   * @param {refreshToken} token
+   * @param {userEmail} userInfo
+   * @returns { obj }Obj :  refresh 토큰이 일치여부와 토큰의 유효성을 검사하고 결과내용을 담은 객체를 반환
+   */
   verifyRefreshToken: async (token, userInfo) => {
     const { redisCli } = redis;
     const data = await redisCli.get(userInfo);
@@ -61,17 +70,19 @@ export default {
     if (token === data) {
       try {
         jwt.verify(token, REFRESH_TOKEN_SECRET_KEY);
-        return true;
+        return {
+          ok: true,
+        };
       } catch (error) {
         return {
           ok: false,
-          name: error.name,
           message: error.message,
-          type: 'error',
         };
       }
     } else {
-      return false;
+      return {
+        ok: false,
+      };
     }
   },
   resolveToken: (req) => {
