@@ -1,10 +1,11 @@
-import { Route, Routes } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Home from './pages/Home/Home';
 import { Header } from './components';
 import SignIn from './pages/SignIn/SignIn';
 import SignUp from './pages/SignUp/SignUp';
 import themes from './styles';
+import PrivateRoute from './components/PrivateRoute';
 
 function App() {
   const theme = createTheme(themes);
@@ -12,9 +13,13 @@ function App() {
     <ThemeProvider theme={theme}>
       <Header />
       <Routes>
-        <Route path="/" exact element={<Home />} />
-        <Route path="/signin" exact element={<SignIn />} />
-        <Route path="/signup" exact element={<SignUp />} />
+        <Route path="/" element={<Home />} />
+        <Route element={<PrivateRoute path="/signup" />}>
+          <Route path="/signup" element={<SignUp />} />
+        </Route>
+        <Route element={<PrivateRoute path="/signin" />}>
+          <Route path="/signin" element={<SignIn />} />
+        </Route>
       </Routes>
     </ThemeProvider>
   );
