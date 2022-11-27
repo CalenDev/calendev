@@ -126,20 +126,17 @@ function CommonSearchBar() {
             />
             <Typography variant="body1">미인증글 제외</Typography>
           </Stack>
-          <Select
+          <StyledSelect
             value={searchConditions.sorting}
             onChange={handleChangeSelect}
             inputProps={{ 'aria-label': 'Without label' }}
-            sx={{
-              minWidth: '150px',
-            }}
           >
             <MenuItem value="행사시작일시순">행자시작일시순</MenuItem>
             <MenuItem value="최신순">최신순</MenuItem>
             <MenuItem value="조회순">조회순</MenuItem>
             <MenuItem value="북마크순">북마크순</MenuItem>
             <MenuItem value="가까운순">가까운순</MenuItem>
-          </Select>
+          </StyledSelect>
         </Stack>
       </Stack>
     </Stack>
@@ -164,6 +161,10 @@ function SearchBarFabButton(props) {
     </StyledSearchBarFabButton>
   );
 }
+
+const StyledSelect = styled(Select)`
+  min-width: 150px;
+`;
 
 const StyledSearchBarFabButton = styled(Fab)`
   border-radius: 4px;
