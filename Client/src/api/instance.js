@@ -34,7 +34,7 @@ const getTokenRefresh = async () => {
     return data.accessToken;
   } catch (e) {
     sessionStorage.removeItem('accessToken');
-    return '';
+    return e;
   }
 };
 
