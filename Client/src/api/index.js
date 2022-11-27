@@ -1,3 +1,4 @@
 import postUserSignIn from './auth';
+import getSearchTags from './event';
 
-export default postUserSignIn;
+export { postUserSignIn, getSearchTags };
