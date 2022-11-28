@@ -11,7 +11,7 @@ const postUserSignIn = async (userEmail, userPassword) => {
     return data;
   } catch (e) {
     return {
-      error: e,
+      status: e.response.status,
     };
   }
 };
