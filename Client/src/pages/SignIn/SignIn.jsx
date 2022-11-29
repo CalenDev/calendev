@@ -13,7 +13,7 @@ import Typography from '@mui/material/Typography';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 // import api
-import postUserSignIn from '../../api/auth';
+import { postUserSignIn } from '../../api/auth';
 // import utils
 import { validateRegexEmail, validateRegexPassword } from '../../utils';
 // import components
