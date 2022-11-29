@@ -1,3 +1,4 @@
-import validatePassword from './validation';
+import { validateRegexEmail, validateRegexPassword } from './validationCheck';
+import commonMsgText from './commonMsgText';
 
-export default validatePassword;
+export { validateRegexEmail, validateRegexPassword, commonMsgText };

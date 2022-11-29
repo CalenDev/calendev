@@ -1,16 +1,20 @@
 import { Route, Routes } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import config from './config';
 import Home from './pages/Home/Home';
-import ResetPw from './pages/ResetPw/ResetPw';
+import { Header } from './components';
+import SignIn from './pages/SignIn/SignIn';
+import SignUp from './pages/SignUp/SignUp';
+import themes from './styles';
 
 function App() {
-  const theme = createTheme(config.themes);
+  const theme = createTheme(themes);
   return (
     <ThemeProvider theme={theme}>
+      <Header />
       <Routes>
         <Route path="/" exact element={<Home />} />
-        <Route path="/resetPw" exact element={<ResetPw />} />
+        <Route path="/signin" exact element={<SignIn />} />
+        <Route path="/signup" exact element={<SignUp />} />
       </Routes>
     </ThemeProvider>
   );

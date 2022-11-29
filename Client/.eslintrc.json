@@ -6,12 +6,12 @@
     "plugin:react/jsx-runtime"
   ],
   "rules": {
-    "operator-linebreak": "off",
     "react/jsx-props-no-spreading": [
       "error",
       {
         "custom": "ignore"
       }
-    ]
+    ],
+    "operator-linebreak": "off"
   }
 }
