@@ -17,10 +17,9 @@ const postUserSignIn = async (userEmail, userPassword) => {
 };
 
 const putResetPw = async (token, userPassword) => {
-  const API_END_POINT = `${process.env.REACT_APP_SERVER_URL}/api/v1/auth/password`;
+  const API_END_POINT = `${process.env.REACT_APP_SERVER_URL}/api/v1/auth/password/${token}`;
   try {
     const { data } = await axios.put(API_END_POINT, {
-      token,
       userPassword,
     });
     return data;
