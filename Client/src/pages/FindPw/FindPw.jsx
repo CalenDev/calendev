@@ -35,9 +35,7 @@ function FindPw() {
   };
   return (
     <CommonPaper>
-      <StyledTitle variant="h5" sx={{ fontWeight: 'bold' }}>
-        비밀번호 찾기
-      </StyledTitle>
+      <StyledTitle variant="h5">비밀번호 찾기</StyledTitle>
       <StyledStack spacing={1}>
         <Stack component="form" onSubmit={handleSubmit} spacing={2}>
           <CustomTextField
@@ -49,7 +47,6 @@ function FindPw() {
               maxLength: 20,
             }}
           />
-
           <FindPwButton alertMsgObj={alertMsgObj} value="비밀번호 찾기" />
         </Stack>
         <FindPwAlert alertMsgObj={alertMsgObj} />
@@ -60,6 +57,7 @@ function FindPw() {
 
 const StyledTitle = styled(Typography)`
   margin: ${(props) => props.theme.spacing(2)};
+  font-weight: bold;
 `;
 
 const StyledStack = styled(Stack)`
