@@ -14,9 +14,9 @@ import TokenProvider from '../../../global/security/jwt.js';
 
 import redis from '../../../global/config/redisCofig.js';
 
-const findUserByEmail = async (userEmail) => {
+const findUserByEmail = (userEmail) => {
   // kenx를 이용하여 일치하는 사용자 정보를 배열의 형태로 리턴받는다.
-  const user = await User.findTargetUserByEmail(userEmail);
+  const user = User.findTargetUserByEmail(userEmail);
   return user;
 };
 
