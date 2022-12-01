@@ -65,7 +65,27 @@ class UpdateRes {
   }
 }
 
+class ResetPassWordReq {
+  userEmail;
+  userPassword;
+  constructor() {}
+
+  get getUserEmail() {
+    return this.userEmail;
+  }
+  get getUserPassword() {
+    return this.userPassword;
+  }
+  set setUserEmail(userEmail) {
+    this.userEmail = userEmail;
+  }
+  set setUserPassword(userPassword) {
+    this.userPassword = userPassword;
+  }
+}
+
 export default {
   UpdateReq,
   UpdateRes,
+  ResetPassWordReq,
 };
