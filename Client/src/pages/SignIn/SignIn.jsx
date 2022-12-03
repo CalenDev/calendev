@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-no-duplicate-props */
+
 // import react
 import { useState } from 'react';
 // import module
@@ -13,7 +15,7 @@ import Typography from '@mui/material/Typography';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 // import api
-import { postUserSignIn } from '../../api/auth';
+import { postUserSignIn } from '../../api';
 // import utils
 import { validateRegexEmail, validateRegexPassword } from '../../utils';
 // import components
@@ -56,11 +58,16 @@ function SignIn() {
       userPassword: curPassword,
     });
 
-    if (apiRes.status === 'success') {
-      navigate('/', { replace: true });
-    } else if (apiRes.status === 'failure') {
-      setEmailMsgObj({ code: 112, arg1: '' });
-      setPasswordMsgObj({ code: 112, arg1: '' });
+    switch (apiRes.status) {
+      case 200:
+        navigate('/', { replace: true });
+        break;
+      case 404:
+        setEmailMsgObj({ code: 112, arg1: '' });
+        setPasswordMsgObj({ code: 112, arg1: '' });
+        break;
+      default:
+        break;
     }
   };
 
@@ -69,13 +76,16 @@ function SignIn() {
       <StyledTitle sx={{ fontWeight: 'bold' }} variant="h4">
         로그인
       </StyledTitle>
-      <Stack component="form" onSubmit={handleSubmit} spacing={2}>
+      <Stack width="100%" component="form" onSubmit={handleSubmit} spacing={2}>
         <Stack spacing={1}>
           <CustomTextField
             name="email"
             autoComplete="email"
             placeholder="이메일"
             helpermsgobj={emailMsgObj}
+            inputProps={{
+              maxLength: 100,
+            }}
           />
           <CustomTextField
             name="password"
@@ -83,6 +93,9 @@ function SignIn() {
             placeholder="비밀번호"
             helpermsgobj={passwordMsgObj}
             type={showConfirmPassword ? 'text' : 'password'}
+            inputProps={{
+              maxLength: 20,
+            }}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
