@@ -5,7 +5,7 @@ import Button from '@mui/material/Button';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { validateRegexPassword, urlQueryParser } from '../../utils';
-import { putResetPw } from '../../api';
+import { putResetPw, getCheckResetPasswordToken } from '../../api';
 import { CommonPaper, CustomTextField } from '../../components';
 
 /*
@@ -46,8 +46,7 @@ function ResetPw() {
         return;
       }
 
-      // const apiRes = await getCheckResetPasswordToken();
-      const apiRes = { status: 200 };
+      const apiRes = await getCheckResetPasswordToken();
       switch (apiRes.status) {
         case 200: // token is not expired
           break;
@@ -115,7 +114,7 @@ function ResetPw() {
         });
         break;
       case 500:
-        console.log('server error!');
+        console.log('server error! go error page!');
         break;
       default:
         break;
@@ -124,7 +123,7 @@ function ResetPw() {
 
   return (
     <CommonPaper>
-      <StyledTitle sx={{ fontWeight: 'bold' }} variant="h4">
+      <StyledTitle sx={{ fontWeight: 'bold' }} noWrap variant="h4">
         비밀번호 변경
       </StyledTitle>
       <Stack width="100%" component="form" onSubmit={handleSubmit} spacing={2}>

@@ -136,7 +136,6 @@ const StyledButtonWrapper = styled(Stack)`
   flex-direction: row;
 `;
 const StyledAppBar = styled(AppBar)`
-  min-width: 350px;
   display: flex;
   justify-content: space-between;
   flex-direction: row;
