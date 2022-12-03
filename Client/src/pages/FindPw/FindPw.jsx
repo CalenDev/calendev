@@ -27,9 +27,9 @@ function FindPw() {
 
     const apiRes = await postFindPw(curEmail);
 
-    if (apiRes.status === 'success') {
+    if (apiRes.status === 200) {
       setAlertMsgObj({ code: 120, arg1: '' });
-    } else if (apiRes.status === 'failure') {
+    } else if (apiRes.status === 401) {
       setAlertMsgObj({ code: 115, arg1: '이메일' });
     }
   };

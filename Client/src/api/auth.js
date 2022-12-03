@@ -3,15 +3,15 @@ import axios from 'axios';
 const postUserSignIn = async (userEmail, userPassword) => {
   const API_END_POINT = `${process.env.REACT_APP_SERVER_URL}/api/v1/auth/login`;
   try {
-    const { data } = await axios.post(API_END_POINT, {
+    const res = await axios.post(API_END_POINT, {
       userEmail,
       userPassword,
     });
 
-    return data;
+    return res;
   } catch (e) {
     return {
-      status: e.response.status,
+      ...e.response,
     };
   }
 };
@@ -24,12 +24,10 @@ const postFindPw = async (email) => {
       user_email: email,
     });
 
-    return {
-      status: res.status,
-    };
+    return res;
   } catch (e) {
     return {
-      status: e.response.status,
+      ...e.response,
     };
   }
 };

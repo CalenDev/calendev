@@ -56,9 +56,9 @@ function SignIn() {
       userPassword: curPassword,
     });
 
-    if (apiRes.status === 'success') {
+    if (apiRes.status === 200) {
       navigate('/', { replace: true });
-    } else if (apiRes.status === 'failure') {
+    } else if (apiRes.status === 401) {
       setEmailMsgObj({ code: 112, arg1: '' });
       setPasswordMsgObj({ code: 112, arg1: '' });
     }
