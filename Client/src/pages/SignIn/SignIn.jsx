@@ -62,11 +62,12 @@ function SignIn() {
       case 200:
         navigate('/', { replace: true });
         break;
-      case 404:
+      case 401:
         setEmailMsgObj({ code: 112, arg1: '' });
         setPasswordMsgObj({ code: 112, arg1: '' });
         break;
       default:
+        // server Error! go to error page
         break;
     }
   };

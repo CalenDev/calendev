@@ -50,7 +50,7 @@ function ResetPw() {
       switch (apiRes.status) {
         case 200: // token is not expired
           break;
-        case 404:
+        case 401:
           // token is expired
           navigate('/', {
             replace: true,
@@ -62,6 +62,7 @@ function ResetPw() {
           });
           break;
         default:
+          // server Error! go to error page
           break;
       }
     }
