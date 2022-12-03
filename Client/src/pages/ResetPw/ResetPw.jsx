@@ -46,7 +46,7 @@ function ResetPw() {
         return;
       }
 
-      const apiRes = await getCheckResetPasswordToken();
+      const apiRes = await getCheckResetPasswordToken(queryStringObj.token);
       switch (apiRes.status) {
         case 200: // token is not expired
           break;
