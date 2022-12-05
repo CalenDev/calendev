@@ -152,18 +152,7 @@ const StyledButtonWrapper = styled(Stack)`
   justify-content: center;
   align-items: center;
   flex-direction: row;
-`;
-const StyledAppBar = styled(AppBar)`
-  display: flex;
-  justify-content: space-between;
-  flex-direction: row;
-
-  .headerLogoIconButton {
-    img {
-      width: 48px;
-      height: 48px;
-    }
-  }
+  gap: ${(props) => props.theme.spacing(4)};
 
   .headerIconButton {
     padding: 0px;
@@ -171,23 +160,43 @@ const StyledAppBar = styled(AppBar)`
       width: 40px;
       height: 40px;
     }
-    margin-right: ${(props) => props.theme.spacing(1)};
   }
 
   ${(props) => props.theme.breakpoints.down('mobile')} {
-    .headerLogoIconButton {
-      img {
-        width: 40px;
-        height: 40px;
-      }
-    }
-
+    gap: ${(props) => props.theme.spacing(2)};
     .headerIconButton {
       svg {
+        width: 26px;
+        height: 26px;
+      }
+    }
+  }
+`;
+const StyledAppBar = styled(AppBar)`
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  padding: 0 ${(props) => props.theme.spacing(1.5)};
+
+  .headerLogoIconButton {
+    gap: ${(props) => props.theme.spacing(2)};
+    padding-left: 0;
+    padding-right: 0;
+    img {
+      width: 48px;
+      height: 48px;
+    }
+  }
+
+  ${(props) => props.theme.breakpoints.down('mobile')} {
+    padding: 0 ${(props) => props.theme.spacing(1)};
+
+    .headerLogoIconButton {
+      gap: ${(props) => props.theme.spacing(1)};
+      img {
         width: 32px;
         height: 32px;
       }
-      margin-right: ${(props) => props.theme.spacing(0.6)};
     }
   }
 `;
