@@ -4,20 +4,21 @@ import {
   responsiveFontSizes,
   ThemeProvider,
 } from '@mui/material/styles';
-import { CommonModal, Header } from './components';
+import { Header } from './components';
 import themes from './styles';
 import Error from './pages/Error/Error';
 import Home from './pages/Home/Home';
 import ResetPw from './pages/ResetPw/ResetPw';
 import SignIn from './pages/SignIn/SignIn';
 import SignUp from './pages/SignUp/SignUp';
+import GlobalModal from './features/GlobalModal';
 
 function App() {
   const theme = responsiveFontSizes(createTheme(themes));
   return (
     <ThemeProvider theme={theme}>
       <Header />
-      <CommonModal />
+      <GlobalModal />
       <Routes>
         <Route path="/" exact element={<Home />} />
         <Route path="/signin" exact element={<SignIn />} />
