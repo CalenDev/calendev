@@ -26,7 +26,6 @@ export default {
         req.body.userEmail = result.userEmail;
         next();
       } catch (error) {
-        // TODO: 에러 어캐 처리할지 정해야한다.
         next(new AppError(error.message, 401));
       }
       // 2) 유효한 토큰이면 다음 프로세스로 진행시킨다.

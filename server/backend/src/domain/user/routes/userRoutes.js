@@ -11,7 +11,7 @@ router.route('/refresh').get(authControllers.refreshJWT);
 // 토큰정보를 기반으로 권한이 있는지 미들웨어에서 확인.
 router
   .route('/signinOptions/forgotPassword')
-  .post(authControllers.sendResetEmail);
+  .post(authControllers.authJWT, authControllers.sendResetEmail);
 
 router
   .route('/signinOptions/resetPassword/:token')
