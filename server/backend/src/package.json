@@ -24,6 +24,7 @@
     "mongoose": "^6.7.0",
     "morgan": "^1.10.0",
     "mysql2": "^2.3.3",
+    "nodemailer": "^6.8.0",
     "nodemon": "^2.0.20",
     "redis": "^4.5.0",
     "save": "^2.9.0",
