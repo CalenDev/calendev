@@ -1,6 +1,6 @@
 import AppError from '../../../global/utils/appError.js';
-import encrypt from '../../../global/utils/encrypt.js';
 import User from '../models/user.js';
+import encrypt from '../../../global/utils/encrypt.js';
 
 export default {
   resetPassword: async (resetReq) => {

@@ -1,6 +1,5 @@
 /* eslint-disable no-param-reassign */
 import AppError from '../../../global/utils/appError.js';
-import objectMapper from '../../../global/utils/objectMapper.js';
 
 const handleCastErrorDB = (err) => {
   const message = `Invalid ${err.path}: ${err.value}.`;

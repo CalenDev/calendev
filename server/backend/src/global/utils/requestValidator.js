@@ -1,5 +1,3 @@
-import requestReg from './requestReg.js';
-
 const validateEmail = (email) => {
   const reg = /^.+@.{2,}..{2,}$/;
   return reg.test(email);

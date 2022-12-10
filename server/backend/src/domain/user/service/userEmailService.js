@@ -1,10 +1,8 @@
-import crypto from 'crypto';
 import dotenv from 'dotenv';
-import nodemailer from 'nodemailer';
-import redisCofig from '../../../global/config/redisCofig.js';
+import crypto from 'crypto';
 import AppError from '../../../global/utils/appError.js';
+import redisCofig from '../../../global/config/redisCofig.js';
 import User from '../models/user.js';
-import UserUpdateDto from '../dto/updateDto.js';
 import sendEmail from '../../../global/utils/sendEmail.js';
 
 dotenv.config({ path: './.env' });

@@ -1,10 +1,7 @@
 /* eslint-disable no-param-reassign */
 import User from '../models/user.js';
-
 import encrypt from '../../../global/utils/encrypt.js';
-
 import dttmBuilder from '../utils/dttmBuilder.js';
-import UserJoinDto from '../dto/joinDto.js';
 
 const controlParams = async (signupReq) => {
   const { hashedPassword, salt } = await encrypt.createHashedPassword(

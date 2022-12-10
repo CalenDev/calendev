@@ -1,9 +1,6 @@
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
-import { promisify } from 'util';
-import catchAsync from '../utils/catchAsync.js';
 import redis from '../config/redisCofig.js';
-import AppError from '../utils/appError.js';
 
 dotenv.config({ path: './.env' });
 

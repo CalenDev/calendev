@@ -1,37 +1,34 @@
-import jwt from 'jsonwebtoken';
-import crypto from 'crypto';
 import catchAsync from '../../../global/utils/catchAsync.js';
 import AppError from '../../../global/utils/appError.js';
-import objectMapper from '../../../global/utils/objectMapper.js';
-import validator from '../../../global/utils/requestValidator.js';
+import redisCofig from '../../../global/config/redisCofig.js';
 import UserLogInDto from '../dto/loginDto.js';
-import UserUpdateDto from '../dto/updateDto.js';
 import userLogInService from '../service/userLogInService.js';
-import userEmailService from '../service/userEmailService.js';
+import UserUpdateDto from '../dto/updateDto.js';
 import userUpdateService from '../service/userUpdateService.js';
+import userEmailService from '../service/userEmailService.js';
 import refreshService from '../../../global/security/refresh.js';
 import tokenProvider from '../../../global/security/jwt.js';
-import redisCofig from '../../../global/config/redisCofig.js';
+import objectMapper from '../../../global/utils/objectMapper.js';
+import validator from '../../../global/utils/requestValidator.js';
 
 const { redisCli } = redisCofig;
 
 export default {
   authJWT: (req, res, next) => {
-    if (req.headers.authorization) {
-      try {
-        // 1) 헤더에서 액세스 토큰을 꺼내서 유효성 검사를 실시한다.
-        const token = tokenProvider.resolveToken(req);
-        // 이름을 구체적으로 어떤 res인지
-        const result = tokenProvider.verifyAccessToken(token);
-        req.body.userEmail = result.userEmail;
-        next();
-      } catch (error) {
-        next(new AppError(error.message, 401));
-      }
-      // 2) 유효한 토큰이면 다음 프로세스로 진행시킨다.
-    } else {
-      // 3) 헤더에 아무 내용없으면 로그인페이지로 이동하게끔 res 내려준다.
-      res.send('error : noting is in header!');
+    // 1) 헤더에 토큰이 존재하는 지 확인.
+    if (!req.headers.authorization) {
+      return res.send('error: nothing is in header');
+    }
+
+    try {
+      // 2) 헤더에서 액세스 토큰을 꺼내서 유효성 검사를 실시한다.
+      const token = tokenProvider.resolveToken(req);
+      const verificationResult = tokenProvider.verifyAccessToken(token);
+
+      req.body.userEmail = verificationResult.userEmail;
+      return next();
+    } catch (error) {
+      return next(new AppError(error.message, 401));
     }
   },
   refreshJWT: catchAsync(async (req, res, next) => {
@@ -104,7 +101,7 @@ export default {
       next(new AppError('Token is Invalid or Expired!'), 400);
     }
 
-    // 3)DTO로 넘겨준다.
+    // 3) DTO로 넘겨준다.
     const resetPasswordReq = new UserUpdateDto.ResetPassWordReq();
     // eslint-disable-next-line prefer-destructuring
     resetPasswordReq.userEmail = users;
