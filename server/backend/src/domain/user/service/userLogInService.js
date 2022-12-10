@@ -1,22 +1,13 @@
+import AppError from '../../../global/utils/appError.js';
+import redis from '../../../global/config/redisCofig.js';
 import User from '../models/user.js';
-
 import UserLoginDto from '../dto/loginDto.js';
-
-import encrypt from '../../../global/utils/encrypt.js';
-
+import TokenProvider from '../../../global/security/jwt.js';
 import passwordEncoder from '../../../global/utils/passwordEncoder.js';
 
-import AppError from '../../../global/utils/appError.js';
-
-import catchAsync from '../../../global/utils/catchAsync.js';
-
-import TokenProvider from '../../../global/security/jwt.js';
-
-import redis from '../../../global/config/redisCofig.js';
-
-const findUserByEmail = async (userEmail) => {
-  // kenx를 이용하여 일치하는 사용자 정보를 배열의 형태로 리턴받는다.
-  const user = await User.findTargetUserByEmail(userEmail);
+const findUserByEmail = (userEmail) => {
+  // knex를 이용하여 일치하는 사용자 정보를 배열의 형태로 리턴받는다.
+  const user = User.findTargetUserByEmail(userEmail);
   return user;
 };
 

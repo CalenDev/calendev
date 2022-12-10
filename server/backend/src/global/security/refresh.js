@@ -1,9 +1,7 @@
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import AppError from '../utils/appError.js';
-import catchAsync from '../utils/catchAsync.js';
 import tokenProvider from './jwt.js';
-import UserLoginDto from '../../domain/user/dto/loginDto.js';
 
 dotenv.config({ path: './.env' });
 
@@ -21,13 +19,16 @@ class TokenValidator {
   accessTokenFilter = () => {
     let isAccessTokenExpired;
     try {
-      //ExpiredTokenError은 따로 operational error로 간주하지 않는다.
       isAccessTokenExpired = tokenProvider.verifyAccessToken(this.accessToken);
+      isAccessTokenExpired.ok = true;
     } catch (error) {
-      if (error.message !== 'ExpiredTokenError')
-        throw new AppError(error.message, 401);
+      //ExpiredTokenError은 따로 operational error로 간주하지 않는다.
+      if (error.message !== 'jwt expired') {
+        throw new AppError(`JWT Error: ${error.message}`, 401);
+      }
     }
-    if (isAccessTokenExpired.ok) {
+
+    if (isAccessTokenExpired && isAccessTokenExpired.ok) {
       // jwt가 만료되지 않은 경우
       throw new AppError('AccessToken is not expired!', 401);
     }
@@ -43,12 +44,12 @@ class TokenValidator {
 
   // 리프레쉬 토큰의 검증을 위한 필터
   refreshTokenFilter = async () => {
-    const isRefreshTokenExpired = await tokenProvider.verifyRefreshToken(
+    const isRefreshTokenAlive = await tokenProvider.verifyRefreshToken(
       this.refreshToken,
       this.decodedUserInfo.userEmail,
     );
 
-    if (!isRefreshTokenExpired.ok) {
+    if (!isRefreshTokenAlive) {
       // 1. accessToken : expired / refreshToken : expired or error => 다시 로그인
       throw new AppError('Not Authorized! : LogIn Again!!!', 401);
     }
@@ -58,14 +59,17 @@ class TokenValidator {
 export default {
   refreshJWT: async (req, res, next) => {
     try {
+      // 1) TokenValidator 객체 생성
       const tokenValidator = new TokenValidator(
         tokenProvider.resolveToken(req),
         req.headers.refresh,
       );
 
+      // 2) 액세스 토큰과 리프레쉬 토큰의 유효성을 검사.
       tokenValidator.accessTokenFilter();
       await tokenValidator.refreshTokenFilter();
 
+      // 3) 엑세스 토큰 재발급 후 응답.
       const refreshedAccessToken = tokenProvider.generateAccessToken(
         tokenValidator.decodedUserInfo,
       );

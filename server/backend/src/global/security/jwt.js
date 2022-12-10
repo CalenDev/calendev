@@ -1,14 +1,16 @@
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
-import { promisify } from 'util';
-import catchAsync from '../utils/catchAsync.js';
 import redis from '../config/redisCofig.js';
-import AppError from '../utils/appError.js';
 
 dotenv.config({ path: './.env' });
 
-const { ACCESS_TOKEN_SECRET_KEY } = process.env;
-const { REFRESH_TOKEN_SECRET_KEY } = process.env;
+const {
+  ACCESS_TOKEN_SECRET_KEY,
+  REFRESH_TOKEN_SECRET_KEY,
+  JWT_HASH_ALGORITHM,
+  ACCESS_TOKEN_EXP,
+  REFRESH_TOKEN_EXP,
+} = process.env;
 
 export default {
   /**
@@ -21,8 +23,8 @@ export default {
       userEmail: user.userEmail,
     };
     return jwt.sign(payload, ACCESS_TOKEN_SECRET_KEY, {
-      algorithm: 'HS256',
-      expiresIn: '1h', // 유효기간
+      algorithm: JWT_HASH_ALGORITHM,
+      expiresIn: ACCESS_TOKEN_EXP, // 유효기간
     });
   },
   /**
@@ -30,33 +32,20 @@ export default {
    * refreshtoken은 payload에 아무것도 들어가지 않음
    * @returns refreshToken
    */
-  generateRefreshToken: () =>
-    // eslint-disable-next-line implicit-arrow-linebreak
-    jwt.sign({}, REFRESH_TOKEN_SECRET_KEY, {
-      algorithm: 'HS256',
-      expiresIn: '3h', // 유효기간
-    }),
+  // eslint-disable-next-line arrow-body-style
+  generateRefreshToken: () => {
+    return jwt.sign({}, REFRESH_TOKEN_SECRET_KEY, {
+      algorithm: JWT_HASH_ALGORITHM,
+      expiresIn: REFRESH_TOKEN_EXP, // TODO:유효기간 > Enum
+    });
+  },
   /**
    *
    * @param { accessToken } token
    * @returns {Obj} : accessToken의 유효성을 검증하고 결과내용을 담은 객체를 반환
    */
-  verifyAccessToken: (token) => {
-    let decoded = null;
-    try {
-      decoded = jwt.verify(token, ACCESS_TOKEN_SECRET_KEY);
-      return {
-        ok: true,
-        email: decoded.email,
-      };
-    } catch (error) {
-      return {
-        ok: false,
-        name: error.name,
-        message: error.message,
-      };
-    }
-  },
+  verifyAccessToken: (token) => jwt.verify(token, ACCESS_TOKEN_SECRET_KEY),
+
   /**
    *
    * @param {refreshToken} token
@@ -65,25 +54,14 @@ export default {
    */
   verifyRefreshToken: async (token, userInfo) => {
     const { redisCli } = redis;
-    const data = await redisCli.get(userInfo);
+    const data = await redisCli.get(userInfo).then();
 
     if (token === data) {
-      try {
-        jwt.verify(token, REFRESH_TOKEN_SECRET_KEY);
-        return {
-          ok: true,
-        };
-      } catch (error) {
-        return {
-          ok: false,
-          message: error.message,
-        };
-      }
-    } else {
-      return {
-        ok: false,
-      };
+      jwt.verify(token, REFRESH_TOKEN_SECRET_KEY);
+      return true;
     }
+
+    return false;
   },
   resolveToken: (req) => {
     let bearerToken = req.headers.authorization;

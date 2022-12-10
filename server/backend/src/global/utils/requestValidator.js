@@ -1,12 +1,10 @@
-import requestReg from './requestReg.js';
-
 const validateEmail = (email) => {
-  const reg = new RegExp(requestReg.emailReg);
+  const reg = /^.+@.{2,}..{2,}$/;
   return reg.test(email);
 };
 
 const validateNickname = (nickName) => {
-  const reg = new RegExp(requestReg.nicknameReg);
+  const reg = /^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]{1,30}$/;
   return reg.test(nickName);
 };
 
@@ -29,6 +27,8 @@ const validateReq = (req, serviceName) => {
         validateNickname(req.getUserNickname) &&
         validatePassword(req.getUserPassword)
       );
+    case 'email':
+      return validateEmail(req.getUserEmail);
     default:
       return false;
   }

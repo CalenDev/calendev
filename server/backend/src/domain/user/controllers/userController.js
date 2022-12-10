@@ -1,11 +1,10 @@
 /* GET users listing. */
-import userJoinService from '../service/userJoinService.js';
-import objectMapper from '../../../global/utils/objectMapper.js';
-import UserJoinDto from '../dto/joinDto.js';
 import catchAsync from '../../../global/utils/catchAsync.js';
-import validator from '../../../global/utils/requestValidator.js';
 import AppError from '../../../global/utils/appError.js';
-import dttmBuilder from '../utils/dttmBuilder.js';
+import UserJoinDto from '../dto/joinDto.js';
+import userJoinService from '../service/userJoinService.js';
+import validator from '../../../global/utils/requestValidator.js';
+import objectMapper from '../../../global/utils/objectMapper.js';
 
 export default {
   getAllUsers: catchAsync(async (req, res, next) => {
