@@ -39,6 +39,7 @@ export default {
         email: users[0].userEmail,
         subject:
           '비밀번호 재설정을 위한 이메일이 전송되었습니다. (유효시간 3분)',
+        token: resetToken,
       });
     } catch (error) {
       // 이메일 연동에러, 이메일 전송시 에러 ...
