@@ -18,24 +18,21 @@ const { redisCli } = redisCofig;
 export default {
   authJWT: (req, res, next) => {
     if (req.headers.authorization) {
-      // 1) 헤더에서 액세스 토큰을 꺼내서 유효성 검사를 실시한다.
-      const token = tokenProvider.resolveToken(req);
-      // 이름을 구체적으로 어떤 res인지
-      const result = tokenProvider.verifyAccessToken(token);
-
-      // 2) 유효한 토큰이면 다음 프로세스로 진행시킨다.
-      if (result.ok) {
+      try {
+        // 1) 헤더에서 액세스 토큰을 꺼내서 유효성 검사를 실시한다.
+        const token = tokenProvider.resolveToken(req);
+        // 이름을 구체적으로 어떤 res인지
+        const result = tokenProvider.verifyAccessToken(token);
         req.body.userEmail = result.userEmail;
         next();
-      } else {
-        res.status(401).send({
-          ok: false,
-          message: result.message,
-        });
+      } catch (error) {
+        // TODO: 에러 어캐 처리할지 정해야한다.
+        next(new AppError(error.message, 401));
       }
+      // 2) 유효한 토큰이면 다음 프로세스로 진행시킨다.
     } else {
       // 3) 헤더에 아무 내용없으면 로그인페이지로 이동하게끔 res 내려준다.
-      res.redirect('/auth/login');
+      res.send('error : noting is in header!');
     }
   },
   refreshJWT: catchAsync(async (req, res, next) => {

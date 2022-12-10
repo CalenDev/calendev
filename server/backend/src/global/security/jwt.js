@@ -35,12 +35,13 @@ export default {
    * refreshtoken은 payload에 아무것도 들어가지 않음
    * @returns refreshToken
    */
-  generateRefreshToken: () =>
-    // eslint-disable-next-line implicit-arrow-linebreak
-    jwt.sign({}, REFRESH_TOKEN_SECRET_KEY, {
+  // eslint-disable-next-line arrow-body-style
+  generateRefreshToken: () => {
+    return jwt.sign({}, REFRESH_TOKEN_SECRET_KEY, {
       algorithm: JWT_HASH_ALGORITHM,
       expiresIn: REFRESH_TOKEN_EXP, // TODO:유효기간 > Enum
-    }),
+    });
+  },
   /**
    *
    * @param { accessToken } token
