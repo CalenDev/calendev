@@ -2,27 +2,24 @@ import instance from './instance';
 
 const postUserSignIn = async (userEmail, userPassword) => {
   try {
-    const { data } = await instance.post('/api/v1/auth/signin', {
+    const res = await instance.post('/api/v1/auth/signin', {
       userEmail,
       userPassword,
     });
-    return data;
+    return res;
   } catch (e) {
-    return {
-      error: e,
-    };
+    return e.response;
   }
 };
 
+/*
 const postUserLogout = async () => {
   try {
-    const { data } = await instance.post('/api/v1/auth/logout');
-    return data;
+    const response = await instance.post('/api/v1/auth/logout');
+    return response;
   } catch (e) {
-    return {
-      error: e,
-    };
+    return e.response;
   }
 };
-
-export { postUserSignIn, postUserLogout };
+*/
+export default postUserSignIn;
