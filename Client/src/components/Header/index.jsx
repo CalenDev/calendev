@@ -18,24 +18,21 @@ import { useTheme } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import Stack from '@mui/material/Stack';
+import { useSelector, useDispatch } from 'react-redux';
 import Logo from '../../assets/images/CalendevLogo.png';
-import { postUserLogout } from '../../api/auth';
-
+import { logoutUser, selectUser } from '../../feature/User/UserSlice';
+import { persistor } from '../../store';
 /*
 추후 구현 사항
 1. 달력 버튼 클릭 시, 달력 페이지로 전환.
 2. 토큰 여부에 따른 다른 header 전시
 */
 
-const mockUserInfo = {
-  email: 'suhwan2004@gmail.com',
-  nickname: 'kimsuhwan',
-};
-
 function Header() {
+  const { isSignin, userEmail, userNickname } = useSelector(selectUser);
+  const dispatch = useDispatch();
   const theme = useTheme();
   const navigate = useNavigate();
-  const isLogin = true;
   const [anchorEl, setAnchorEl] = useState(null);
   const handleOpenUserMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -43,6 +40,11 @@ function Header() {
 
   const handleCloseUserMenu = () => {
     setAnchorEl(null);
+  };
+
+  const handleClickLogout = async () => {
+    await persistor.purge();
+    dispatch(logoutUser());
   };
 
   return (
@@ -55,7 +57,7 @@ function Header() {
         <IconButton>
           <DateRangeIcon sx={{ color: '#ffffff' }} fontSize="large" />
         </IconButton>
-        {isLogin ? (
+        {isSignin ? (
           <>
             <Tooltip title="프로필 보기">
               <IconButton onClick={handleOpenUserMenu} size="large">
@@ -81,10 +83,10 @@ function Header() {
               <StyledMenuItem>
                 <Stack>
                   <Typography noWrap variant="body1">
-                    {mockUserInfo.nickname}
+                    {userNickname}
                   </Typography>
                   <Typography variant="body2" noWrap sx={{ opacity: '0.6' }}>
-                    {mockUserInfo.email}
+                    {userEmail}
                   </Typography>
                 </Stack>
                 <StyledEditIcon />
@@ -97,12 +99,7 @@ function Header() {
               </StyledMenuListItemWrapper>
               <Divider />
               <MenuItem>
-                <Button
-                  color="inherit"
-                  onClick={async () => {
-                    await postUserLogout();
-                  }}
-                >
+                <Button color="inherit" onClick={handleClickLogout}>
                   로그아웃
                 </Button>
               </MenuItem>
