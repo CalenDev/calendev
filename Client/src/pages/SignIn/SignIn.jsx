@@ -5,6 +5,7 @@ import jwtDecode from 'jwt-decode';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 // import MUI Component
 import Button from '@mui/material/Button';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -14,14 +15,16 @@ import Typography from '@mui/material/Typography';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 // import api
-import { postUserSignIn } from '../../api';
+import postUserSignIn from '../../api';
 // import utils
 import { validateRegexEmail, validateRegexPassword } from '../../utils';
 // import components
 import { CustomTextField, CommonPaper } from '../../components';
+import { signinUser } from '../../feature/User/UserSlice';
 
 function SignIn() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [emailMsgObj, setEmailMsgObj] = useState({ code: 0, arg1: '' });
   const [passwordMsgObj, setPasswordMsgObj] = useState({ code: 0, arg1: '' });
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -34,6 +37,7 @@ function SignIn() {
     const data = new FormData(e.currentTarget);
     const curEmail = data.get('email');
     const curPassword = data.get('password');
+    let payload;
 
     if (curEmail.length === 0) {
       setEmailMsgObj({ code: 101, arg1: '이메일' });
@@ -56,14 +60,24 @@ function SignIn() {
       userPassword: curPassword,
     });
 
-    if (apiRes.status === 'success') {
-      sessionStorage.setItem('accessToken', apiRes.accessToken);
-      const payload = jwtDecode(apiRes.accessToken);
-      console.log(payload); // 상태값으로 저장예정.
-      navigate('/', { replace: true });
-    } else if (apiRes.status === 'failure') {
-      setEmailMsgObj({ code: 112, arg1: '' });
-      setPasswordMsgObj({ code: 112, arg1: '' });
+    switch (apiRes.status) {
+      case 200:
+        sessionStorage.setItem('accessToken', apiRes.accessToken); // token을 sessionStorage에 저장.
+        payload = jwtDecode(apiRes.accessToken); // token 복호화
+
+        dispatch(
+          signinUser({
+            userEmail: payload.user_email,
+            userNickname: payload.user_nickname,
+            userRoleCd: payload.user_role_cd,
+          }),
+        ); // store에 정보 저장.
+        navigate('/', { replace: true }); // redirect to home
+        break;
+      default: // 틀린 id 또는 password일 시에
+        setEmailMsgObj({ code: 112, arg1: '' });
+        setPasswordMsgObj({ code: 112, arg1: '' });
+        break;
     }
   };
 
