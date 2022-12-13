@@ -20,7 +20,7 @@ import styled from '@emotion/styled';
 import Stack from '@mui/material/Stack';
 import { useSelector, useDispatch } from 'react-redux';
 import Logo from '../../assets/images/CalendevLogo.png';
-import { logoutUser, selectUser } from '../../feature/User/UserSlice';
+import { logoutUser, selectUser } from '../../features/User/UserSlice';
 import { persistor } from '../../store';
 /*
 추후 구현 사항
@@ -108,6 +108,7 @@ function Header() {
         ) : (
           <Button
             onClick={() => {
+              setAnchorEl(null);
               navigate('/SignIn');
             }}
           >

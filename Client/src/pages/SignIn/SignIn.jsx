@@ -20,7 +20,7 @@ import postUserSignIn from '../../api';
 import { validateRegexEmail, validateRegexPassword } from '../../utils';
 // import components
 import { CustomTextField, CommonPaper } from '../../components';
-import { signinUser } from '../../feature/User/UserSlice';
+import { signinUser } from '../../features/User/UserSlice';
 
 function SignIn() {
   const navigate = useNavigate();
