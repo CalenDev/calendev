@@ -44,10 +44,16 @@ async function findTargetUserByEmail(userEmail) {
 
   return targetUser;
 }
-
+async function updateColumn(key, value, columnName) {
+  await knex('user').update(columnName, value);
+  return {
+    success: true,
+  };
+}
 export default {
   getAllUsers,
   findTargetUserByEmail,
   findOne,
   save,
+  updateColumn,
 };
