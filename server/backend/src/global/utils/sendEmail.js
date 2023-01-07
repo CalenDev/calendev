@@ -23,9 +23,8 @@ export default async (options) => {
                     <button>가입확인</button> 
                   </form>  
                   html: '비밀번호 초기화를 위해서는 아래의 URL을 클릭하여 주세요.
-           + http://localhost/reset/${options.token}
-                  
-           
+          + http://${process.env.CLIENT_URL}/resetpw?token=${options.token}
+                
       `,
   };
   // Send the Email

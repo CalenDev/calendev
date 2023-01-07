@@ -21,6 +21,8 @@ export default {
   generateAccessToken: (user) => {
     const payload = {
       userEmail: user.userEmail,
+      userNickname: user.userNickname,
+      userRoleCd: user.userRoleCd,
     };
     return jwt.sign(payload, ACCESS_TOKEN_SECRET_KEY, {
       algorithm: JWT_HASH_ALGORITHM,

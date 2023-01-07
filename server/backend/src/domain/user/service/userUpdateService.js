@@ -6,7 +6,7 @@ export default {
   resetPassword: async (resetReq) => {
     const users = await User.findTargetUserByEmail(resetReq.getUserEmail);
     if (users.length === 0) {
-      throw new AppError('Invalid UserInfo!!!', 400);
+      throw new AppError('Invalid UserInfo!!!', 404);
     }
 
     const hashedPassword = await encrypt.createHashedPasswordBySalt(
@@ -17,7 +17,7 @@ export default {
     if (hashedPassword === users[0].userPassword) {
       throw new AppError(
         'Password has been used before!! Try new Password',
-        400,
+        401,
       );
     }
 

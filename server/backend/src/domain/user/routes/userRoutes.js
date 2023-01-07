@@ -17,7 +17,9 @@ router
   .route('/signinOptions/resetPassword/:token')
   .patch(authControllers.resetPassword);
 
-router.route('/').get(userControllers.getAllUsers);
+router.route('/checkPageToken/:token').get(authControllers.validateResetPage);
+
+router.route('/').get(authControllers.authJWT, userControllers.getAllUsers);
 
 router.route('/check-duplicate').post(userControllers.checkDuplicate);
 

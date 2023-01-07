@@ -1,3 +1,4 @@
+import cookie from 'cookie-parser';
 import catchAsync from '../../../global/utils/catchAsync.js';
 import AppError from '../../../global/utils/appError.js';
 import redisCofig from '../../../global/config/redisCofig.js';
@@ -17,7 +18,7 @@ export default {
   authJWT: (req, res, next) => {
     // 1) 헤더에 토큰이 존재하는 지 확인.
     if (!req.headers.authorization) {
-      return res.send('error: nothing is in header');
+      return res.status(400).send('error: nothing is in header');
     }
 
     try {
@@ -33,7 +34,8 @@ export default {
   },
   refreshJWT: catchAsync(async (req, res, next) => {
     // 1. 헤더에 JWT가 들어있는지 확인후 넘겨준다. 없다면 에러를 리턴한다.
-    if (req.headers.authorization && req.headers.refresh) {
+    const refresh = req.cookies.refreshToken;
+    if (req.headers.authorization && refresh) {
       // recap
       const result = await refreshService.refreshJWT(req, res, next);
       return result;
@@ -64,11 +66,14 @@ export default {
     if (!(userLogInRes instanceof UserLogInDto.UserLoginRes)) {
       return next(userLogInRes);
     }
-
+    // 4) 리프레시 토큰은 http-only쿠키로 넣어서 리턴, 액세스토큰은 json으로 리턴
+    res.cookie('refreshToken', userLogInRes.getRefreshToken, {
+      httpOnly: true,
+    });
     return res.status(200).json({
       status: 'success',
       data: {
-        userLogInRes,
+        accessToken: userLogInRes.getAccessToken,
       },
     });
   }),
@@ -91,14 +96,27 @@ export default {
     });
   }),
 
+  validateResetPage: catchAsync(async (req, res, next) => {
+    const pageToken = req.params.token;
+
+    const users = await redisCli.get(pageToken);
+    if (users === null) {
+      next(new AppError('ResetToken is Invalid or Expired!', 401));
+    } else {
+      res.status(200).json({
+        ok: true,
+      });
+    }
+  }),
+
   resetPassword: catchAsync(async (req, res, next) => {
     // 1) 토큰을 뺀다
     const resetToken = req.params.token;
 
-    // 2) 토큰에 일치하는 유저가 있는지 확인해본다.
+    // 2) 레디스를 통해, 토큰에 대해 일치하는 유저가 있는지 확인해본다.
     const users = await redisCli.get(resetToken);
     if (users.length === 0) {
-      next(new AppError('Token is Invalid or Expired!'), 400);
+      next(new AppError('ResetToken is Invalid or Expired!', 401));
     }
 
     // 3) DTO로 넘겨준다.
@@ -107,8 +125,12 @@ export default {
     resetPasswordReq.userEmail = users;
     resetPasswordReq.userPassword = req.body.userPassword;
 
-    await userUpdateService.resetPassword(resetPasswordReq);
+    // 4) 비밀번호 validation 진행 후 업데이트
+    if (!validator.validateReq(resetPasswordReq.getUserPassword, 'resetPW')) {
+      return next(new AppError('Please provide valid password!', 401));
+    }
 
+    await userUpdateService.resetPassword(resetPasswordReq);
     return res.status(200).json({
       status: 'success',
       message: 'Password Reset!',

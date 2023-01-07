@@ -24,7 +24,7 @@ class TokenValidator {
     } catch (error) {
       //ExpiredTokenError은 따로 operational error로 간주하지 않는다.
       if (error.message !== 'jwt expired') {
-        throw new AppError(`JWT Error: ${error.message}`, 401);
+        throw new AppError(`JWT Error: ${error.message}`, 400);
       }
     }
 
@@ -37,21 +37,20 @@ class TokenValidator {
 
     // 유저 정보가 포함되지 않은 토큰은 권한이 없음으로 판단. 이때 유효하지 않은 토큰들도 걸러진다.
     if (decodedUserInfo === null) {
-      throw new AppError('Not Authorized! : token is invalid', 401);
+      throw new AppError('Not Authorized! : token is invalid', 400);
     }
     this.decodedUserInfo = decodedUserInfo;
   };
 
   // 리프레쉬 토큰의 검증을 위한 필터
   refreshTokenFilter = async () => {
-    const isRefreshTokenAlive = await tokenProvider.verifyRefreshToken(
-      this.refreshToken,
-      this.decodedUserInfo.userEmail,
-    );
-
-    if (!isRefreshTokenAlive) {
-      // 1. accessToken : expired / refreshToken : expired or error => 다시 로그인
-      throw new AppError('Not Authorized! : LogIn Again!!!', 401);
+    try {
+      const isRefreshTokenAlive = await tokenProvider.verifyRefreshToken(
+        this.refreshToken,
+        this.decodedUserInfo.userEmail,
+      );
+    } catch (error) {
+      throw new AppError('Not Authorized! : LogIn Again!!!', 404);
     }
   };
 }
@@ -62,7 +61,7 @@ export default {
       // 1) TokenValidator 객체 생성
       const tokenValidator = new TokenValidator(
         tokenProvider.resolveToken(req),
-        req.headers.refresh,
+        req.cookies.refreshToken,
       );
 
       // 2) 액세스 토큰과 리프레쉬 토큰의 유효성을 검사.
@@ -73,12 +72,10 @@ export default {
       const refreshedAccessToken = tokenProvider.generateAccessToken(
         tokenValidator.decodedUserInfo,
       );
-
       return res.status(200).json({
         ok: true,
         data: {
           accessToken: refreshedAccessToken,
-          refreshToken: tokenValidator.refreshToken,
         },
       });
     } catch (error) {
