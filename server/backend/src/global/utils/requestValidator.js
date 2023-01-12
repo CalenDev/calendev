@@ -13,6 +13,19 @@ const validatePassword = (password) => {
   const reg = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
   return reg.test(password);
 };
+const validateYear = (year) => {
+  const reg = /^[0-9]*/;
+  return reg.test(year);
+};
+
+const validateMonth = (month) => {
+  const reg = /[0-9]{1,2}/;
+  return reg.test(month) && month >= 1 && month <= 12;
+};
+
+const validateDttm = (year, month) =>
+  // eslint-disable-next-line implicit-arrow-linebreak
+  validateYear(year) && validateMonth(month);
 
 const validateReq = (req, serviceName) => {
   switch (serviceName) {
@@ -31,6 +44,12 @@ const validateReq = (req, serviceName) => {
       return validateEmail(req.getUserEmail);
     case 'resetPW':
       return validatePassword(req.getUserPassword);
+    case 'year':
+      return validateYear(req.getYear);
+    case 'month':
+      return validateMonth(req.getMonth);
+    case 'dttm':
+      return validateDttm(req.getYear, req.getMonth);
     default:
       return false;
   }
