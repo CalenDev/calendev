@@ -50,9 +50,11 @@ export default {
   }),
 
   withdrawUser: catchAsync(async (req, res, next) => {
+    // 1) 토큰에서 유저정보를 받는다.
     const accessToken = req.params.token;
-
     const payload = TokenProvider.getJwtPayLoadData(accessToken);
+
+    // 2) 유저정보가 들어있지 않거나 토큰이 잘못된 경우 에러리턴
     if (payload === null || !payload.userEmail) {
       return next(new AppError('JsonWebToken is invalid', 401));
     }

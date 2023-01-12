@@ -30,15 +30,18 @@ export default {
     return duplicateValidationRes;
   },
   create: async (signupReq) => {
+    // 1) 이미 존재하는 유저가 있는지 확인.
     const targetUser = await User.findOne(signupReq.getUserEmail, 'userEmail');
     if (targetUser.length !== 0) {
       throw new AppError('Bad Request', 400);
     }
+
     await controlParams(signupReq);
     signupReq.createdAtDttm = dttmBuilder.buildCurrentUTCDttm();
     await User.save(signupReq);
   },
   remove: async (userData) => {
+    // 1) 유저정보의 유저가 실제로 존재하는 지 확인.
     const targetUser = await User.findOne(userData.userEmail, 'userEmail');
     if (targetUser.length === 0) {
       throw new AppError('Bad Request', 404);

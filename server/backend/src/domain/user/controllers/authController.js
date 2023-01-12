@@ -34,11 +34,15 @@ export default {
   },
   refreshJWT: catchAsync(async (req, res, next) => {
     // 1. 헤더에 JWT가 들어있는지 확인후 넘겨준다. 없다면 에러를 리턴한다.
-    const refresh = req.cookies.refreshToken;
-    if (req.headers.authorization && refresh) {
+    const { refreshToken } = req.cookies;
+    if (req.headers.authorization && refreshToken) {
       // recap
-      const result = await refreshService.refreshJWT(req, res, next);
-      return result;
+      const tokenRefreshResult = await refreshService.refreshJWT(
+        req,
+        res,
+        next,
+      );
+      return tokenRefreshResult;
     }
 
     return res.status(400).json({
@@ -96,11 +100,12 @@ export default {
     });
   }),
 
+  // 요청 파라매터로 받은 토큰으로 현재 리셋페이지가 유효한지 검증.
   validateResetPage: catchAsync(async (req, res, next) => {
-    const pageToken = req.params.token;
-
-    const users = await redisCli.get(pageToken);
-    if (users === null) {
+    // 1) 토큰을 받아 레디스에 조회. 레디스에는 일정기간동안 토큰과 유저정보가 존재함.
+    const resetPageToken = req.params.token;
+    const authorizedUser = await redisCli.get(resetPageToken);
+    if (authorizedUser === null) {
       next(new AppError('ResetToken is Invalid or Expired!', 401));
     } else {
       res.status(200).json({
@@ -111,18 +116,18 @@ export default {
 
   resetPassword: catchAsync(async (req, res, next) => {
     // 1) 토큰을 뺀다
-    const resetToken = req.params.token;
+    const passwordResetToken = req.params.token;
 
     // 2) 레디스를 통해, 토큰에 대해 일치하는 유저가 있는지 확인해본다.
-    const users = await redisCli.get(resetToken);
-    if (users.length === 0) {
+    const authorizedUser = await redisCli.get(passwordResetToken);
+    if (authorizedUser.length === null) {
       next(new AppError('ResetToken is Invalid or Expired!', 401));
     }
 
     // 3) DTO로 넘겨준다.
     const resetPasswordReq = new UserUpdateDto.ResetPassWordReq();
     // eslint-disable-next-line prefer-destructuring
-    resetPasswordReq.userEmail = users;
+    resetPasswordReq.userEmail = authorizedUser;
     resetPasswordReq.userPassword = req.body.userPassword;
 
     // 4) 비밀번호 validation 진행 후 업데이트

@@ -21,11 +21,11 @@ export default {
       );
     }
 
-    const response = await User.updateColumn(
+    const userUpdateResult = await User.updateColumn(
       resetReq.getUserEmail,
       hashedPassword,
       'userPassword',
     );
-    return response;
+    return userUpdateResult;
   },
 };

@@ -11,7 +11,6 @@ import { rmSync } from 'fs';
 import dotenv from 'dotenv';
 import { resolveSoa } from 'dns';
 import userRouter from './domain/user/routes/userRoutes.js';
-import postRouter from './domain/post/routes/postRoutes.js';
 import authRouter from './domain/user/routes/authRoutes.js';
 import AppError from './global/utils/appError.js';
 import globalErrorHandler from './domain/user/controllers/errorController.js';
@@ -83,7 +82,6 @@ app.use((req, res, next) => {
 });
 
 // ROUTES
-app.use('/api/v1/posts', postRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/auth', authRouter);
 
