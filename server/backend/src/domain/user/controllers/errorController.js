@@ -27,6 +27,7 @@ const sendErrorDev = (err, res) => {
     status: err.status,
     error: err,
     message: err.message,
+    code: err.errorCode,
     stack: err.stack,
   });
 };
@@ -37,6 +38,7 @@ const sendErrorProd = (err, res) => {
     res.status(err.statusCode).json({
       status: err.status,
       message: err.message,
+      code: err.errorCode,
     });
   } else {
     // Programming error or unknown error : 클라이언트에게 미표시
@@ -54,25 +56,10 @@ const sendErrorProd = (err, res) => {
 export default (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
+
   if (process.env.NODE_ENV === 'development') {
     sendErrorDev(err, res);
   } else if (process.env.NODE_ENV === 'production') {
-    let error = { ...err };
-    error.message = err.message;
-
-    switch (err.message) {
-      case 'CastError':
-        error = handleCastErrorDB(error);
-        break;
-      case 'JsonWebTokenError':
-        error = handleJsonWebTokenError(error);
-        break;
-      case 'NotBeforeError':
-        error = handleNotBeforeError(error);
-        break;
-      default:
-    }
-
-    sendErrorProd(error, res);
+    sendErrorProd(err, res);
   }
 };

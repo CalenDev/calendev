@@ -44,7 +44,7 @@ export default {
     // 1) 유저정보의 유저가 실제로 존재하는 지 확인.
     const targetUser = await User.findOne(userData.userEmail, 'userEmail');
     if (targetUser.length === 0) {
-      throw new AppError('Bad Request', 404);
+      throw new AppError('Bad Request', 404, 'E404D');
     }
     await User.remove(userData.userEmail);
   },

@@ -24,20 +24,20 @@ class TokenValidator {
     } catch (error) {
       //ExpiredTokenError은 따로 operational error로 간주하지 않는다.
       if (error.message !== 'jwt expired') {
-        throw new AppError(`JWT Error: ${error.message}`, 400);
+        throw new AppError(err.message, 401, 'E401B');
       }
     }
 
     if (isAccessTokenExpired && isAccessTokenExpired.ok) {
       // jwt가 만료되지 않은 경우
-      throw new AppError('AccessToken is not expired!', 401);
+      throw new AppError('Not Found', 404, 'E404B');
     }
 
     const decodedUserInfo = jwt.decode(this.accessToken);
 
     // 유저 정보가 포함되지 않은 토큰은 권한이 없음으로 판단. 이때 유효하지 않은 토큰들도 걸러진다.
     if (decodedUserInfo === null) {
-      throw new AppError('Not Authorized! : token is invalid', 400);
+      throw new AppError('Bad Request', 400, 'E400AD');
     }
     this.decodedUserInfo = decodedUserInfo;
   };
@@ -50,7 +50,7 @@ class TokenValidator {
         this.decodedUserInfo.userEmail,
       );
     } catch (error) {
-      throw new AppError('Not Authorized! : LogIn Again!!!', 404);
+      throw new AppError('Not Authorized', 401, 'E401C');
     }
   };
 }

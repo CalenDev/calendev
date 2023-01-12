@@ -33,7 +33,7 @@ const findUserByEmailAndPassword = async (userLogInReq) => {
 
 const authenticate = async (user) => {
   if (user === null) {
-    return new AppError('Incorrect Email or Password!', 401);
+    return new AppError('Not Authorized', 401, 'E401E');
   }
   const accessToken = TokenProvider.generateAccessToken(user);
   const refreshToken = TokenProvider.generateRefreshToken();
