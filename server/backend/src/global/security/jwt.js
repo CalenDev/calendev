@@ -38,7 +38,7 @@ export default {
   generateRefreshToken: () => {
     return jwt.sign({}, REFRESH_TOKEN_SECRET_KEY, {
       algorithm: JWT_HASH_ALGORITHM,
-      expiresIn: REFRESH_TOKEN_EXP, // TODO:유효기간 > Enum
+      expiresIn: REFRESH_TOKEN_EXP,
     });
   },
   /**
@@ -73,5 +73,9 @@ export default {
       bearerToken = refreshToken;
     }
     return bearerToken;
+  },
+  getJwtPayLoadData: (token) => {
+    const data = jwt.decode(token);
+    return data;
   },
 };

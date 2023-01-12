@@ -23,6 +23,8 @@ router.route('/').get(authControllers.authJWT, userControllers.getAllUsers);
 
 router.route('/check-duplicate').post(userControllers.checkDuplicate);
 
-router.route('/signup').post(userControllers.signupUser);
+router.route('/').post(userControllers.signupUser);
+
+router.route('/:token').delete(userControllers.withdrawUser);
 
 export default router;

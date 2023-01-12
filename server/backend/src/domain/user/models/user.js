@@ -50,10 +50,14 @@ async function updateColumn(key, value, columnName) {
     success: true,
   };
 }
+async function remove(email) {
+  await knex('user').where('userEmail', email).del();
+}
 export default {
   getAllUsers,
   findTargetUserByEmail,
   findOne,
   save,
+  remove,
   updateColumn,
 };
