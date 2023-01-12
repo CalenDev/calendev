@@ -1,0 +1,32 @@
+const CompanyTag = {
+  BAA: Symbol('네이버'),
+  BAB: Symbol('카카오'),
+  BAC: Symbol('토스'),
+  BAD: Symbol('삼성'),
+  BAE: Symbol('다음'),
+  BAF: Symbol('구글'),
+  BAG: Symbol('AWS'),
+  BAH: Symbol('국민은행'),
+  BAI: Symbol('LG'),
+  BAJ: Symbol('라인'),
+  BAK: Symbol('NHN'),
+  BAL: Symbol('애플'),
+  BAM: Symbol('현대 자동차'),
+  BAN: Symbol('우아한형제들'),
+  BAO: Symbol('필립스'),
+  BAP: Symbol('아틀라시안'),
+  BAQ: Symbol('쿠팡'),
+  BAR: Symbol('당근마켓'),
+  BAS: Symbol('SKT'),
+  BAT: Symbol('스마일게이트'),
+  BAU: Symbol('야놀자'),
+  BAV: Symbol('NC소프트'),
+  BAW: Symbol('넷마블'),
+  BAX: Symbol('11번가'),
+  BAY: Symbol('티맥스 소프트'),
+  BAZ: Symbol('넥슨'),
+  BBA: Symbol('티몬'),
+};
+Object.freeze(CompanyTag);
+
+export default CompanyTag;
