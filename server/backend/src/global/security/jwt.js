@@ -20,13 +20,14 @@ export default {
    */
   generateAccessToken: (user) => {
     const payload = {
+      userId: user.userId,
       userEmail: user.userEmail,
       userNickname: user.userNickname,
       userRoleCd: user.userRoleCd,
     };
     return jwt.sign(payload, ACCESS_TOKEN_SECRET_KEY, {
       algorithm: JWT_HASH_ALGORITHM,
-      expiresIn: ACCESS_TOKEN_EXP, // 유효기간
+      expiresIn: ACCESS_TOKEN_EXP,
     });
   },
   /**
@@ -46,7 +47,12 @@ export default {
    * @param { accessToken } token
    * @returns {Obj} : accessToken의 유효성을 검증하고 결과내용을 담은 객체를 반환
    */
-  verifyAccessToken: (token) => jwt.verify(token, ACCESS_TOKEN_SECRET_KEY),
+  verifyAccessToken: (token) => {
+    const res = jwt.verify(token, ACCESS_TOKEN_SECRET_KEY);
+    return {
+      ok: true,
+    };
+  },
 
   /**
    *
@@ -54,23 +60,27 @@ export default {
    * @param {userEmail} userInfo
    * @returns { obj }Obj :  refresh 토큰이 일치여부와 토큰의 유효성을 검사하고 결과내용을 담은 객체를 반환
    */
-  verifyRefreshToken: async (token, userInfo) => {
+  verifyRefreshToken: async (userRefreshToken, userInfo) => {
     const { redisCli } = redis;
-    const data = await redisCli.get(userInfo).then();
-
-    if (token === data) {
-      jwt.verify(token, REFRESH_TOKEN_SECRET_KEY);
+    const originalRefreshToken = await redisCli.get(userInfo);
+    if (userRefreshToken === originalRefreshToken) {
+      jwt.verify(userRefreshToken, REFRESH_TOKEN_SECRET_KEY);
       return true;
     }
 
     return false;
   },
+  /**
+   * 헤더에 들어있는 토큰을 코드내에서 사용하는 토큰으로 정제
+   * @param {user request}} HTTP Request
+   * @returns AccessToken from HTTP headers' Bearer Token.
+   */
   resolveToken: (req) => {
     let bearerToken = req.headers.authorization;
 
     if (bearerToken.length) {
-      const refreshToken = bearerToken.split('Bearer: ')[1];
-      bearerToken = refreshToken;
+      const accessToken = bearerToken.split('Bearer: ')[1];
+      bearerToken = accessToken;
     }
     return bearerToken;
   },

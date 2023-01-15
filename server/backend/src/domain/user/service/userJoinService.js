@@ -15,9 +15,9 @@ const controlParams = async (signupReq) => {
 
 export default {
   findAll: async () => {
-    const usrs = await User.getAllUsers();
+    const users = await User.getAllUsers();
 
-    return usrs;
+    return users;
   },
   checkDuplicate: async (duplicateValidationReq) => {
     const targetUser = await User.findOne(
@@ -46,6 +46,6 @@ export default {
     if (targetUser.length === 0) {
       throw new AppError('Bad Request', 404, 'E404AD');
     }
-    await User.remove(userData.userEmail);
+    await User.remove(userData.userId);
   },
 };
