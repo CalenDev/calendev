@@ -20,7 +20,6 @@ class TokenValidator {
     let isAccessTokenExpired;
     try {
       isAccessTokenExpired = tokenProvider.verifyAccessToken(this.accessToken);
-      isAccessTokenExpired.ok = true;
     } catch (error) {
       //ExpiredTokenError은 따로 operational error로 간주하지 않는다.
       if (error.message !== 'jwt expired') {
@@ -73,7 +72,7 @@ export default {
         tokenValidator.decodedUserInfo,
       );
       return res.status(200).json({
-        ok: true,
+        status: 'success',
         data: {
           accessToken: refreshedAccessToken,
         },

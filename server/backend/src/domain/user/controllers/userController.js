@@ -19,7 +19,6 @@ export default {
   }),
 
   signupUser: catchAsync(async (req, res, next) => {
-    // eslint-disable-next-line no-console
     const signupReq = new UserJoinDto.JoinReq();
     objectMapper.map(req.body, signupReq);
 
@@ -29,7 +28,9 @@ export default {
 
     await userJoinService.create(signupReq);
 
-    return res.status(201).send('signup success');
+    return res.status(201).json({
+      status: 'success',
+    });
   }),
 
   checkDuplicate: catchAsync(async (req, res, next) => {
@@ -58,6 +59,6 @@ export default {
     }
     await userJoinService.remove(payload);
 
-    return res.status(200).json({});
+    return res.status(200).json({ status: 'success' });
   }),
 };

@@ -34,9 +34,8 @@ export default {
   },
   refreshJWT: catchAsync(async (req, res, next) => {
     // 1. 헤더에 JWT가 들어있는지 확인후 넘겨준다. 없다면 에러를 리턴한다.
-    const refresh = req.cookies.refreshToken;
-    if (req.headers.authorization && refresh) {
-      // recap
+    const userRefreshToken = req.cookies.refreshToken;
+    if (req.headers.authorization && userRefreshToken) {
       const result = await refreshService.refreshJWT(req, res, next);
     }
 
@@ -104,7 +103,7 @@ export default {
       next(new AppError('Bad Request', 400, 'E400AE'));
     } else {
       res.status(200).json({
-        ok: true,
+        status: 'success',
       });
     }
   }),
@@ -120,8 +119,7 @@ export default {
     }
 
     // 3) DTO로 넘겨준다.
-    const resetPasswordReq = new UserUpdateDto.ResetPassWordReq();
-    // eslint-disable-next-line prefer-destructuring
+    const resetPasswordReq = new UserUpdateDto.ResetPasswordReq();
     resetPasswordReq.userEmail = authorizedUser;
     resetPasswordReq.userPassword = req.body.userPassword;
 

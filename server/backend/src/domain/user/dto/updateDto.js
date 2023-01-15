@@ -65,7 +65,7 @@ class UpdateRes {
   }
 }
 
-class ResetPassWordReq {
+class ResetPasswordReq {
   userEmail;
   userPassword;
   constructor() {}
@@ -87,5 +87,5 @@ class ResetPassWordReq {
 export default {
   UpdateReq,
   UpdateRes,
-  ResetPassWordReq,
+  ResetPasswordReq,
 };
