@@ -32,10 +32,10 @@ const ErrorCode = {
   // 408
   E408AA: 'Request Timeout: Request Time out',
   // 500
-  E500AB: 'Internal Server Error : Uncaught exception',
-  E500AC: 'Internal Server Error : Email Service is inavailable',
-  E500AD: 'Internal Server Error : Database Connection lost',
-  E500AE: 'Internal Server Error : There was a Duplicate key Error',
+  E500AA: 'Internal Server Error : Uncaught exception',
+  E500AB: 'Internal Server Error : Email Service is inavailable',
+  E500AC: 'Internal Server Error : Database Connection lost',
+  E500AD: 'Internal Server Error : There was a Duplicate key Error',
 };
 Object.freeze(ErrorCode);
 
