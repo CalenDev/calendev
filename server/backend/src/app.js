@@ -1,15 +1,11 @@
 /* eslint-disable function-paren-newline */
 /* eslint-disable implicit-arrow-linebreak */
-import http from 'http';
-import createError from 'http-errors';
 import express from 'express';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import logger from 'morgan';
-import { rmSync } from 'fs';
 import dotenv from 'dotenv';
-import { resolveSoa } from 'dns';
 import userRouter from './domain/user/routes/userRoutes.js';
 import authRouter from './domain/user/routes/authRoutes.js';
 import AppError from './global/utils/appError.js';
@@ -34,9 +30,6 @@ process.on('uncaughtException', (err) => {
   process.exit(1);
 });
 
-mongoose();
-redis.connect();
-
 const app = express();
 app.use(logger('dev'));
 app.use(express.json());
@@ -45,7 +38,17 @@ app.use(cookieParser());
 app.use(express.static(path.join(dirname, 'public')));
 app.use(allowCrossDomain);
 
-app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
+// init database server
+redis.connect();
+try {
+  mongoose();
+} catch (error) {
+  throw new AppError('Internal Server Error', 500, 'E500AC');
+}
+
+app.use(
+  cors({ credentials: true, origin: `http://${process.env.CLIENT_URL}` }),
+);
 /**
  * Normalize a port into a number, string, or false.
  */
@@ -70,10 +73,6 @@ const port = normalizePort(process.env.PORT || '8000');
 app.set('port', port);
 const server = app.listen(port, () => {
   console.log(`App running on port ${port}`);
-});
-
-app.get('/', (req, res) => {
-  res.send('backend server on!');
 });
 
 app.use((req, res, next) => {

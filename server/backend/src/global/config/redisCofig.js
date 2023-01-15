@@ -1,5 +1,6 @@
 import redis from 'redis';
 import dotenv from 'dotenv';
+import AppError from '../utils/appError.js';
 
 dotenv.config({ path: './.env' });
 
@@ -14,6 +15,7 @@ redisClient.on('connect', () => {
 
 redisClient.on('error', (err) => {
   console.log(`Error ${err}`);
+  throw new AppError('Redis Server Down!!', 500, '500AD');
 });
 
 // 프로미스를 사용하기위한 레디스 Cli
