@@ -5,4 +5,4 @@ const Category = {
   CD: Symbol('분야'),
 };
 Object.freeze(Category);
-export default { Category };
+export default Category;

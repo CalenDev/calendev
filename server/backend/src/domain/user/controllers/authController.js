@@ -29,7 +29,7 @@ export default {
       req.body.userEmail = verificationResult.userEmail;
       return next();
     } catch (error) {
-      return next(new AppError(error.message, 403, 'E403A'));
+      return next(new AppError(error.message, 403, 'E403AA'));
     }
   },
   refreshJWT: catchAsync(async (req, res, next) => {

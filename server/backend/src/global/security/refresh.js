@@ -24,13 +24,13 @@ class TokenValidator {
     } catch (error) {
       //ExpiredTokenError은 따로 operational error로 간주하지 않는다.
       if (error.message !== 'jwt expired') {
-        throw new AppError(err.message, 401, 'E401B');
+        throw new AppError(err.message, 401, 'E401AB');
       }
     }
 
     if (isAccessTokenExpired && isAccessTokenExpired.ok) {
       // jwt가 만료되지 않은 경우
-      throw new AppError('Not Found', 404, 'E404B');
+      throw new AppError('Not Found', 404, 'E404AB');
     }
 
     const decodedUserInfo = jwt.decode(this.accessToken);
@@ -50,7 +50,7 @@ class TokenValidator {
         this.decodedUserInfo.userEmail,
       );
     } catch (error) {
-      throw new AppError('Not Authorized', 401, 'E401C');
+      throw new AppError('Not Authorized', 401, 'E401AC');
     }
   };
 }
