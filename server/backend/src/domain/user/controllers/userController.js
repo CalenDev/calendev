@@ -24,9 +24,7 @@ export default {
     objectMapper.map(req.body, signupReq);
 
     if (!validator.validateReq(signupReq, 'signup')) {
-      return next(
-        new AppError('Please provide valid Email, NickName, Password!!'),
-      );
+      return next(new AppError('Bad Request', 400, 'E400AG'));
     }
 
     await userJoinService.create(signupReq);
@@ -56,7 +54,7 @@ export default {
 
     // 2) 유저정보가 들어있지 않거나 토큰이 잘못된 경우 에러리턴
     if (payload === null || !payload.userEmail) {
-      return next(new AppError('JsonWebToken is invalid', 401));
+      return next(new AppError('JsonWebToken is invalid', 400, 'E400AD'));
     }
     await userJoinService.remove(payload);
 

@@ -13,7 +13,7 @@ export default {
     const users = await User.findTargetUserByEmail(resetReq.getUserEmail);
 
     if (users.length === 0) {
-      throw new AppError('Incorrect Email Information', 401);
+      throw new AppError('Not Found', 404, 'E404AD');
     }
 
     // 2) 비밀번호 재설정을 위한 토큰 발급
@@ -43,10 +43,7 @@ export default {
       // 이메일 연동에러, 이메일 전송시 에러 ...
       // redis에 저장했던 토큰 삭제
       await redisCofig.redisClient.del(resetToken);
-      throw new AppError(
-        'There is an Error While Sending Email... Try agian!',
-        500,
-      );
+      throw new AppError('Internal Server Error', 500, 'E500AC');
     }
   },
 };

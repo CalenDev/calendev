@@ -6,7 +6,7 @@ export default {
   resetPassword: async (resetReq) => {
     const users = await User.findTargetUserByEmail(resetReq.getUserEmail);
     if (users.length === 0) {
-      throw new AppError('Invalid UserInfo!!!', 404);
+      throw new AppError('Not Found', 404, 'E404AD');
     }
 
     const hashedPassword = await encrypt.createHashedPasswordBySalt(
@@ -15,10 +15,7 @@ export default {
     );
 
     if (hashedPassword === users[0].userPassword) {
-      throw new AppError(
-        'Password has been used before!! Try new Password',
-        401,
-      );
+      throw new AppError('Not Authorized', 401, 'E401AD');
     }
 
     const userUpdateResult = await User.updateColumn(

@@ -33,7 +33,7 @@ export default {
     // 1) 이미 존재하는 유저가 있는지 확인.
     const targetUser = await User.findOne(signupReq.getUserEmail, 'userEmail');
     if (targetUser.length !== 0) {
-      throw new AppError('Bad Request', 400);
+      throw new AppError('Bad Request', 400, 'E400AF');
     }
 
     await controlParams(signupReq);
@@ -44,7 +44,7 @@ export default {
     // 1) 유저정보의 유저가 실제로 존재하는 지 확인.
     const targetUser = await User.findOne(userData.userEmail, 'userEmail');
     if (targetUser.length === 0) {
-      throw new AppError('Bad Request', 404);
+      throw new AppError('Bad Request', 404, 'E404AD');
     }
     await User.remove(userData.userEmail);
   },

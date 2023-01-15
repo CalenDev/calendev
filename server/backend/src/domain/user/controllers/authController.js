@@ -18,7 +18,7 @@ export default {
   authJWT: (req, res, next) => {
     // 1) 헤더에 토큰이 존재하는 지 확인.
     if (!req.headers.authorization) {
-      return res.status(400).send('error: nothing is in header');
+      return next(new AppError('Nothng is in header', 400, 'E400AA'));
     }
 
     try {
@@ -29,25 +29,21 @@ export default {
       req.body.userEmail = verificationResult.userEmail;
       return next();
     } catch (error) {
-      return next(new AppError(error.message, 401));
+      return next(new AppError(error.message, 403, 'E403AA'));
     }
   },
   refreshJWT: catchAsync(async (req, res, next) => {
     // 1. 헤더에 JWT가 들어있는지 확인후 넘겨준다. 없다면 에러를 리턴한다.
-    const { refreshToken } = req.cookies;
-    if (req.headers.authorization && refreshToken) {
+    const refresh = req.cookies.refreshToken;
+    if (req.headers.authorization && refresh) {
       // recap
-      const tokenRefreshResult = await refreshService.refreshJWT(
-        req,
-        res,
-        next,
-      );
-      return tokenRefreshResult;
+      const result = await refreshService.refreshJWT(req, res, next);
     }
 
     return res.status(400).json({
       ok: false,
-      message: 'AccessToken and RefreshToken does not exist in header!',
+      message: 'Bad Request',
+      errorCode: 'E400AB',
     });
   }),
 
@@ -58,9 +54,7 @@ export default {
 
     // 2) 입력값들의 유효성검사를 진행한다.
     if (!validator.validateReq(userLogInReq, 'login')) {
-      return next(
-        new AppError('Please provide valid email and password!', 401),
-      );
+      return next(new AppError('Bad Request', 400, 'E400AG'));
     }
 
     // 3) 유저 로그인 서비스를 통해 검증한다.
@@ -89,7 +83,7 @@ export default {
 
     // 2) 변수에 대하여 validation을 진행한다. (입력값)
     if (!validator.validateReq(resetPasswordReq, 'email')) {
-      return next(new AppError('Please provide valid Email!!', 400));
+      return next(new AppError('Bad Request', 400, 'E400AG'));
     }
     // 3) 유저 이메일 서비스를 통해 비밀번호 재설정 링크를 보낸다.
     await userEmailService.sendPasswordResetEmail(resetPasswordReq);
@@ -105,8 +99,9 @@ export default {
     // 1) 토큰을 받아 레디스에 조회. 레디스에는 일정기간동안 토큰과 유저정보가 존재함.
     const resetPageToken = req.params.token;
     const authorizedUser = await redisCli.get(resetPageToken);
+
     if (authorizedUser === null) {
-      next(new AppError('ResetToken is Invalid or Expired!', 401));
+      next(new AppError('Bad Request', 400, 'E400AE'));
     } else {
       res.status(200).json({
         ok: true,
@@ -120,8 +115,8 @@ export default {
 
     // 2) 레디스를 통해, 토큰에 대해 일치하는 유저가 있는지 확인해본다.
     const authorizedUser = await redisCli.get(passwordResetToken);
-    if (authorizedUser.length === null) {
-      next(new AppError('ResetToken is Invalid or Expired!', 401));
+    if (authorizedUser.length === 0) {
+      next(new AppError('JwtTokenError', 400, 'E400AE'));
     }
 
     // 3) DTO로 넘겨준다.
@@ -132,7 +127,7 @@ export default {
 
     // 4) 비밀번호 validation 진행 후 업데이트
     if (!validator.validateReq(resetPasswordReq.getUserPassword, 'resetPW')) {
-      return next(new AppError('Please provide valid password!', 401));
+      return next(new AppError('Bad Request', 400, 'E400AG'));
     }
 
     await userUpdateService.resetPassword(resetPasswordReq);
