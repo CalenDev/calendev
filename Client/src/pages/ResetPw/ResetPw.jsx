@@ -1,5 +1,6 @@
 /* eslint-disable react/jsx-no-duplicate-props */
 /* eslint-disable import/order */
+
 // import react
 import { useState, useEffect } from 'react';
 // import redux
@@ -132,10 +133,10 @@ function ResetPw() {
     }
 
     switch (apiRes.data.status) {
-      case 'success': // status 200 : success to reset password
+      case 'success':
         navigate('/signin', { replace: true });
         break;
-      case 'fail': // status 401 : token unvalid
+      case 'fail':
         navigate('/', {
           replace: true,
         });
