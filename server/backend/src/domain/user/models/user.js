@@ -45,8 +45,8 @@ export default {
     return targetUser;
   },
 
-  updateOne: async (key, value, columnName) => {
-    await knex('user').update(columnName, value);
+  updateOne: async (userId, value, columnName) => {
+    await knex('user').update(columnName, value).where('userId', userId);
     return {
       success: true,
     };

@@ -14,6 +14,6 @@ router.route('/:token').delete(userControllers.withdrawUser);
 
 router
   .route('/signinOptions/forgotPassword')
-  .post(authControllers.authJWT, authControllers.sendResetEmail);
+  .post(authControllers.sendResetEmail);
 
 export default router;

@@ -19,7 +19,7 @@ export default {
     }
 
     const userUpdateResult = await User.updateColumn(
-      resetReq.getUserEmail,
+      users[0].userId,
       hashedPassword,
       'userPassword',
     );
