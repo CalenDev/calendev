@@ -38,7 +38,10 @@ function FindPw() {
 
     if (!apiRes.data || !apiRes.data.status) {
       // axiosError 감지 - 서버로 아예 req가 가지 못한 경우
-      navigate('/error', { replace: false });
+      navigate('/error', {
+        replace: false,
+        state: { errorTitle: 'Network Error!' },
+      });
       return;
     }
 
@@ -53,7 +56,10 @@ function FindPw() {
       case 'error':
       default:
         setAlertMsgObj({ code: 114, arg1: '이메일' });
-        navigate('/error', { replace: false });
+        navigate('/error', {
+          replace: true,
+          state: { errorTitle: apiRes.data.message },
+        });
         break;
     }
   };
