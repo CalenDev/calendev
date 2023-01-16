@@ -38,12 +38,12 @@ function ResetPw() {
       }
 
       const apiRes = await getCheckResetPasswordToken(queryStringObj.token);
-      /* if (!apiRes.data || !apiRes.data.status) {
+      if (!apiRes.data || !apiRes.data.status) {
         navigate('/error', {
           replace: true,
           state: { errorTitle: apiRes.message },
         });
-      } */
+      }
       switch (apiRes.data.status) {
         case 'success':
           break;
