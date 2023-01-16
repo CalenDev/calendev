@@ -38,16 +38,22 @@ function ResetPw() {
       }
 
       const apiRes = await getCheckResetPasswordToken(queryStringObj.token);
-      switch (apiRes.status) {
-        case 200: // status 200 : valid token. render resetPw page
+      /* if (!apiRes.data || !apiRes.data.status) {
+        navigate('/error', {
+          replace: true,
+          state: { errorTitle: apiRes.message },
+        });
+      } */
+      switch (apiRes.data.status) {
+        case 'success':
           break;
-        case 401: // status 401 : unvalid token. redirect to home.
+        case 'fail':
           navigate('/', {
             replace: true,
           });
           handleOpenModal(2);
           break;
-        case 500: // status 500 : server error. redirect to error page.
+        case 'error':
           navigate('/', {
             replace: true,
             state: {
@@ -73,7 +79,7 @@ function ResetPw() {
     } else if (!validateRegexPassword(newPassword)) {
       setNewPwMsgObj({ code: 113, arg1: '' });
     } else {
-      setNewPwMsgObj('');
+      setNewPwMsgObj({ code: 0, arg1: '' });
     }
 
     if (checkingPassword.length === 0) {
@@ -81,7 +87,7 @@ function ResetPw() {
     } else if (newPassword !== checkingPassword) {
       setCheckedPwMsgObj({ code: 109, arg1: '' });
     } else if (newPassword === checkingPassword) {
-      setCheckedPwMsgObj('');
+      setCheckedPwMsgObj({ code: 0, arg1: '' });
     }
 
     if (
@@ -93,17 +99,24 @@ function ResetPw() {
     }
 
     const apiRes = await putResetPw(queryStringObj.token, newPassword);
-    switch (apiRes.status) {
-      case 200: // status 200 : success to reset password
+    if (!apiRes.data || !apiRes.data.status) {
+      navigate('/error', {
+        replace: true,
+        state: { errorTitle: apiRes.message },
+      });
+    }
+
+    switch (apiRes.data.status) {
+      case 'success': // status 200 : success to reset password
         navigate('/signin', { replace: true });
         break;
-      case 401: // status 401 : token unvalid
+      case 'fail': // status 401 : token unvalid
         navigate('/', {
           replace: true,
         });
         handleOpenModal(2);
         break;
-      case 500:
+      case 'error':
         navigate('/', {
           replace: true,
           state: {
