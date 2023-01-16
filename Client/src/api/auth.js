@@ -14,12 +14,12 @@ const postUserSignIn = async (userEmail, userPassword) => {
   }
 };
 
-const postFindPw = async (email) => {
+const postFindPw = async (userEmail) => {
   const API_END_POINT = `${process.env.REACT_APP_SERVER_URL}/api/v1/user/signinOptions/forgotPassword`;
 
   try {
     const res = await axios.post(API_END_POINT, {
-      userEmail: email,
+      userEmail,
     });
 
     return res;
