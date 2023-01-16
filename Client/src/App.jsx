@@ -8,6 +8,7 @@ import Home from './pages/Home/Home';
 import { Header } from './components';
 import SignIn from './pages/SignIn/SignIn';
 import SignUp from './pages/SignUp/SignUp';
+import FindPw from './pages/FindPw/FindPw';
 import themes from './styles';
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
         <Route path="/" exact element={<Home />} />
         <Route path="/signin" exact element={<SignIn />} />
         <Route path="/signup" exact element={<SignUp />} />
+        <Route path="/findpw" exact element={<FindPw />} />
       </Routes>
     </ThemeProvider>
   );

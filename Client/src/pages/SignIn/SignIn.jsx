@@ -13,7 +13,7 @@ import Typography from '@mui/material/Typography';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 // import api
-import postUserSignIn from '../../api/auth';
+import { postUserSignIn } from '../../api';
 // import utils
 import { validateRegexEmail, validateRegexPassword } from '../../utils';
 // import components
@@ -56,9 +56,9 @@ function SignIn() {
       userPassword: curPassword,
     });
 
-    if (apiRes.status === 'success') {
+    if (apiRes.status === 200) {
       navigate('/', { replace: true });
-    } else if (apiRes.status === 'failure') {
+    } else if (apiRes.status === 401) {
       setEmailMsgObj({ code: 112, arg1: '' });
       setPasswordMsgObj({ code: 112, arg1: '' });
     }

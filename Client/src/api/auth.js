@@ -3,17 +3,29 @@ import axios from 'axios';
 const postUserSignIn = async (userEmail, userPassword) => {
   const API_END_POINT = `${process.env.REACT_APP_SERVER_URL}/api/v1/auth/login`;
   try {
-    const { data } = await axios.post(API_END_POINT, {
+    const res = await axios.post(API_END_POINT, {
       userEmail,
       userPassword,
     });
 
-    return data;
+    return res;
   } catch (e) {
-    return {
-      error: e,
-    };
+    return e;
   }
 };
 
-export default postUserSignIn;
+const postFindPw = async (userEmail) => {
+  const API_END_POINT = `${process.env.REACT_APP_SERVER_URL}/api/v1/user/signinOptions/forgotPassword`;
+
+  try {
+    const res = await axios.post(API_END_POINT, {
+      userEmail,
+    });
+
+    return res;
+  } catch (e) {
+    return e;
+  }
+};
+
+export { postUserSignIn, postFindPw };

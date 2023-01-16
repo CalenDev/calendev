@@ -1,3 +1,3 @@
-import postUserSignIn from './auth';
+import { postUserSignIn, postFindPw } from './auth';
 
-export default postUserSignIn;
+export { postUserSignIn, postFindPw };
