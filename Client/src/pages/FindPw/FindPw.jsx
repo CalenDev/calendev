@@ -6,15 +6,18 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Alert from '@mui/material/Alert';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import { useNavigate } from 'react-router-dom';
 import { postFindPw } from '../../api';
 import { validateRegexEmail, commonMsgText } from '../../utils';
 import { CommonPaper, CustomTextField } from '../../components';
 
 function FindPw() {
+  const navigate = useNavigate();
   const [alertMsgObj, setAlertMsgObj] = useState({
     code: 100,
     arg1: '',
   });
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
@@ -27,15 +30,24 @@ function FindPw() {
 
     const apiRes = await postFindPw(curEmail);
 
-    switch (apiRes.status) {
-      case 200:
+    if (!apiRes.data || !apiRes.data.status) {
+      // axiosError 감지 - 서버로 아예 req가 가지 못한 경우
+      navigate('/error', { replace: false });
+      return;
+    }
+
+    // response의 status기반의 결과처리
+    switch (apiRes.data.status) {
+      case 'success':
         setAlertMsgObj({ code: 120, arg1: '' });
         break;
-      case 401:
+      case 'fail':
         setAlertMsgObj({ code: 114, arg1: '이메일' });
         break;
+      case 'error':
       default:
-        console.log('server Error! go to error page');
+        setAlertMsgObj({ code: 114, arg1: '이메일' });
+        navigate('/error', { replace: false });
         break;
     }
   };
