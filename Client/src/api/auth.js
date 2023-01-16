@@ -36,4 +36,18 @@ const putResetPw = async (token, userPassword) => {
   }
 };
 
-export { postUserSignIn, putResetPw, getCheckResetPasswordToken };
+const postFindPw = async (userEmail) => {
+  const API_END_POINT = `${process.env.REACT_APP_SERVER_URL}/api/v1/user/signinOptions/forgotPassword`;
+
+  try {
+    const response = await axios.post(API_END_POINT, {
+      userEmail,
+    });
+
+    return response;
+  } catch (e) {
+    return e;
+  }
+};
+
+export { postUserSignIn, putResetPw, postFindPw, getCheckResetPasswordToken };

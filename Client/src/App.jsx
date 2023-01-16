@@ -7,6 +7,7 @@ import {
 import { Header } from './components';
 import themes from './styles';
 import Error from './pages/Error/Error';
+import FindPw from './pages/FindPw/FindPw';
 import Home from './pages/Home/Home';
 import ResetPw from './pages/ResetPw/ResetPw';
 import SignIn from './pages/SignIn/SignIn';
@@ -27,6 +28,7 @@ function App() {
         <Route path="/signup" exact element={<SignUp />} />
         <Route path="/resetpw" exact element={<ResetPw />} />
         <Route path="/error" exact element={<Error />} />
+        <Route path="/findpw" exact element={<FindPw />} />
       </Routes>
     </ThemeProvider>
   );

@@ -1,3 +1,8 @@
-import { postUserSignIn, putResetPw, getCheckResetPasswordToken } from './auth';
+import {
+  postUserSignIn,
+  putResetPw,
+  getCheckResetPasswordToken,
+  postFindPw,
+} from './auth';
 
-export { postUserSignIn, putResetPw, getCheckResetPasswordToken };
+export { postUserSignIn, putResetPw, getCheckResetPasswordToken, postFindPw };
