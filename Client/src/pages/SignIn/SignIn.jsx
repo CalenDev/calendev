@@ -77,7 +77,7 @@ function SignIn() {
       <StyledTitle sx={{ fontWeight: 'bold' }} variant="h4">
         로그인
       </StyledTitle>
-      <Stack width="100%" component="form" onSubmit={handleSubmit} spacing={2}>
+      <Stack component="form" onSubmit={handleSubmit} spacing={2}>
         <Stack spacing={1}>
           <CustomTextField
             name="email"
