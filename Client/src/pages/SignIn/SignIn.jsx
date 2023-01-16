@@ -59,25 +59,38 @@ function SignIn() {
       userEmail: curEmail,
       userPassword: curPassword,
     });
+    if (!apiRes.data || !apiRes.data.status) {
+      navigate('/error', {
+        replace: true,
+        state: { errorTitle: apiRes.message },
+      });
+    }
 
-    switch (apiRes.status) {
-      case 200:
+    switch (apiRes.data.status) {
+      case 'success':
         sessionStorage.setItem('accessToken', apiRes.accessToken); // token을 sessionStorage에 저장.
         payload = jwtDecode(apiRes.accessToken); // token 복호화
 
         dispatch(
           signinUser({
-            userEmail: payload.user_email,
-            userNickname: payload.user_nickname,
-            userRoleCd: payload.user_role_cd,
+            userId: payload.userId,
+            userEmail: payload.userEmail,
+            userNickname: payload.userNickname,
+            userRoleCd: payload.userRoleCd,
           }),
         ); // store에 정보 저장.
         navigate('/', { replace: true }); // redirect to home
         break;
-      default: // 틀린 id 또는 password일 시에
+      case 'fail':
         setEmailMsgObj({ code: 112, arg1: '' });
         setPasswordMsgObj({ code: 112, arg1: '' });
         break;
+      case 'error':
+      default:
+        navigate('/error', {
+          replace: true,
+          state: { errorTitle: apiRes.message },
+        });
     }
   };
 
