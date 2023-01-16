@@ -36,7 +36,7 @@ function FindPw() {
       return;
     }
 
-    // response의 status기반의 결과처리
+    // response의 data.status기반의 결과처리
     switch (apiRes.data.status) {
       case 'success':
         setAlertMsgObj({ code: 120, arg1: '' });
