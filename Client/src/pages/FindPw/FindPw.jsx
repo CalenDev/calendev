@@ -1,14 +1,20 @@
+// import react
 import { useState } from 'react';
+// import module
 import { PropTypes } from 'prop-types';
 import styled from '@emotion/styled';
+import { useNavigate } from 'react-router-dom';
+// import MUI Component
+import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import Alert from '@mui/material/Alert';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import { useNavigate } from 'react-router-dom';
+// import api
 import { postFindPw } from '../../api';
+// import utils
 import { validateRegexEmail, commonMsgText } from '../../utils';
+// import components
 import { CommonPaper, CustomTextField } from '../../components';
 
 function FindPw() {
