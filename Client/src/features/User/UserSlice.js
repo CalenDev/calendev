@@ -4,6 +4,7 @@ import { PURGE } from 'redux-persist';
 
 const initialState = {
   isSignin: false,
+  userId: 0,
   userEmail: '',
   userNickname: '',
   userRoleCd: '',
@@ -14,14 +15,16 @@ export const UserSlice = createSlice({
   initialState,
   reducers: {
     signinUser: (state, actions) => {
-      const { userEmail, userNickname, userRoleCd } = actions.payload;
+      const { userId, userEmail, userNickname, userRoleCd } = actions.payload;
       state.isSignin = true;
+      state.userId = userId;
       state.userEmail = userEmail;
       state.userNickname = userNickname;
       state.userRoleCd = userRoleCd;
     },
     logoutUser: (state) => {
       state.isSignin = false;
+      state.userId = 0;
       state.userEmail = '';
       state.userNickname = '';
       state.userRoleCd = '';
