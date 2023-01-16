@@ -1,30 +1,28 @@
+// import react
 import { useState } from 'react';
-import AppBar from '@mui/material/AppBar';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import DateRangeIcon from '@mui/icons-material/DateRange';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import StarIcon from '@mui/icons-material/Star';
-import PeopleIcon from '@mui/icons-material/People';
-import EditIcon from '@mui/icons-material/Edit';
-import LockIcon from '@mui/icons-material/Lock';
+// import module
 import PropTypes from 'prop-types';
+import styled from '@emotion/styled';
+import { useNavigate } from 'react-router-dom';
+// import Mui Component
+import AppBar from '@mui/material/AppBar';
+import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import Tooltip from '@mui/material/Tooltip';
-import { useTheme } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import styled from '@emotion/styled';
 import Stack from '@mui/material/Stack';
+import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
+// import Mui Icon
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import DateRangeIcon from '@mui/icons-material/DateRange';
+import StarIcon from '@mui/icons-material/Star';
+import PeopleIcon from '@mui/icons-material/People';
+import EditIcon from '@mui/icons-material/Edit';
+import LockIcon from '@mui/icons-material/Lock';
+// import assets
 import Logo from '../../assets/images/CalendevLogo.png';
-
-/*
-추후 구현 사항
-1. 달력 버튼 클릭 시, 달력 페이지로 전환.
-2. 토큰 여부에 따른 다른 header 전시
-*/
 
 const mockUserInfo = {
   email: 'suhwan2004@gmail.com',
@@ -32,10 +30,10 @@ const mockUserInfo = {
 };
 
 function Header() {
-  const theme = useTheme();
   const navigate = useNavigate();
   const isLogin = true;
   const [anchorEl, setAnchorEl] = useState(null);
+
   const handleOpenUserMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -43,27 +41,35 @@ function Header() {
   const handleCloseUserMenu = () => {
     setAnchorEl(null);
   };
+  const handleClickToNavigate = (e, path) => {
+    e.preventDefault();
+    navigate(path);
+  };
 
   return (
     <StyledAppBar position="static">
-      <StyledLogoIconButton onClick={() => navigate('/')}>
+      <StyledLogoIconButton
+        onClick={() => navigate('/')}
+        className="headerLogoIconButton"
+      >
         <img src={Logo} alt="logPicture" />
         <StyledWhiteTypography variant="h6">CalenDev</StyledWhiteTypography>
       </StyledLogoIconButton>
       <StyledButtonWrapper>
-        <IconButton>
+        <IconButton className="headerIconButton">
           <DateRangeIcon sx={{ color: '#ffffff' }} fontSize="large" />
         </IconButton>
         {isLogin ? (
           <>
             <Tooltip title="프로필 보기">
-              <IconButton onClick={handleOpenUserMenu} size="large">
+              <IconButton
+                onClick={handleOpenUserMenu}
+                className="headerIconButton"
+              >
                 <AccountCircleIcon sx={{ color: '#ffffff' }} fontSize="large" />
               </IconButton>
             </Tooltip>
-            <Menu
-              sx={{ mt: theme.spacing(5) }}
-              id="menu-appbar"
+            <StyledMenu
               anchorEl={anchorEl}
               anchorOrigin={{
                 vertical: 'top',
@@ -78,37 +84,56 @@ function Header() {
               onClose={handleCloseUserMenu}
             >
               <StyledMenuItem>
-                <Stack>
-                  <Typography noWrap variant="body1">
+                <Stack className="headerProfileTitle">
+                  <Typography className="headerMainText" noWrap variant="body1">
                     {mockUserInfo.nickname}
                   </Typography>
-                  <Typography variant="body2" noWrap sx={{ opacity: '0.6' }}>
+                  <Typography
+                    noWrap
+                    variant="body2"
+                    sx={{
+                      opacity: '0.6',
+                    }}
+                  >
                     {mockUserInfo.email}
                   </Typography>
                 </Stack>
-                <StyledEditIcon />
+                <EditIcon />
               </StyledMenuItem>
               <Divider />
-              <StyledMenuListItemWrapper>
-                <MenuListItem icon={StarIcon} text="즐겨찾기" />
-                <MenuListItem icon={PeopleIcon} text="주최자" />
-                <MenuListItem icon={LockIcon} text="개인정보" />
-              </StyledMenuListItemWrapper>
+              <CustomMenuListItem
+                icon={StarIcon}
+                text="즐겨찾기"
+                path="/favorite"
+                handleClick={handleClickToNavigate}
+              />
+              <CustomMenuListItem
+                icon={PeopleIcon}
+                text="주최자"
+                path="/organizer"
+                handleClick={handleClickToNavigate}
+              />
+              <CustomMenuListItem
+                icon={LockIcon}
+                text="개인정보"
+                path="/profile"
+                handleClick={handleClickToNavigate}
+              />
               <Divider />
-              <MenuItem>
-                <Button color="inherit">로그아웃</Button>
-              </MenuItem>
-            </Menu>
+              <StyledMenuItem>
+                <Typography variant="button">로그아웃</Typography>
+              </StyledMenuItem>
+            </StyledMenu>
           </>
         ) : (
           <Button
-            onClick={() => {
-              navigate('/SignIn');
+            onClick={(e) => {
+              handleClickToNavigate(e, '/signin');
             }}
+            size="small"
+            sx={{ color: '#ffffff' }}
           >
-            <StyledWhiteTypography variant="h6">
-              로그인/회원가입
-            </StyledWhiteTypography>
+            로그인/회원가입
           </Button>
         )}
       </StyledButtonWrapper>
@@ -117,13 +142,6 @@ function Header() {
 }
 
 export default Header;
-
-const StyledMenuListItemWrapper = styled(Stack)`
-  .MenuListItemIcon {
-    opacity: 0.54;
-    margin-right: ${(props) => props.theme.spacing(6)};
-  }
-`;
 
 const StyledWhiteTypography = styled(Typography)`
   color: #fff;
@@ -134,12 +152,55 @@ const StyledButtonWrapper = styled(Stack)`
   justify-content: center;
   align-items: center;
   flex-direction: row;
+  gap: ${(props) => props.theme.spacing(4)};
+
+  .headerIconButton {
+    padding: 0px;
+    svg {
+      width: 40px;
+      height: 40px;
+    }
+  }
+
+  ${(props) => props.theme.breakpoints.down('mobile')} {
+    gap: ${(props) => props.theme.spacing(2)};
+    .headerIconButton {
+      svg {
+        width: 26px;
+        height: 26px;
+      }
+    }
+  }
 `;
 const StyledAppBar = styled(AppBar)`
   display: flex;
   justify-content: space-between;
   flex-direction: row;
+  padding: 0 ${(props) => props.theme.spacing(1.5)};
+
+  .headerLogoIconButton {
+    gap: ${(props) => props.theme.spacing(2)};
+    padding-left: 0;
+    padding-right: 0;
+    img {
+      width: 48px;
+      height: 48px;
+    }
+  }
+
+  ${(props) => props.theme.breakpoints.down('mobile')} {
+    padding: 0 ${(props) => props.theme.spacing(1)};
+
+    .headerLogoIconButton {
+      gap: ${(props) => props.theme.spacing(1)};
+      img {
+        width: 32px;
+        height: 32px;
+      }
+    }
+  }
 `;
+
 const StyledLogoIconButton = styled(IconButton)`
   display: flex;
   justify-content: center;
@@ -148,26 +209,83 @@ const StyledLogoIconButton = styled(IconButton)`
   gap: 4%;
 `;
 
+const StyledMenu = styled(Menu)`
+  margin-top: ${(props) => props.theme.spacing(5)};
+  .MuiPopover-paper {
+    width: 190px;
+  }
+  ${(props) => props.theme.breakpoints.down('mobile')} {
+    margin-top: ${(props) => props.theme.spacing(4)};
+    .MuiPopover-paper {
+      width: 120px;
+    }
+  }
+`;
+
 const StyledMenuItem = styled(MenuItem)`
-  gap: ${(props) => props.theme.spacing(2)};
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: auto;
+
+  .headerProfileTitle {
+    width: 120px;
+  }
+  svg {
+    opacity: 0.54;
+  }
+
+  ${(props) => props.theme.breakpoints.down('mobile')} {
+    .headerProfileTitle {
+      width: 60px;
+    }
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+    padding: ${(props) => props.theme.spacing(0.5, 1.5)};
+  }
 `;
 
-const StyledEditIcon = styled(EditIcon)`
-  margin: theme.spacing(1.5);
-  opacity: 0.54;
-`;
-
-function MenuListItem({ text, icon }) {
+function CustomMenuListItem(props) {
+  const { path, text, handleClick, icon } = props;
   const IconComponent = icon;
   return (
-    <MenuItem>
+    <StyledMenuListItem onClick={(e) => handleClick(e, path)}>
       <IconComponent className="MenuListItemIcon" />
       <Typography variant="body2">{text}</Typography>
-    </MenuItem>
+    </StyledMenuListItem>
   );
 }
 
-MenuListItem.propTypes = {
+const StyledMenuListItem = styled(MenuItem)`
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: auto;
+  gap: ${(props) => props.theme.spacing(4)};
+
+  .MenuListItemIcon {
+    opacity: 0.54;
+  }
+  svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  ${(props) => props.theme.breakpoints.down('mobile')} {
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+    gap: ${(props) => props.theme.spacing(1.5)};
+  }
+`;
+
+CustomMenuListItem.propTypes = {
   text: PropTypes.string.isRequired,
   icon: PropTypes.elementType.isRequired,
+  path: PropTypes.string.isRequired,
+  handleClick: PropTypes.func.isRequired,
 };

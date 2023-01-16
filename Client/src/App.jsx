@@ -14,7 +14,9 @@ import SignUp from './pages/SignUp/SignUp';
 import GlobalModal from './features/GlobalModal';
 
 function App() {
-  const theme = responsiveFontSizes(createTheme(themes));
+  let theme = createTheme(themes);
+  theme = responsiveFontSizes(theme);
+
   return (
     <ThemeProvider theme={theme}>
       <Header />
