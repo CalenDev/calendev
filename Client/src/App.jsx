@@ -1,5 +1,9 @@
 import { Route, Routes } from 'react-router-dom';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import {
+  createTheme,
+  responsiveFontSizes,
+  ThemeProvider,
+} from '@mui/material/styles';
 import Home from './pages/Home/Home';
 import { Header } from './components';
 import SignIn from './pages/SignIn/SignIn';
@@ -8,7 +12,8 @@ import FindPw from './pages/FindPw/FindPw';
 import themes from './styles';
 
 function App() {
-  const theme = createTheme(themes);
+  let theme = createTheme(themes);
+  theme = responsiveFontSizes(theme);
   return (
     <ThemeProvider theme={theme}>
       <Header />
