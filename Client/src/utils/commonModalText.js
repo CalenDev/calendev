@@ -14,7 +14,7 @@ function commonModalText(code) {
     },
   };
 
-  return textScript[code] === undefined ? {} : textScript[code];
+  return textScript[code] === undefined ? textScript[0] : textScript[code];
 }
 
 export default commonModalText;
