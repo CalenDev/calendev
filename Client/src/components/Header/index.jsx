@@ -43,6 +43,7 @@ function Header() {
   };
 
   const handleClickLogout = async () => {
+    setAnchorEl(null);
     await persistor.purge();
     dispatch(logoutUser());
   };
@@ -109,7 +110,7 @@ function Header() {
           <Button
             onClick={() => {
               setAnchorEl(null);
-              navigate('/SignIn');
+              navigate('/signIn');
             }}
           >
             <StyledWhiteTypography variant="h6">
