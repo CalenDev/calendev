@@ -53,10 +53,10 @@ function Error() {
           </Typography>
           <Stack>
             <Typography variant="subtitle1">
-              관리팀 P.N : 010-2067-9786
+              관리팀 P.N : 010-1111-1111
             </Typography>
             <Typography variant="subtitle1">
-              관리팀 Email : suhwan2004@gmail.com
+              관리팀 Email : admin@gmail.com
             </Typography>
           </Stack>
         </Stack>
