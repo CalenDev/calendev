@@ -8,7 +8,7 @@ const postUserSignIn = async (userEmail, userPassword) => {
     });
     return res;
   } catch (e) {
-    return e.response;
+    return e;
   }
 };
 
@@ -18,7 +18,7 @@ const postUserLogout = async () => {
     const response = await instance.post('/api/v1/auth/logout');
     return response;
   } catch (e) {
-    return e.response;
+    return e;
   }
 };
 */
