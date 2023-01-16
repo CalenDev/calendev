@@ -40,7 +40,7 @@ export default {
     }
 
     return res.status(400).json({
-      ok: false,
+      status: 'fail',
       message: 'Bad Request',
       errorCode: 'E400AB',
     });

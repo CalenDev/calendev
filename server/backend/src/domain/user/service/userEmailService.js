@@ -26,9 +26,7 @@ export default {
       users[0].userEmail,
       'EX',
       60 * 3,
-      () => {
-        console.log('데이터 저장 완료 3분후 삭제');
-      },
+      () => {},
     );
 
     // 4) 유저에게 이메일 전송.

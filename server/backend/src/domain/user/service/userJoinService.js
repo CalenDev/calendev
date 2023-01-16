@@ -26,7 +26,7 @@ export default {
     );
 
     const duplicateValidationRes = new UserJoinDto.DuplicateValidationRes();
-    duplicateValidationRes.isUserUnique = targetUser.length !== 0;
+    duplicateValidationRes.isUserUnique = targetUser.length === 0;
     return duplicateValidationRes;
   },
   create: async (signupReq) => {
