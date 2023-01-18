@@ -1,6 +1,7 @@
 import mongoose, { mongo, trusted } from 'mongoose';
-import instance from '../../../global/config/knexConfig.js';
 import AppError from '../../../global/utils/appError.js';
+import catchAsync from '../../../global/utils/catchAsync.js';
+import mongoErrorHandler from './mongoErrorHandler.js';
 
 // 이친구들은 이제 스키마를 또 만든거임. 그냥 obj로 막두기 그래서
 const Image = new mongoose.Schema({
@@ -84,17 +85,11 @@ const PostModel = Model('Posts', Post);
 
 const save = async (postDto) => {
   const savePost = PostModel(postDto);
-  const result = savePost
-    .save()
-    .then()
-    .catch((err) => {
-      if (err instanceof mongoose.Error.ValidationError) {
-        throw new AppError(err.message, 400, 'E400AA');
-      }
-      const error = new AppError(err.message, 500, 'E500A');
-      throw error;
-    });
-  return result;
+  try {
+    return await savePost.save(postDto);
+  } catch (error) {
+    mongoErrorHandler(error);
+  }
 };
 const update = async (targetId, postDto) => {
   const result = PostModel.findOneAndUpdate({ _id: targetId }, postDto, {
@@ -103,8 +98,7 @@ const update = async (targetId, postDto) => {
   })
     .then()
     .catch((err) => {
-      const error = new AppError(err.message, 500, 'E500A');
-      throw error;
+      mongoErrorHandler(err);
     });
   return result;
 };
@@ -118,8 +112,7 @@ const removePost = async (targetId) => {
   await PostModel.deleteOne({ _id: targetId })
     .then()
     .catch((error) => {
-      const appError = new AppError(error.message, 500, 'E500D');
-      throw appError;
+      mongoErrorHandler();
     });
 };
 
@@ -133,4 +126,10 @@ const findInTimeRange = async (startDttm, endDttm) => {
   return res;
 };
 
-export default { save, find, update, findInTimeRange, removePost };
+export default {
+  save,
+  find,
+  update,
+  findInTimeRange,
+  removePost,
+};

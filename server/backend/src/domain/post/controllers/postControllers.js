@@ -15,8 +15,7 @@ export default {
     objectMapper.map(req.body, postReq);
 
     // 2. 저장을 위한 try catch > 추후에 에러 정리하면 에러핸들러에서 한번에..\
-    await postService.save(postReq);
-
+    const saveResult = await postService.save(postReq);
     res.status(200).json({
       status: 'success',
     });

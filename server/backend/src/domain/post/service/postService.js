@@ -3,10 +3,12 @@ import dttmBuilder from '../../user/utils/dttmBuilder.js';
 import AppError from '../../../global/utils/appError.js';
 
 export default {
-  save: (postReq) => {
+  save: async (postReq) => {
     // eslint-disable-next-line no-param-reassign
     postReq.createdAtDttm = dttmBuilder.buildCurrentKSTDttm();
-    return Post.save(postReq);
+
+    const res = Post.save(postReq);
+    return res;
   },
   update: async (postUpdateReq) => {
     // 1. validation 후 수정
