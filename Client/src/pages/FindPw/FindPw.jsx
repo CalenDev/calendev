@@ -15,7 +15,7 @@ import { postFindPw } from '../../api';
 // import utils
 import { validateRegexEmail, commonMsgText } from '../../utils';
 // import components
-import { CommonPaper, CustomTextField } from '../../components';
+import { CommonPaper, CommonTextField } from '../../components';
 
 function FindPw() {
   const navigate = useNavigate();
@@ -68,7 +68,7 @@ function FindPw() {
       <StyledTitle variant="h5">비밀번호 찾기</StyledTitle>
       <StyledStack spacing={1}>
         <Stack component="form" onSubmit={handleSubmit} spacing={2}>
-          <CustomTextField
+          <CommonTextField
             id="email"
             placeholder="이메일"
             name="email"

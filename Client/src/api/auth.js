@@ -16,8 +16,7 @@ const getCheckResetPasswordToken = async (token) => {
   try {
     const response = await instance.get(`/api/v1/auth/page/${token}`);
     return response;
-  }
-  catch(e){
+  } catch (e) {
     return e;
   }
 };
@@ -44,9 +43,12 @@ const putResetPw = async (token, userPassword) => {
 
 const postFindPw = async (userEmail) => {
   try {
-    const response = await instance.post(`/api/v1/user/signinOptions/forgotPassword`, {
-      userEmail,
-    });
+    const response = await instance.post(
+      '/api/v1/user/signinOptions/forgotPassword',
+      {
+        userEmail,
+      },
+    );
 
     return response;
   } catch (e) {
@@ -54,4 +56,10 @@ const postFindPw = async (userEmail) => {
   }
 };
 
-export { postUserSignIn, putResetPw, postUserLogout, postFindPw, getCheckResetPasswordToken };
+export {
+  postUserSignIn,
+  putResetPw,
+  postUserLogout,
+  postFindPw,
+  getCheckResetPasswordToken,
+};

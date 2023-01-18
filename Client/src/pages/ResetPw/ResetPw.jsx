@@ -22,7 +22,7 @@ import { putResetPw, getCheckResetPasswordToken } from '../../api';
 // import utils
 import { validateRegexPassword, urlQueryParser } from '../../utils';
 // import components
-import { CommonPaper, CustomTextField } from '../../components';
+import { CommonPaper, CommonTextField } from '../../components';
 
 function ResetPw() {
   const navigate = useNavigate();
@@ -162,7 +162,7 @@ function ResetPw() {
       </StyledTitle>
       <Stack width="100%" component="form" onSubmit={handleSubmit} spacing={2}>
         <Stack spacing={1}>
-          <CustomTextField
+          <CommonTextField
             placeholder="영대소문자, 숫자, 특수문자 포함 8~20자"
             name="newPassword"
             autoComplete="new_password"
@@ -193,7 +193,7 @@ function ResetPw() {
             helpermsgobj={newPwMsgObj}
           />
 
-          <CustomTextField
+          <CommonTextField
             placeholder="비밀번호를 확인해주세요."
             name="checkingPassword"
             autoComplete="new_password"

@@ -7,9 +7,7 @@ import axios from 'axios';
       E401AB: 'Not Authorized: AccessToken is expired',
       E401AC: 'Not Authorized: RefreshToken is expired',
       E404AC: 'Not Found: RefreshToken is invalid or does not exist',
-    */ 
-    
-
+    */
 
 const instance = axios.create({
   baseURL: process.env.REACT_APP_MAIN_URL,
@@ -33,22 +31,21 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const { config, response } = error;
+    const { response } = error;
 
     // 만약, 토큰 관련 에러가 아니라면 단순 에러이기 때문에 바로, 에러 처리를 해주도록 함.
     if (!response) {
       return Promise.reject(error);
     }
-    
-    try{
+
+    try {
       const apiRes = await instance.get('/tokenRefresh');
       sessionStorage.setItem('accessToken', apiRes.data.accessToken);
       return Promise.resolve(apiRes);
-    }catch(e){
+    } catch (e) {
       sessionStorage.removeItem('accessToken');
       return Promise.reject(e);
     }
-    return Promise.reject(error);
   },
 );
 

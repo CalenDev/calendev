@@ -22,16 +22,15 @@ import PeopleIcon from '@mui/icons-material/People';
 import EditIcon from '@mui/icons-material/Edit';
 import LockIcon from '@mui/icons-material/Lock';
 // import assets
+import { useSelector, useDispatch } from 'react-redux';
 import Logo from '../../assets/images/CalendevLogo.png';
 // import redux
-import { useSelector, useDispatch } from 'react-redux';
 import { logoutUser, selectUser } from '../../features/User/UserSlice';
 import { persistor } from '../../store';
 
 function Header() {
   const { isSignin, userEmail, userNickname } = useSelector(selectUser);
   const dispatch = useDispatch();
-  const theme = useTheme();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
 
