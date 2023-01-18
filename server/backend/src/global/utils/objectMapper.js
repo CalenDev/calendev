@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 const map = (req, userJoinReq) => {
   Object.getOwnPropertyNames(userJoinReq).forEach((cur, i) => {
-    if (req[cur]) userJoinReq[cur] = req[cur];
+    if (req[cur] !== undefined) userJoinReq[cur] = req[cur];
   });
 };
 
