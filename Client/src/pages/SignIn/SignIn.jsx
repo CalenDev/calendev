@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-no-duplicate-props */
+
 // import react
 import { useState } from 'react';
 // import module
@@ -15,7 +17,7 @@ import Typography from '@mui/material/Typography';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 // import api
-import postUserSignIn from '../../api';
+import { postUserSignIn } from '../../api';
 // import utils
 import { validateRegexEmail, validateRegexPassword } from '../../utils';
 // import components
@@ -106,6 +108,9 @@ function SignIn() {
             autoComplete="email"
             placeholder="이메일"
             helpermsgobj={emailMsgObj}
+            inputProps={{
+              maxLength: 100,
+            }}
           />
           <CustomTextField
             name="password"
@@ -113,6 +118,9 @@ function SignIn() {
             placeholder="비밀번호"
             helpermsgobj={passwordMsgObj}
             type={showConfirmPassword ? 'text' : 'password'}
+            inputProps={{
+              maxLength: 20,
+            }}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">

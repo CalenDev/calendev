@@ -12,7 +12,16 @@ const postUserSignIn = async (userEmail, userPassword) => {
   }
 };
 
-/*
+const getCheckResetPasswordToken = async (token) => {
+  try {
+    const response = await instance.get(`/api/v1/auth/page/${token}`);
+    return response;
+  }
+  catch(e){
+    return e;
+  }
+};
+
 const postUserLogout = async () => {
   try {
     const response = await instance.post('/api/v1/auth/logout');
@@ -21,5 +30,28 @@ const postUserLogout = async () => {
     return e;
   }
 };
-*/
-export default postUserSignIn;
+
+const putResetPw = async (token, userPassword) => {
+  try {
+    const response = await instance.patch(`/api/v1/auth/password/${token}`, {
+      userPassword,
+    });
+    return response;
+  } catch (e) {
+    return e;
+  }
+};
+
+const postFindPw = async (userEmail) => {
+  try {
+    const response = await instance.post(`/api/v1/user/signinOptions/forgotPassword`, {
+      userEmail,
+    });
+
+    return response;
+  } catch (e) {
+    return e;
+  }
+};
+
+export { postUserSignIn, putResetPw, postUserLogout, postFindPw, getCheckResetPasswordToken };
