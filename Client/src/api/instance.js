@@ -2,10 +2,6 @@
 /* eslint-disable no-use-before-define */
 
 import axios from 'axios';
-
-let isTokenRefreshing = false;
-let refreshSubscribers = [];
-const tokenErrorCodeArr = ['E400AD', 'E401AB', 'E401AC', 'E404AC'];
 /*
       E400AD: 'Bad Request: JsonWebToken is invaid',
       E401AB: 'Not Authorized: AccessToken is expired',
@@ -40,7 +36,7 @@ instance.interceptors.response.use(
     const { config, response } = error;
 
     // 만약, 토큰 관련 에러가 아니라면 단순 에러이기 때문에 바로, 에러 처리를 해주도록 함.
-    if (!response || !tokenErrorCodeArr.includes(response.data.errorCode)) {
+    if (!response) {
       return Promise.reject(error);
     }
     
