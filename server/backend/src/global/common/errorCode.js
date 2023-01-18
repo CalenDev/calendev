@@ -9,7 +9,7 @@ const ErrorCode = {
   E400AB: 'Bad Request: AccessToken and RefreshToken does not exist in header',
 
   E400AC: 'Bad Request: Please provide valid Email',
-  E400AD: 'Bad Request: JsonWebToken is invaid',
+  E400AD: 'Bad Request: JsonWebToken is invalid',
   E400AE: 'Bad Request: ResetToken is invalid',
   E400AF: 'Bad Request: Duplicate User Exists',
   E400AG: 'Bad Request: Input data is invalid',
