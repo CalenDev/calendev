@@ -3,10 +3,10 @@
 
 import axios from 'axios';
 /*
-      E400AD: 'Bad Request: JsonWebToken is invaid',
-      E401AB: 'Not Authorized: AccessToken is expired',
-      E401AC: 'Not Authorized: RefreshToken is expired',
-      E404AC: 'Not Found: RefreshToken is invalid or does not exist',
+      E400AD: 'Bad Request: JsonWebToken is invaid', // 로그아웃
+      E401AB: 'Not Authorized: AccessToken is expired', // 이건 엑세스 토큰 다시받음
+      E401AC: 'Not Authorized: RefreshToken is expired', // 로그아웃을 시켜버릴거임
+      E404AC: 'Not Found: RefreshToken is invalid or does not exist', // 로그아웃을 시켜버릴거임
     */
 
 const instance = axios.create({
@@ -34,7 +34,7 @@ instance.interceptors.response.use(
     const { response } = error;
 
     // 만약, 토큰 관련 에러가 아니라면 단순 에러이기 때문에 바로, 에러 처리를 해주도록 함.
-    if (!response) {
+    if (!response || !response.data.errorCode === 'E401AB') {
       return Promise.reject(error);
     }
 
