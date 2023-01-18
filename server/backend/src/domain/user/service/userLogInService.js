@@ -43,7 +43,7 @@ const authenticate = async (user) => {
   const refreshToken = TokenProvider.generateRefreshToken();
 
   // 3) 리프레시 토큰은 레디스에 저장.
-  await redis.redisClient.set(user.userEmail, refreshToken);
+  await redis.redisClient.set(user.userId, refreshToken);
 
   const userLoginRes = new UserLoginDto.UserLoginRes();
   userLoginRes.setAccessToken = accessToken;

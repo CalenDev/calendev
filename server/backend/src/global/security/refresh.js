@@ -46,7 +46,7 @@ class TokenValidator {
     try {
       const isRefreshTokenAlive = await tokenProvider.verifyRefreshToken(
         this.refreshToken,
-        this.decodedUserInfo.userEmail,
+        this.decodedUserInfo.userId,
       );
     } catch (error) {
       throw new AppError('Not Authorized', 401, 'E401AC');

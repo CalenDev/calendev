@@ -21,7 +21,6 @@ export default {
   generateAccessToken: (user) => {
     const payload = {
       userId: user.userId,
-      userEmail: user.userEmail,
       userNickname: user.userNickname,
       userRoleCd: user.userRoleCd,
     };
@@ -51,6 +50,7 @@ export default {
     const res = jwt.verify(token, ACCESS_TOKEN_SECRET_KEY);
     return {
       ok: true,
+      userId: res.userId,
     };
   },
 
