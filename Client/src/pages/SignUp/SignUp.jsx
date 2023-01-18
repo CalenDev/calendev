@@ -12,7 +12,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import CustomPaper from '../../components/CustomPaper';
+import CommonPaper from '../../components/CommonPaper';
 import commonMsgText from './commonMsgText';
 
 const url = 'https://b0055c23-9249-422f-a317-960947120571.mock.pstmn.io';
@@ -359,7 +359,7 @@ export default function SignUp() {
   );
 }
 
-const StyledPaper = styled(CustomPaper)`
+const StyledPaper = styled(CommonPaper)`
   & > * {
     :not(:last-child){
       margin-bottom: ${(props) => props.theme.spacing(4)};
