@@ -23,14 +23,6 @@ import { validateRegexEmail, validateRegexPassword } from '../../utils';
 // import components
 import { CommonTextField, CommonPaper } from '../../components';
 import { signinUser } from '../../features/User/UserSlice';
-<<<<<<< HEAD
-import { CustomTextField, CommonPaper } from '../../components';
-import { signinUser } from '../../features/User/UserSlice';
-=======
-import { CommonTextField, CommonPaper } from '../../components';
->>>>>>> ab7dafd6fa373123c4b03dfa34257d1a814f2c3c
-
-
 
 function SignIn() {
   const navigate = useNavigate();
