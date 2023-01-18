@@ -19,7 +19,7 @@ import { postUserSignIn } from '../../api';
 // import utils
 import { validateRegexEmail, validateRegexPassword } from '../../utils';
 // import components
-import { CustomTextField, CommonPaper } from '../../components';
+import { CommonTextField, CommonPaper } from '../../components';
 
 function SignIn() {
   const navigate = useNavigate();
@@ -79,7 +79,7 @@ function SignIn() {
       </StyledTitle>
       <Stack component="form" onSubmit={handleSubmit} spacing={2}>
         <Stack spacing={1}>
-          <CustomTextField
+          <CommonTextField
             name="email"
             autoComplete="email"
             placeholder="이메일"
@@ -88,7 +88,7 @@ function SignIn() {
               maxLength: 100,
             }}
           />
-          <CustomTextField
+          <CommonTextField
             name="password"
             autoComplete="current-password"
             placeholder="비밀번호"
