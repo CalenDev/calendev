@@ -36,7 +36,12 @@ export default {
     // 1. 헤더에 JWT가 들어있는지 확인후 넘겨준다. 없다면 에러를 리턴한다.
     const userRefreshToken = req.cookies.refreshToken;
     if (req.headers.authorization && userRefreshToken) {
-      const result = await refreshService.refreshJWT(req, res, next);
+      const refreshProcessResult = await refreshService.refreshJWT(
+        req,
+        res,
+        next,
+      );
+      return refreshProcessResult;
     }
 
     return res.status(400).json({
