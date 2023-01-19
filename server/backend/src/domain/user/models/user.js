@@ -15,6 +15,7 @@ export default {
   findOne: async (value, columnName) => {
     const user = await knex('user')
       .select(
+        'userId',
         'userEmail',
         'userNickname',
         'userPassword',
@@ -33,6 +34,7 @@ export default {
   findTargetUserByEmail: async (userEmail) => {
     const targetUser = await knex('user')
       .select(
+        'userId',
         'userEmail',
         'userNickname',
         'userPassword',

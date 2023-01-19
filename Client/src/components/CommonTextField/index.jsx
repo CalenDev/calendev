@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import TextField from '@mui/material/TextField';
 import commonMsgText from '../../utils/commonMsgText';
 
-export default function CustomTextField(props) {
+export default function CommonTextField(props) {
   const { helpermsgobj } = props;
   const textHelperMsgObj =
     helpermsgobj === undefined ? { code: 0 } : helpermsgobj;
@@ -20,14 +20,14 @@ export default function CustomTextField(props) {
   );
 }
 
-CustomTextField.propTypes = {
+CommonTextField.propTypes = {
   helpermsgobj: PropTypes.shape({
     code: PropTypes.number.isRequired,
     arg1: PropTypes.string,
   }),
 };
 
-CustomTextField.defaultProps = {
+CommonTextField.defaultProps = {
   helpermsgobj: { code: 0 },
 };
 
