@@ -49,7 +49,9 @@ function Header() {
   const handleClickLogout = async () => {
     setAnchorEl(null);
     await persistor.purge();
+    sessionStorage.removeItem('accessToken');
     dispatch(logoutUser());
+    navigate('/signin', { replace: true });
   };
 
   return (
@@ -126,11 +128,7 @@ function Header() {
                 handleClick={handleClickToNavigate}
               />
               <Divider />
-              <MenuItem>
-                <Button color="inherit" onClick={handleClickLogout}>
-                  로그아웃
-                </Button>
-              </MenuItem>
+              <MenuItem onClick={handleClickLogout}>로그아웃</MenuItem>
             </StyledMenu>
           </>
         ) : (
