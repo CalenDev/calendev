@@ -18,7 +18,7 @@ instance.interceptors.request.use(
     const accessToken = sessionStorage.getItem('accessToken');
     // accessToken이 존재한다면, header에 저장.
     if (config.headers && accessToken) {
-      config.headers.Authorization = `Bearer ${accessToken}`;
+      config.headers.Authorization = `Bearer: ${accessToken}`;
     }
     return config;
   },
@@ -36,24 +36,26 @@ instance.interceptors.response.use(
      - response가 없는 경우 : 아예, 서버로 가지도 못한 경우
      - data가 없는 경우, errorCode가 없는 경우 : 서버에서 받게된 예기치 못한 response
     */
+
     if (!response || !response.data || !response.data.errorCode) {
-      return Promise.reject(error); // 에러를 그대로 반환
+      return Promise.reject(error); // 에러 페이지로 갈 거임. 렌더링은 이럴 때만 e.response.data.message로
     }
 
     const { errorCode } = response.data;
     switch (errorCode) {
       case 'E400AA':
-      case 'E400AD':
       case 'E401AB':
         try {
           const apiRes = await instance.get('/refresh'); // 엑세스 토큰 갱신
           sessionStorage.setItem('accessToken', apiRes.data.accessToken);
           return instance(config); // 기존 실패했던 request를 다시 보냄.
         } catch (e) {
-          sessionStorage.removeItem('accessToken'); //
+          // 실패했을때 로그아웃 시키고 로그인페이지로...
+          sessionStorage.removeItem('accessToken');
           return Promise.reject(e);
         }
       case 'E400AB':
+      case 'E400AD':
       case 'E401AC':
       case 'E404AC':
         dispatch(logoutUser()); // redux 로그인 상태 초기화
