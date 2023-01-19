@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import redis from '../config/redisCofig.js';
+import AppError from '../utils/appError.js';
 
 dotenv.config({ path: './.env' });
 
@@ -55,20 +56,35 @@ export default {
   },
 
   /**
-   *
+   * 리프레시 토큰을 검증하는 메소드로 토큰에 문제가 있거나 레디스에 문제가 있을 시 에러를 던진다.
    * @param {refreshToken} token
-   * @param {userEmail} userInfo
-   * @returns { obj }Obj :  refresh 토큰이 일치여부와 토큰의 유효성을 검사하고 결과내용을 담은 객체를 반환
+   * @param {userId} userInfo
+   * @returns {} 아무것도 반환하지 않는다. 토큰의 validation을 진행하고 문제가 있을 시에 에러를 던지기만 한다.
    */
   verifyRefreshToken: async (userRefreshToken, userInfo) => {
+    // 1) 유저 정보를 기반으로 레디스에서 original refresh 토큰을 가져온다.
     const { redisCli } = redis;
-    const originalRefreshToken = await redisCli.get(userInfo);
-    if (userRefreshToken === originalRefreshToken) {
-      jwt.verify(userRefreshToken, REFRESH_TOKEN_SECRET_KEY);
-      return true;
+    const originalRefreshToken = await redisCli.get(`${userInfo}`);
+
+    // 2-1) 레디스에 리프레시 토큰이 존재하지 않는다. >> 레디스에 있던 토큰이 만료됨.
+    if (originalRefreshToken === null) {
+      throw new AppError('Not Authorized', 401, 'E401AC');
     }
 
-    return false;
+    // 2-2) 레디스에 리프레시 토큰이 존재하고 유저가 전달한 토큰과 일치한다.
+    if (userRefreshToken === originalRefreshToken) {
+      // 레디스에서 꺼낼 때는 만료안됬는데 verify할 때 토큰 생존시간이 끝날 수 있음.
+      const verifyRes = jwt.verify(
+        userRefreshToken,
+        REFRESH_TOKEN_SECRET_KEY,
+        (err) => {
+          throw new AppError(err.message, 401, 'E401AC');
+        },
+      );
+    } else {
+      // 2-3) 레디스에 리프레시 토큰이 존재하고, 유저가 전달한 토큰과 불일치한다.
+      throw new AppError('Not Authorized', 404, 'E404AC');
+    }
   },
   /**
    * 헤더에 들어있는 토큰을 코드내에서 사용하는 토큰으로 정제
