@@ -57,10 +57,7 @@ function SignIn() {
       setPasswordMsgObj({ code: 113, arg1: '' });
     }
 
-    const apiRes = await postUserSignIn({
-      userEmail: curEmail,
-      userPassword: curPassword,
-    });
+    const apiRes = await postUserSignIn(curEmail, curPassword);
     if (!apiRes.data || !apiRes.data.status) {
       navigate('/error', {
         replace: true,
@@ -70,8 +67,8 @@ function SignIn() {
 
     switch (apiRes.data.status) {
       case 'success':
-        sessionStorage.setItem('accessToken', apiRes.accessToken); // token을 sessionStorage에 저장.
-        payload = jwtDecode(apiRes.accessToken); // token 복호화
+        sessionStorage.setItem('accessToken', apiRes.data.data.accessToken); // token을 sessionStorage에 저장.
+        payload = jwtDecode(apiRes.data.data.accessToken); // token 복호화
 
         dispatch(
           signinUser({
@@ -93,6 +90,7 @@ function SignIn() {
           replace: true,
           state: { errorTitle: apiRes.message },
         });
+        break;
     }
   };
 
