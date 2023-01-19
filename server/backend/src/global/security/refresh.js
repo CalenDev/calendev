@@ -50,7 +50,7 @@ class TokenValidator {
         this.decodedUserInfo.userId,
       );
     } catch (error) {
-      if (error.errorCode !== 'E401AC') {
+      if (error.errorCode !== 'E401AC' && error.errorCode !== 'E404AC') {
         throw new AppError('Internal Server Error', 500, 'E500AE');
       } else {
         // TokenProvider에서 처리한 에러는 그대로 넘겨준다.
