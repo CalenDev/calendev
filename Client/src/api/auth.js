@@ -2,7 +2,7 @@ import instance from './instance';
 
 const postUserSignIn = async (userEmail, userPassword) => {
   try {
-    const res = await instance.post('/api/v1/auth/signin', {
+    const res = await instance.post('/api/v1/auth/login', {
       userEmail,
       userPassword,
     });
