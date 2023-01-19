@@ -54,7 +54,7 @@ export default {
     const payload = TokenProvider.getJwtPayLoadData(accessToken);
 
     // 2) 유저정보가 들어있지 않거나 토큰이 잘못된 경우 에러리턴
-    if (payload === null || !payload.userEmail) {
+    if (payload === null || !payload.userId) {
       return next(new AppError('JsonWebToken is invalid', 400, 'E400AD'));
     }
     await userJoinService.remove(payload);

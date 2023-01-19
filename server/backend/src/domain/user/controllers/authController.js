@@ -26,17 +26,22 @@ export default {
       const token = tokenProvider.resolveToken(req);
       const verificationResult = tokenProvider.verifyAccessToken(token);
 
-      req.body.userEmail = verificationResult.userEmail;
+      req.body.userId = verificationResult.userId;
       return next();
     } catch (error) {
-      return next(new AppError(error.message, 403, 'E403AA'));
+      return next(new AppError(error.message, 401, 'E401AB'));
     }
   },
   refreshJWT: catchAsync(async (req, res, next) => {
     // 1. 헤더에 JWT가 들어있는지 확인후 넘겨준다. 없다면 에러를 리턴한다.
     const userRefreshToken = req.cookies.refreshToken;
     if (req.headers.authorization && userRefreshToken) {
-      const result = await refreshService.refreshJWT(req, res, next);
+      const refreshProcessResult = await refreshService.refreshJWT(
+        req,
+        res,
+        next,
+      );
+      return refreshProcessResult;
     }
 
     return res.status(400).json({
@@ -115,7 +120,7 @@ export default {
     // 2) 레디스를 통해, 토큰에 대해 일치하는 유저가 있는지 확인해본다.
     const authorizedUser = await redisCli.get(passwordResetToken);
     if (authorizedUser.length === 0) {
-      next(new AppError('JwtTokenError', 400, 'E400AE'));
+      next(new AppError('Password-Reset Token Error', 400, 'E400AE'));
     }
 
     // 3) DTO로 넘겨준다.
