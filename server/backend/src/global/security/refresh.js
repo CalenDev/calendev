@@ -21,9 +21,10 @@ class TokenValidator {
     try {
       isAccessTokenExpired = tokenProvider.verifyAccessToken(this.accessToken);
     } catch (error) {
-      //ExpiredTokenError은 따로 operational error로 간주하지 않는다.
+      // ExpiredTokenError은 따로 operational error로 간주하지 않는다.
+      // 토큰 만료가 아닌 토큰에러는 invalid 토큰에러를 반환한다.
       if (error.message !== 'jwt expired') {
-        throw new AppError(err.message, 401, 'E401AB');
+        throw new AppError(err.message, 400, 'E400AD');
       }
     }
 
@@ -44,12 +45,17 @@ class TokenValidator {
   // 리프레쉬 토큰의 검증을 위한 필터
   refreshTokenFilter = async () => {
     try {
-      const isRefreshTokenAlive = await tokenProvider.verifyRefreshToken(
+      await tokenProvider.verifyRefreshToken(
         this.refreshToken,
         this.decodedUserInfo.userId,
       );
     } catch (error) {
-      throw new AppError('Not Authorized', 401, 'E401AC');
+      if (error.errorCode !== 'E401AC') {
+        throw new AppError('Internal Server Error', 500, 'E500AE');
+      } else {
+        // TokenProvider에서 처리한 에러는 그대로 넘겨준다.
+        throw error;
+      }
     }
   };
 }
