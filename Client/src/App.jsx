@@ -13,6 +13,7 @@ import ResetPw from './pages/ResetPw/ResetPw';
 import SignIn from './pages/SignIn/SignIn';
 import SignUp from './pages/SignUp/SignUp';
 import GlobalModal from './features/GlobalModal';
+import NotifyEmail from './pages/NotifyEmail/NotifyEmail';
 
 function App() {
   let theme = createTheme(themes);
@@ -29,6 +30,7 @@ function App() {
         <Route path="/resetpw" exact element={<ResetPw />} />
         <Route path="/error" exact element={<Error />} />
         <Route path="/findpw" exact element={<FindPw />} />
+        <Route path="/notifyemail" exact element={<NotifyEmail />} />
       </Routes>
     </ThemeProvider>
   );
