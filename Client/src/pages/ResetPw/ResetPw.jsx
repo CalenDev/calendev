@@ -125,11 +125,12 @@ function ResetPw() {
     }
 
     const apiRes = await putResetPw(queryStringObj.token, newPassword);
-    if (!apiRes.data || !apiRes.data.status) {
+    if (!apiRes) {
       navigate('/error', {
         replace: true,
-        state: { errorTitle: apiRes.message },
+        state: { errorTitle: '네트워크 에러가 발생했습니다!' },
       });
+      return;
     }
 
     switch (apiRes.data.status) {
@@ -143,14 +144,11 @@ function ResetPw() {
         handleOpenModal(2);
         break;
       case 'error':
-        navigate('/', {
-          replace: true,
-          state: {
-            errorTitle: 'Calendev Server Error',
-          },
-        });
-        break;
       default:
+        navigate('/error', {
+          replace: true,
+          state: { errorTitle: '에러가 발생했습니다! 관리자에게 문의해주세요' },
+        });
         break;
     }
   };
