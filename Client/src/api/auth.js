@@ -2,13 +2,13 @@ import instance from './instance';
 
 const postUserSignIn = async (userEmail, userPassword) => {
   try {
-    const res = await instance.post('/api/v1/auth/login', {
+    const response = await instance.post('/api/v1/auth/login', {
       userEmail,
       userPassword,
     });
-    return res;
+    return response;
   } catch (e) {
-    return e;
+    return e.response;
   }
 };
 
@@ -17,7 +17,7 @@ const getCheckResetPasswordToken = async (token) => {
     const response = await instance.get(`/api/v1/auth/page/${token}`);
     return response;
   } catch (e) {
-    return e;
+    return e.response;
   }
 };
 
@@ -26,7 +26,7 @@ const postUserLogout = async () => {
     const response = await instance.post('/api/v1/auth/logout');
     return response;
   } catch (e) {
-    return e;
+    return e.response;
   }
 };
 
@@ -37,7 +37,7 @@ const putResetPw = async (token, userPassword) => {
     });
     return response;
   } catch (e) {
-    return e;
+    return e.response;
   }
 };
 
@@ -52,7 +52,7 @@ const postFindPw = async (userEmail) => {
 
     return response;
   } catch (e) {
-    return e;
+    return e.response;
   }
 };
 
