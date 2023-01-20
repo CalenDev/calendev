@@ -29,7 +29,7 @@ import { logoutUser, selectUser } from '../../features/User/UserSlice';
 import { persistor } from '../../store';
 
 function Header() {
-  const { isSignin, userEmail, userNickname } = useSelector(selectUser);
+  const { isSignin, userNickname } = useSelector(selectUser);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -95,15 +95,6 @@ function Header() {
                 <Stack className="headerProfileTitle">
                   <Typography className="headerMainText" noWrap variant="body1">
                     {userNickname}
-                  </Typography>
-                  <Typography
-                    noWrap
-                    variant="body2"
-                    sx={{
-                      opacity: '0.6',
-                    }}
-                  >
-                    {userEmail}
                   </Typography>
                 </Stack>
                 <EditIcon />
