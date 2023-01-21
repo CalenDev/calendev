@@ -8,11 +8,11 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Stack from '@mui/material/Stack';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import CommonPaper from '../../components/CommonPaper';
+import CommonTextField from '../../components/CommonTextField';
 import commonMsgText from '../../utils/commonMsgText';
 import { postUserDuplicate, postUserSignUp } from '../../api';
 
@@ -376,30 +376,6 @@ const StyledPaper = styled(CommonPaper)`
     }
   }
 `;
-
-function CommonTextField(props) {
-  const { helpermsgobj } = props;
-  let textHelperMsgObj = { code: 0 };
-  if (helpermsgobj !== undefined) {
-    textHelperMsgObj = helpermsgobj;
-  }
-  return (
-    <TextField
-      error={textHelperMsgObj.code % 10 !== 0}
-      helperText={commonMsgText(textHelperMsgObj)}
-      {...props}
-      size="small"
-      variant="outlined"
-      fullWidth
-    />
-  );
-}
-
-CommonTextField.propTypes = {
-  helpermsgobj: PropTypes.shape({
-    code: PropTypes.number.isRequired,
-  }).isRequired,
-};
 
 const StyledTextField = styled(CommonTextField)`
   & .MuiInputBase-input {
