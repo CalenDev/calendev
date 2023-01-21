@@ -5,4 +5,7 @@ import {
   postFindPw,
 } from './auth';
 
-export { postUserSignIn, putResetPw, getCheckResetPasswordToken, postFindPw };
+import { postUserDuplicate, postUserSignUp } from './user';
+
+export { postUserSignIn, putResetPw, getCheckResetPasswordToken, postFindPw
+  , postUserDuplicate, postUserSignUp };
