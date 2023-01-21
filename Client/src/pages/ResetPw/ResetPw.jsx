@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react';
 // import redux
 import { openModal } from '../../features/GlobalModal/GlobalModalSlice';
 import { useDispatch } from 'react-redux';
-// import module
+import { persistor } from '../../store';
 import styled from '@emotion/styled';
 import { useLocation, useNavigate } from 'react-router-dom';
 // import MUI Component
@@ -23,6 +23,7 @@ import { putResetPw, getCheckResetPasswordToken } from '../../api';
 import { validateRegexPassword, urlQueryParser } from '../../utils';
 // import components
 import { CommonPaper, CommonTextField } from '../../components';
+import { commonFailRes, commonErrorRes } from '../../utils/commonApiRes';
 
 function ResetPw() {
   const navigate = useNavigate();
@@ -64,30 +65,30 @@ function ResetPw() {
       }
 
       const apiRes = await getCheckResetPasswordToken(queryStringObj.token);
-      if (!apiRes.data || !apiRes.data.status) {
+      if (!apiRes) {
+        // network error!
         navigate('/error', {
           replace: true,
-          state: { errorTitle: apiRes.message },
+          state: { errorTitle: '네트워크 에러가 발생했습니다!' },
         });
+        return;
       }
 
+      const code = apiRes.data.code || apiRes.data.errorCode;
       switch (apiRes.data.status) {
         case 'success':
           break;
         case 'fail':
+          await commonFailRes(dispatch, persistor, navigate, code);
           navigate('/', {
             replace: true,
           });
           handleOpenModal(2);
           break;
         case 'error':
+          await commonErrorRes(navigate, code);
+          break;
         default:
-          navigate('/', {
-            replace: true,
-            state: {
-              errorTitle: apiRes.data.message,
-            },
-          });
           break;
       }
     }
@@ -132,23 +133,22 @@ function ResetPw() {
       });
       return;
     }
-
+    const code = apiRes.data.code || apiRes.data.errorCode;
     switch (apiRes.data.status) {
       case 'success':
         navigate('/signin', { replace: true });
         break;
       case 'fail':
+        await commonFailRes(dispatch, persistor, navigate, code);
         navigate('/', {
           replace: true,
         });
         handleOpenModal(2);
         break;
       case 'error':
+        await commonErrorRes(navigate, code);
+        break;
       default:
-        navigate('/error', {
-          replace: true,
-          state: { errorTitle: '에러가 발생했습니다! 관리자에게 문의해주세요' },
-        });
         break;
     }
   };

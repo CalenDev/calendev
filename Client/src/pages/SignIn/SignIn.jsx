@@ -20,9 +20,11 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { postUserSignIn } from '../../api';
 // import utils
 import { validateRegexEmail, validateRegexPassword } from '../../utils';
+import { commonFailRes, commonErrorRes } from '../../utils/commonApiRes';
 // import components
 import { CommonTextField, CommonPaper } from '../../components';
 import { signinUser, selectUser } from '../../features/User/UserSlice';
+import { persistor } from '../../store';
 
 function SignIn() {
   const { isSignin } = useSelector(selectUser);
@@ -76,6 +78,7 @@ function SignIn() {
       return;
     }
 
+    const code = apiRes.data.code || apiRes.data.errorCode;
     switch (apiRes.data.status) {
       case 'success':
         sessionStorage.setItem('accessToken', apiRes.data.data.accessToken); // token을 sessionStorage에 저장.
@@ -92,16 +95,14 @@ function SignIn() {
         navigate('/', { replace: true }); // redirect to home
         break;
       case 'fail':
+        await commonFailRes(dispatch, persistor, navigate, code);
         setEmailMsgObj({ code: 112, arg1: '' });
         setPasswordMsgObj({ code: 112, arg1: '' });
-        // 각 페이지별로 특정 에러코드가 뜬 상황에 동일한 처리가 이뤄지는가?
         break;
       case 'error':
+        await commonErrorRes(navigate, code);
+        break;
       default:
-        navigate('/error', {
-          replace: true,
-          state: { errorTitle: '에러가 발생했습니다! 관리자에게 문의해주세요' },
-        });
         break;
     }
   };
