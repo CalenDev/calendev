@@ -1,18 +1,28 @@
-import mongoose from 'mongoose';
+/* eslint-disable no-param-reassign */
 import catchAsync from '../../../global/utils/catchAsync.js';
 import AppError from '../../../global/utils/appError.js';
 import objectMapper from '../../../global/utils/objectMapper.js';
 import PostDto from '../dto/postDto.js';
-import Post from '../models/post.js';
 import postService from '../service/postService.js';
 import validator from '../../../global/utils/requestValidator.js';
-import dttmBuilder from '../../user/utils/dttmBuilder.js';
+import TokenProvider from '../../../global/security/jwt.js';
+
+const payloadDataToDto = (payload, dto) => {
+  if (payload) {
+    dto.userId = payload.userId;
+    dto.userNickname = payload.userNickname;
+    dto.userRoleCd = payload.userRoleCd;
+  }
+};
 
 export default {
   savePost: catchAsync(async (req, res, next) => {
     // 1. jwt authentication을 거쳐서 온 요청으로 dto 생성
     const postReq = new PostDto.PostSaveReq();
     objectMapper.map(req.body, postReq);
+
+    const payload = TokenProvider.getPayload(req.headers.authorization);
+    payloadDataToDto(payload, postReq);
 
     // 2. 저장을 위한 try catch > 추후에 에러 정리하면 에러핸들러에서 한번에..\
     const saveResult = await postService.save(postReq);
@@ -21,12 +31,10 @@ export default {
     });
   }),
 
-  // 캘린더뷰에 표시하기 위해 필요한 데이터들 조회 (달마다)
-  // 기간에 대해 search하는게 필요 > 한달짜리로 해야하니까
   getSimplePostData: catchAsync(async (req, res, next) => {
     // query 필터링
     const queryObj = { ...req.query };
-    const excludedFields = ['page', 'sort', 'limit', 'fields'];
+    const excludedFields = ['page', 'limit', 'fields'];
     excludedFields.forEach((el) => delete queryObj[el]);
 
     // 1. DTO 만들기
@@ -40,13 +48,17 @@ export default {
     }
 
     // sorting
+    let simplePostDataList = [];
 
-    let simplePostDataList = await postService.getSimpleMonthlyData(
-      simplePostDataReq,
-    );
-
-    if (req.query.sort) {
-      simplePostDataList = simplePostDataList.sort(req.query.sort);
+    if (queryObj.sort) {
+      simplePostDataList = await postService.getSortedSimpleMonthlyData(
+        simplePostDataReq,
+        queryObj.sort,
+      );
+    } else {
+      simplePostDataList = await postService.getSimpleMonthlyData(
+        simplePostDataReq,
+      );
     }
 
     return res.status(200).json({
@@ -73,14 +85,19 @@ export default {
     // 1. jwt authentication을 거쳐서 온 요청으로 dto 생성
     const editPostReq = new PostDto.PostEditReq();
     objectMapper.map(req.body, editPostReq);
+    // eslint-disable-next-line no-underscore-dangle
+    editPostReq.postId = req.body._id;
+
+    const payload = TokenProvider.getPayload(req.headers.authorization);
+    payloadDataToDto(payload, editPostReq);
 
     // 2. 수정사항 서비스단에서 처리
     // 2-1. 자신의 게시물인지 확인하는 단계가 필요한데 컨트롤러에서 맡는지?
     try {
-      const response = await postService.update(editPostReq);
+      const postUpdateResponse = await postService.update(editPostReq);
       res.status(200).json({
         status: 'success',
-        response,
+        postUpdateResponse,
       });
     } catch (error) {
       next(error);
