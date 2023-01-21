@@ -24,7 +24,7 @@ export default {
       throw new AppError(
         "Access Denied : Doesn't have permission to access Post",
         403,
-        'E403A',
+        'E403AA',
       );
     }
 
@@ -41,6 +41,14 @@ export default {
     const dttmRange = dttmBuilder.buildSingleMonthDttm(targetYear, targetMonth);
 
     return Post.findInTimeRange(dttmRange[0], dttmRange[1]);
+  },
+  getSortedSimpleMonthlyData: (simplePostDataReq, sortVal) => {
+    const targetYear = simplePostDataReq.getYear;
+    const targetMonth = simplePostDataReq.getMonth;
+
+    const dttmRange = dttmBuilder.buildSingleMonthDttm(targetYear, targetMonth);
+
+    return Post.findInTimeRangeAndSort(dttmRange[0], dttmRange[1], sortVal);
   },
   removePost: (removeReq) => {
     const targetPost = Post.find();
