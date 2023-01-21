@@ -83,53 +83,61 @@ const Post = new mongoose.Schema({
 const Model = mongoose.model;
 const PostModel = Model('Posts', Post);
 
-const save = async (postDto) => {
-  const savePost = PostModel(postDto);
-  try {
-    return await savePost.save(postDto);
-  } catch (error) {
-    mongoErrorHandler(error);
-  }
-};
-const update = async (targetId, postDto) => {
-  const result = PostModel.findOneAndUpdate({ _id: targetId }, postDto, {
-    new: true,
-    runValidators: true,
-  })
-    .then()
-    .catch((err) => {
-      mongoErrorHandler(err);
-    });
-  return result;
-};
-
-// 배열로 리턴
-const find = async (targetPostId) => {
-  const res = await PostModel.find({ _id: targetPostId });
-  return res;
-};
-const removePost = async (targetId) => {
-  await PostModel.deleteOne({ _id: targetId })
-    .then()
-    .catch((error) => {
-      mongoErrorHandler();
-    });
-};
-
-// 배열로 리턴
-const findInTimeRange = async (startDttm, endDttm) => {
-  const res = await PostModel.find({
-    eventStartDttm: {
-      $gt: new Date(startDttm).toISOString(),
-    },
-  });
-  return res;
-};
-
 export default {
-  save,
-  find,
-  update,
-  findInTimeRange,
-  removePost,
+  save: async (postDto) => {
+    const savePost = PostModel(postDto);
+    try {
+      return await savePost.save(postDto);
+    } catch (error) {
+      return mongoErrorHandler(error);
+    }
+  },
+  find: async (targetPostId) => {
+    const res = await PostModel.find({ _id: targetPostId });
+    console.log(res.sort({ eventStartDttm: 1 }));
+
+    return res;
+  },
+  update: async (targetId, postDto) => {
+    const result = PostModel.findOneAndUpdate({ _id: targetId }, postDto, {
+      new: true,
+      runValidators: true,
+    })
+      .then()
+      .catch((err) => {
+        mongoErrorHandler(err);
+      });
+    return result;
+  },
+  findInTimeRange: async (startDttm, endDttm) => {
+    try {
+      const res = await PostModel.find({
+        eventStartDttm: {
+          $gt: new Date(startDttm).toISOString(),
+          $lt: new Date(endDttm).toISOString(),
+        },
+      });
+      return res;
+    } catch (error) {
+      return mongoErrorHandler(error);
+    }
+  },
+  removePost: async (targetId) => {
+    await PostModel.deleteOne({ _id: targetId })
+      .then()
+      .catch((err) => {
+        mongoErrorHandler(err);
+      });
+  },
+  findInTimeRangeAndSort: async (startDttm, sortVal) => {
+    const res = await PostModel.find({
+      eventStartDttm: {
+        $gt: new Date(startDttm).toISOString(),
+      },
+    })
+      .sort([[sortVal, -1]])
+      // eslint-disable-next-line prefer-arrow-callback
+      .exec();
+    return res;
+  },
 };
