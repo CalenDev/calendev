@@ -33,7 +33,7 @@ instance.interceptors.response.use(
     */
 
     if (!response || !response.data || !response.data.code) {
-      return Promise.reject(error);
+      return Promise.reject(error); // 에러 페이지로 갈 거임. 렌더링은 이럴 때만 e.response.data.message로
     }
 
     const code = response.data.code || response.data.errorCode;
