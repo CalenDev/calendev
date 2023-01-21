@@ -15,6 +15,7 @@ import CommonPaper from '../../components/CommonPaper';
 import CommonTextField from '../../components/CommonTextField';
 import commonMsgText from '../../utils/commonMsgText';
 import { postUserDuplicate, postUserSignUp } from '../../api';
+import { validateRegexEmail } from '../../utils';
 
 const checkData = [
   {
@@ -47,13 +48,11 @@ export default function SignUp() {
   });
 
   function emailValidateCheck(emailInputVal) {
-    const regEmail = /^.+@.{2,}\..{2,}$/;
-
     setEmailDuplCheck(false);
 
     if (emailInputVal.length < 1) {
       setEmailMsgObj({ code: 101, arg1: '이메일' });
-    } else if (!regEmail.test(emailInputVal)) {
+    } else if (!validateRegexEmail(emailInputVal)) {
       setEmailMsgObj({ code: 107 });
     } else if (emailInputVal.length > 29) {
       setEmailMsgObj({ code: 102, arg1: '메일' });
@@ -129,14 +128,21 @@ export default function SignUp() {
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setValues({ ...values, [name]: value });
-    if (name === 'email') {
-      emailValidateCheck(value);
-    } else if (name === 'nickname') {
-      nicknameValidateCheck(value);
-    } else if (name === 'password') {
-      pwdValidateCheck(value);
-    } else if (name === 'confirmPassword') {
-      pwdConfirmValidateCheck(value);
+    switch (name) {
+      case 'email':
+        emailValidateCheck(value);
+        break;
+      case 'nickname':
+        nicknameValidateCheck(value);
+        break;
+      case 'password':
+        pwdValidateCheck(value);
+        break;
+      case 'confirmPassword':
+        pwdConfirmValidateCheck(value);
+        break;
+      default:
+        break;
     }
   };
 
@@ -195,12 +201,22 @@ export default function SignUp() {
       values.email,
       'userEmail',
     );
+
+    if (responseEmail.status !== 200) {
+      navigate('/error', {
+        replace: true,
+        state: { errorTitle: responseEmail.message },
+      });
+      return -1;
+    }
+
     const emailIsUnique = responseEmail.data.data.duplicateValidationRes.isUserUnique;
     if (emailIsUnique) {
       setEmailMsgObj({ code: 110, arg1: '이메일' });
     } else {
       setEmailMsgObj({ code: 105, arg1: '이메일' });
     }
+    return 0;
   };
 
   const handleNicknameDuplicate = async () => {
@@ -208,12 +224,22 @@ export default function SignUp() {
       values.nickname,
       'userNickname',
     );
+
+    if (responseNickname.status !== 200) {
+      navigate('/error', {
+        replace: true,
+        state: { errorTitle: responseNickname.message },
+      });
+      return -1;
+    }
+
     const nicknameIsUnique = responseNickname.data.data.duplicateValidationRes.isUserUnique;
     if (nicknameIsUnique) {
       setNicknameMsgObj({ code: 110, arg1: '별명' });
     } else {
       setNicknameMsgObj({ code: 105, arg1: '별명' });
     }
+    return 0;
   };
 
   const handleSubmit = async (event) => {
@@ -223,13 +249,19 @@ export default function SignUp() {
       values.nickname,
       values.password,
     );
-    const isApplySignUp = responseSignUp.data.status;
-    if (isApplySignUp) {
-      alert('회원가입 성공');
-      navigate('/', { replace: true });
-    } else {
-      navigate('/error', { replace: true });
+
+    console.log(responseSignUp.status);
+
+    if (responseSignUp.status !== 201) {
+      navigate('/error', {
+        replace: true,
+        state: { errorTitle: responseSignUp.message },
+      });
+      return -1;
     }
+
+    alert('회원가입 성공');
+    navigate('/', { replace: true });
     return 0;
   };
 
