@@ -19,6 +19,7 @@ const Tag = new mongoose.Schema({
 const Post = new mongoose.Schema({
   postId: mongoose.Schema.Types.ObjectId,
   userId: { type: Number, required: true },
+  userNickname: { type: String, required: true },
   organizerId: { type: Number, required: true },
   // 길이 validation, regex
   postTitle: {
@@ -116,10 +117,11 @@ export default {
           $gt: new Date(startDttm).toISOString(),
           $lt: new Date(endDttm).toISOString(),
         },
-      });
+      }).select(process.env.SIMPLE_POST_PROPERTIES);
       return res;
     } catch (error) {
-      return mongoErrorHandler(error);
+      mongoErrorHandler(error);
+      throw error;
     }
   },
   removePost: async (targetId) => {
@@ -129,13 +131,14 @@ export default {
         mongoErrorHandler(err);
       });
   },
-  findInTimeRangeAndSort: async (startDttm, sortVal) => {
+  findInTimeRangeAndSort: async (startDttm, endDttm, sortVal) => {
     const res = await PostModel.find({
       eventStartDttm: {
         $gt: new Date(startDttm).toISOString(),
+        $lt: new Date(endDttm).toISOString(),
       },
     })
-      .sort([[sortVal, -1]])
+      .sort([[sortVal, 1]])
       // eslint-disable-next-line prefer-arrow-callback
       .exec();
     return res;
