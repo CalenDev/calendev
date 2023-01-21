@@ -15,12 +15,12 @@ const validatePassword = (password) => {
 };
 const validateYear = (year) => {
   const reg = /^[0-9]*/;
-  return reg.test(year);
+  return reg.test(year) && Number(year) > 0;
 };
 
 const validateMonth = (month) => {
   const reg = /[0-9]{1,2}/;
-  return reg.test(month) && month >= 1 && month <= 12;
+  return reg.test(month) && Number(month) >= 1 && Number(month) <= 12;
 };
 
 const validateDttm = (year, month) =>
