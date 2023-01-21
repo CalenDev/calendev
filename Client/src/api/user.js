@@ -9,7 +9,7 @@ const postUserDuplicate = async (target, authType) => {
     });
     return response;
   } catch (e) {
-    return e;
+    return e.response;
   }
 };
 
@@ -23,7 +23,7 @@ const postUserSignUp = async (userEmail, userNickname, userPassword) => {
     });
     return response;
   } catch (e) {
-    return e;
+    return e.response;
   }
 };
 
