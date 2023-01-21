@@ -19,13 +19,11 @@ async function commonFailRes(dispatch, persistor, navigate, code) {
 
 async function commonErrorRes(navigate, code) {
   switch (code) {
-    case 'E500AA':
+    default:
       navigate('/error', {
         replace: true,
         errorTitle: '네트워크 에러가 발생했습니다!',
       });
-      break;
-    default:
       break;
   }
 }
