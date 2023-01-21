@@ -1,9 +1,8 @@
-import axios from 'axios';
+import instance from './instance';
 
 const postUserDuplicate = async (target, authType) => {
-  const API_END_POINT = `${process.env.REACT_APP_SERVER_URL}/api/v1/auth/duplicate`;
   try {
-    const response = await axios.post(API_END_POINT, {
+    const response = await instance.post('/api/v1/auth/duplicate', {
       target,
       authType,
     });
@@ -14,9 +13,8 @@ const postUserDuplicate = async (target, authType) => {
 };
 
 const postUserSignUp = async (userEmail, userNickname, userPassword) => {
-  const API_END_POINT = `${process.env.REACT_APP_SERVER_URL}/api/v1/users`;
   try {
-    const response = await axios.post(API_END_POINT, {
+    const response = await instance.post('/api/v1/users', {
       userEmail,
       userNickname,
       userPassword,
