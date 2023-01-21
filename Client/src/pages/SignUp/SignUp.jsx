@@ -1,5 +1,5 @@
+import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import axios from 'axios';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import Button from '@mui/material/Button';
@@ -14,8 +14,7 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import CommonPaper from '../../components/CommonPaper';
 import commonMsgText from './commonMsgText';
-
-const url = 'https://b0055c23-9249-422f-a317-960947120571.mock.pstmn.io';
+import { postUserDuplicate, postUserSignUp } from '../../api';
 
 const checkData = [
   {
@@ -29,6 +28,7 @@ const checkData = [
 ];
 
 export default function SignUp() {
+  const navigate = useNavigate();
   const [nicknameMsgObj, setNicknameMsgObj] = useState({ code: 0, arg1: '' });
   const [nicknameDuplCheck, setNicknameDuplCheck] = useState(false);
   const [emailMsgObj, setEmailMsgObj] = useState({ code: 0, arg1: '' });
@@ -45,32 +45,6 @@ export default function SignUp() {
     showPassword: false,
     showConfirmPassword: false,
   });
-
-  const checkNicknameDuplicate = () => {
-    axios
-      .get(`${url}/api/v1/nicknames/duplicate/${values.nickname}`)
-      .then((response) => {
-        const nicknameIsUnique = response.data.nickname_is_unique;
-        if (nicknameIsUnique) {
-          setNicknameMsgObj({ code: 110, arg1: '별명' });
-        } else {
-          setNicknameMsgObj({ code: 105, arg1: '별명' });
-        }
-      });
-  };
-
-  const checkEmailDuplicate = () => {
-    axios
-      .get(`${url}/api/v1/emails/duplicate/${values.email}`)
-      .then((response) => {
-        const emailIsUnique = response.data.email_is_unique;
-        if (emailIsUnique) {
-          setEmailMsgObj({ code: 110, arg1: '이메일' });
-        } else {
-          setEmailMsgObj({ code: 105, arg1: '이메일' });
-        }
-      });
-  };
 
   function emailValidateCheck(emailInputVal) {
     const regEmail = /^.+@.{2,}\..{2,}$/;
@@ -216,11 +190,47 @@ export default function SignUp() {
     setAllowTerms(tempAllowTerms);
   };
 
-  const handleSubmit = (event) => {
-    const { currentTarget } = event;
+  const handleEmailDuplicate = async () => {
+    const responseEmail = await postUserDuplicate(
+      values.email,
+      'userEmail',
+    );
+    const emailIsUnique = responseEmail.data.data.duplicateValidationRes.isUserUnique;
+    if (emailIsUnique) {
+      setEmailMsgObj({ code: 110, arg1: '이메일' });
+    } else {
+      setEmailMsgObj({ code: 105, arg1: '이메일' });
+    }
+  };
+
+  const handleNicknameDuplicate = async () => {
+    const responseNickname = await postUserDuplicate(
+      values.nickname,
+      'userNickname',
+    );
+    const nicknameIsUnique = responseNickname.data.data.duplicateValidationRes.isUserUnique;
+    if (nicknameIsUnique) {
+      setNicknameMsgObj({ code: 110, arg1: '별명' });
+    } else {
+      setNicknameMsgObj({ code: 105, arg1: '별명' });
+    }
+  };
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    const data = new FormData(currentTarget);
-    return data;
+    const responseSignUp = await postUserSignUp(
+      values.email,
+      values.nickname,
+      values.password,
+    );
+    const isApplySignUp = responseSignUp.data.status;
+    if (isApplySignUp) {
+      alert('회원가입 성공');
+      navigate('/', { replace: true });
+    } else {
+      navigate('/error', { replace: true });
+    }
+    return 0;
   };
 
   return (
@@ -243,7 +253,7 @@ export default function SignUp() {
             <StyledOnelineButton
               color="primary"
               disabled={!emailDuplCheck}
-              onClick={checkEmailDuplicate}
+              onClick={handleEmailDuplicate}
               size="small"
               variant="contained"
               aria-label="이메일 중복 확인"
@@ -264,7 +274,7 @@ export default function SignUp() {
             <StyledOnelineButton
               color="primary"
               disabled={!nicknameDuplCheck}
-              onClick={checkNicknameDuplicate}
+              onClick={handleNicknameDuplicate}
               size="small"
               variant="contained"
               aria-label="별명 중복 확인"
@@ -367,7 +377,7 @@ const StyledPaper = styled(CommonPaper)`
   }
 `;
 
-function CustomTextField(props) {
+function CommonTextField(props) {
   const { helpermsgobj } = props;
   let textHelperMsgObj = { code: 0 };
   if (helpermsgobj !== undefined) {
@@ -385,13 +395,13 @@ function CustomTextField(props) {
   );
 }
 
-CustomTextField.propTypes = {
+CommonTextField.propTypes = {
   helpermsgobj: PropTypes.shape({
     code: PropTypes.number.isRequired,
   }).isRequired,
 };
 
-const StyledTextField = styled(CustomTextField)`
+const StyledTextField = styled(CommonTextField)`
   & .MuiInputBase-input {
     padding: ${(props) => props.theme.spacing(0.5, 2)};
     font-size: 0.9rem;
