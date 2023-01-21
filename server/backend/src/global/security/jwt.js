@@ -74,11 +74,13 @@ export default {
     // 2-2) 레디스에 리프레시 토큰이 존재하고 유저가 전달한 토큰과 일치한다.
     if (userRefreshToken === originalRefreshToken) {
       // 레디스에서 꺼낼 때는 만료안됬는데 verify할 때 토큰 생존시간이 끝날 수 있음.
-      const verifyRes = jwt.verify(
+      const verifyRes = await jwt.verify(
         userRefreshToken,
         REFRESH_TOKEN_SECRET_KEY,
         (err) => {
-          throw new AppError(err.message, 401, 'E401AC');
+          if (err) {
+            throw new AppError('Not Authorized', 401, 'E401AC');
+          }
         },
       );
     } else {
