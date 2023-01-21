@@ -250,8 +250,6 @@ export default function SignUp() {
       values.password,
     );
 
-    console.log(responseSignUp.status);
-
     if (responseSignUp.status !== 201) {
       navigate('/error', {
         replace: true,
