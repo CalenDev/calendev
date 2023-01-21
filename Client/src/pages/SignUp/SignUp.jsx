@@ -16,6 +16,7 @@ import CommonTextField from '../../components/CommonTextField';
 import commonMsgText from '../../utils/commonMsgText';
 import { postUserDuplicate, postUserSignUp } from '../../api';
 import { validateRegexEmail } from '../../utils';
+import { commonFailRes, commonErrorRes } from '../../utils/commonApiRes';
 
 const checkData = [
   {
@@ -35,7 +36,10 @@ export default function SignUp() {
   const [emailMsgObj, setEmailMsgObj] = useState({ code: 0, arg1: '' });
   const [emailDuplCheck, setEmailDuplCheck] = useState(false);
   const [pwdMsgObj, setPwdMsgObj] = useState({ code: 0, arg1: '' });
-  const [pwdConfirmMsgObj, setPwdConfirmMsgObj] = useState({ code: 0, arg1: '' });
+  const [pwdConfirmMsgObj, setPwdConfirmMsgObj] = useState({
+    code: 0,
+    arg1: '',
+  });
   const [allowTerms, setAllowTerms] = useState(checkData);
   const [termsMsgObj, setTermsMsgObj] = useState({ code: 0, arg1: '' });
   const [values, setValues] = useState({
@@ -184,9 +188,10 @@ export default function SignUp() {
     setTermsMsgObj({ code: 100 });
 
     allowTerms.forEach((allowTerm) => {
-      const tempChangeTerm = allowTerm.labelText === event.target.ariaLabel
-        ? { ...allowTerm, isChecked: event.target.checked }
-        : allowTerm;
+      const tempChangeTerm =
+        allowTerm.labelText === event.target.ariaLabel
+          ? { ...allowTerm, isChecked: event.target.checked }
+          : allowTerm;
       tempAllowTerms.push(tempChangeTerm);
       if (!tempChangeTerm.isChecked) {
         setTermsMsgObj({ code: 111 });
@@ -197,20 +202,33 @@ export default function SignUp() {
   };
 
   const handleEmailDuplicate = async () => {
-    const responseEmail = await postUserDuplicate(
-      values.email,
-      'userEmail',
-    );
+    const responseEmail = await postUserDuplicate(values.email, 'userEmail');
 
-    if (responseEmail.status !== 200) {
+    if (!responseEmail) {
+      // network Error!
       navigate('/error', {
         replace: true,
-        state: { errorTitle: responseEmail.message },
+        errorTitle: '네트워크 에러가 발생했습니다!',
       });
       return -1;
     }
 
-    const emailIsUnique = responseEmail.data.data.duplicateValidationRes.isUserUnique;
+    if (responseEmail.status !== 200) {
+      switch (responseEmail.data.staus) {
+        case 'fail':
+          await commonFailRes(navigate);
+          break;
+        case 'error':
+          await commonErrorRes(navigate);
+          break;
+        default:
+          break;
+      }
+      return -1;
+    }
+
+    const emailIsUnique =
+      responseEmail.data.data.duplicateValidationRes.isUserUnique;
     if (emailIsUnique) {
       setEmailMsgObj({ code: 110, arg1: '이메일' });
     } else {
@@ -225,15 +243,31 @@ export default function SignUp() {
       'userNickname',
     );
 
-    if (responseNickname.status !== 200) {
+    if (!responseNickname) {
+      // network Error!
       navigate('/error', {
         replace: true,
-        state: { errorTitle: responseNickname.message },
+        errorTitle: '네트워크 에러가 발생했습니다!',
       });
       return -1;
     }
 
-    const nicknameIsUnique = responseNickname.data.data.duplicateValidationRes.isUserUnique;
+    if (responseNickname.status !== 200) {
+      switch (responseNickname.data.staus) {
+        case 'fail':
+          await commonFailRes(navigate);
+          break;
+        case 'error':
+          await commonErrorRes(navigate);
+          break;
+        default:
+          break;
+      }
+      return -1;
+    }
+
+    const nicknameIsUnique =
+      responseNickname.data.data.duplicateValidationRes.isUserUnique;
     if (nicknameIsUnique) {
       setNicknameMsgObj({ code: 110, arg1: '별명' });
     } else {
@@ -250,11 +284,26 @@ export default function SignUp() {
       values.password,
     );
 
-    if (responseSignUp.status !== 201) {
+    if (!responseSignUp) {
+      // network Error!
       navigate('/error', {
         replace: true,
-        state: { errorTitle: responseSignUp.message },
+        errorTitle: '네트워크 에러가 발생했습니다!',
       });
+      return -1;
+    }
+
+    if (responseSignUp.status !== 201) {
+      switch (responseSignUp.data.staus) {
+        case 'fail':
+          await commonFailRes(navigate);
+          break;
+        case 'error':
+          await commonErrorRes(navigate);
+          break;
+        default:
+          break;
+      }
       return -1;
     }
 
@@ -355,7 +404,11 @@ export default function SignUp() {
                     onMouseDown={handleMouseDownPassword}
                     edge="end"
                   >
-                    {values.showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                    {values.showConfirmPassword ? (
+                      <VisibilityOff />
+                    ) : (
+                      <Visibility />
+                    )}
                   </IconButton>
                 </InputAdornment>
               ),
@@ -368,29 +421,36 @@ export default function SignUp() {
             labeltext="전체 동의"
             checked={termsMsgObj.code !== 111 && termsMsgObj.code !== 0}
           />
-          {
-            allowTerms.map((allowTerm) => (
-              <StyledFormControlLabel
-                control={<Checkbox onChange={handleSingleChange} inputProps={{ 'aria-label': allowTerm.labelText }} />}
-                checked={allowTerm.isChecked}
-                key={allowTerm.labelText}
-                labeltext={allowTerm.labelText}
+          {allowTerms.map((allowTerm) => (
+            <StyledFormControlLabel
+              control=<Checkbox
+                onChange={handleSingleChange}
+                inputProps={{ 'aria-label': allowTerm.labelText }}
               />
-            ))
-          }
+              checked={allowTerm.isChecked}
+              key={allowTerm.labelText}
+              labeltext={allowTerm.labelText}
+            />
+          ))}
         </Stack>
-        <Typography variant="caption" color="error">{commonMsgText(termsMsgObj)}</Typography>
+        <Typography variant="caption" color="error">
+          {commonMsgText(termsMsgObj)}
+        </Typography>
         <StyledFullButton
           color="primary"
           fullWidth
           size="small"
           type="submit"
           variant="contained"
-          disabled={!(emailMsgObj.code === 110
-                    && nicknameMsgObj.code === 110
-                    && pwdMsgObj.code === 110
-                    && pwdConfirmMsgObj.code === 100
-                    && termsMsgObj.code === 100)}
+          disabled={
+            !(
+              emailMsgObj.code === 110 &&
+              nicknameMsgObj.code === 110 &&
+              pwdMsgObj.code === 110 &&
+              pwdConfirmMsgObj.code === 100 &&
+              termsMsgObj.code === 100
+            )
+          }
         >
           회원가입
         </StyledFullButton>
@@ -401,7 +461,7 @@ export default function SignUp() {
 
 const StyledPaper = styled(CommonPaper)`
   & > * {
-    :not(:last-child){
+    :not(:last-child) {
       margin-bottom: ${(props) => props.theme.spacing(4)};
     }
   }
@@ -426,11 +486,7 @@ function CustomFormControlLabel(props) {
   const { labeltext } = props;
   return (
     <FormControlLabel
-      label={(
-        <Typography variant="body2">
-          {labeltext}
-        </Typography>
-      )}
+      label={<Typography variant="body2">{labeltext}</Typography>}
       {...props}
     />
   );
