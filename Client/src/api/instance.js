@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 
 import axios from 'axios';
+import useLogout from '../hooks/useLogout';
 
 const instance = axios.create({
   baseURL: process.env.REACT_APP_MAIN_URL,
@@ -47,6 +48,12 @@ instance.interceptors.response.use(
         } catch (e) {
           return Promise.reject(e);
         }
+      case 'E400AB':
+      case 'E400AD':
+      case 'E401AC':
+      case 'E404AC':
+        await useLogout();
+        return Promise.reject(error);
       default: // 나머지 에러코드는 페이지에게 할당.
         return Promise.reject(error);
     }
