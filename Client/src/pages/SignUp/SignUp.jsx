@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import Button from '@mui/material/Button';
@@ -17,6 +18,7 @@ import commonMsgText from '../../utils/commonMsgText';
 import { postUserDuplicate, postUserSignUp } from '../../api';
 import { validateRegexEmail } from '../../utils';
 import { commonFailRes, commonErrorRes } from '../../utils/commonApiRes';
+import { persistor } from '../../store';
 
 const checkData = [
   {
@@ -31,6 +33,7 @@ const checkData = [
 
 export default function SignUp() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [nicknameMsgObj, setNicknameMsgObj] = useState({ code: 0, arg1: '' });
   const [nicknameDuplCheck, setNicknameDuplCheck] = useState(false);
   const [emailMsgObj, setEmailMsgObj] = useState({ code: 0, arg1: '' });
@@ -212,14 +215,14 @@ export default function SignUp() {
       });
       return -1;
     }
-
+    const code = responseEmail.data.code || responseEmail.data.errorCode;
     if (responseEmail.status !== 200) {
       switch (responseEmail.data.staus) {
         case 'fail':
-          await commonFailRes(navigate);
+          await commonFailRes(dispatch, persistor, navigate, code);
           break;
         case 'error':
-          await commonErrorRes(navigate);
+          await commonErrorRes(navigate, code);
           break;
         default:
           break;
@@ -252,13 +255,14 @@ export default function SignUp() {
       return -1;
     }
 
+    const code = responseNickname.data.code || responseNickname.data.errorCode;
     if (responseNickname.status !== 200) {
       switch (responseNickname.data.staus) {
         case 'fail':
-          await commonFailRes(navigate);
+          await commonFailRes(dispatch, persistor, navigate, code);
           break;
         case 'error':
-          await commonErrorRes(navigate);
+          await commonErrorRes(navigate, code);
           break;
         default:
           break;
@@ -293,13 +297,14 @@ export default function SignUp() {
       return -1;
     }
 
+    const code = responseSignUp.data.code || responseSignUp.data.errorCode;
     if (responseSignUp.status !== 201) {
       switch (responseSignUp.data.staus) {
         case 'fail':
-          await commonFailRes(navigate);
+          await commonFailRes(dispatch, persistor, navigate, code);
           break;
         case 'error':
-          await commonErrorRes(navigate);
+          await commonErrorRes(navigate, code);
           break;
         default:
           break;
