@@ -35,6 +35,7 @@ const ErrorCode = {
   E500AC: 'Internal Server Error : Database Connection lost',
   E500AD: 'Internal Server Error : There was a Duplicate key Error',
   E500AE: 'Internal Server Error : Redis Error',
+  E500AF: 'Internal Server Error : Mongoose Error',
 };
 Object.freeze(ErrorCode);
 
