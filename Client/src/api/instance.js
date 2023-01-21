@@ -1,7 +1,6 @@
 /* eslint-disable no-param-reassign */
 
 import axios from 'axios';
-import useLogout from '../hooks/useLogout';
 
 const instance = axios.create({
   baseURL: process.env.REACT_APP_MAIN_URL,
@@ -34,7 +33,7 @@ instance.interceptors.response.use(
     */
 
     if (!response || !response.data || !response.data.code) {
-      return Promise.reject(error); // 에러 페이지로 갈 거임. 렌더링은 이럴 때만 e.response.data.message로
+      return error.response; // 에러 페이지로 갈 거임. 렌더링은 이럴 때만 e.response.data.message로
     }
 
     const code = response.data.code || response.data.errorCode;
@@ -46,14 +45,8 @@ instance.interceptors.response.use(
           sessionStorage.setItem('accessToken', apiRes.data.data.accessToken);
           return instance({ ...config, headers: { ...config.headers } }); // 기존 실패했던 request를 다시 보냄.
         } catch (e) {
-          return Promise.reject(e);
+          return e.response;
         }
-      case 'E400AB':
-      case 'E400AD':
-      case 'E401AC':
-      case 'E404AC':
-        await useLogout();
-        return Promise.reject(error);
       default: // 나머지 에러코드는 페이지에게 할당.
         return Promise.reject(error);
     }
