@@ -13,7 +13,7 @@ import Typography from '@mui/material/Typography';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import CommonPaper from '../../components/CommonPaper';
-import commonMsgText from './commonMsgText';
+import commonMsgText from '../../utils/commonMsgText';
 import { postUserDuplicate, postUserSignUp } from '../../api';
 
 const checkData = [
