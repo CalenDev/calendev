@@ -1,6 +1,7 @@
 class PostSaveReq {
   userId;
-  organizerId;
+  userNickname;
+  userRoleCd;
   postTitle;
   postContent;
   postThumbnailImg;
@@ -17,8 +18,11 @@ class PostSaveReq {
   get getUserId() {
     return this.userId;
   }
-  get getOrganizerId() {
-    return this.organizerId;
+  get userNickname() {
+    return this.userNickname;
+  }
+  get userRoleCd() {
+    return this.userRoleCd;
   }
   get getPostTitle() {
     return this.postTitle;
@@ -54,7 +58,6 @@ class PostSaveReq {
 class PostEditReq {
   userId;
   postId;
-  organizerId;
   postTitle;
   postContent;
   postThumbnailImg;
@@ -72,10 +75,6 @@ class PostEditReq {
 
   get getPostId() {
     return this.postId;
-  }
-
-  get getOrganizerId() {
-    return this.organizerId;
   }
   get getPostTitle() {
     return this.postTitle;
