@@ -51,6 +51,12 @@ export default {
     return Post.findInTimeRangeAndSort(dttmRange[0], dttmRange[1], sortVal);
   },
   removePost: (removeReq) => {
-    const targetPost = Post.find();
+    const targetPost = Post.find(removeReq.getPostId);
+
+    if (targetPost.length === 0) {
+      throw new AppError('Bad Request', 404, 'E404AF');
+    }
+
+    return Post.removePost(removeReq.getPostId);
   },
 };

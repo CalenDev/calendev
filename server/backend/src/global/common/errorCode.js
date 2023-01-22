@@ -27,6 +27,7 @@ const ErrorCode = {
   E404AC: 'Not Found: RefreshToken is invalid or does not exist',
   E404AD: 'Not Found: User is not found',
   E404AE: 'Not Found: Year-Month is invalid',
+  E404AF: 'Not Found: Post not found',
   // 408
   E408AA: 'Request Timeout: Request Time out',
   // 500
