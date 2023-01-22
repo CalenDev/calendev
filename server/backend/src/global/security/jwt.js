@@ -48,10 +48,12 @@ export default {
    * @returns {Obj} : accessToken의 유효성을 검증하고 결과내용을 담은 객체를 반환
    */
   verifyAccessToken: (token) => {
-    const res = jwt.verify(token, ACCESS_TOKEN_SECRET_KEY);
+    const verificationResult = jwt.verify(token, ACCESS_TOKEN_SECRET_KEY);
     return {
       ok: true,
-      userId: res.userId,
+      userId: verificationResult.userId,
+      userNickname: verificationResult.userNickname,
+      userRoleCd: verificationResult.userRoleCd,
     };
   },
 
