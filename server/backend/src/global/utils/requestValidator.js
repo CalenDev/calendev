@@ -23,6 +23,12 @@ const validateMonth = (month) => {
   return reg.test(month) && Number(month) >= 1 && Number(month) <= 12;
 };
 
+const validateMonthDay = (year, month, day) => {
+  const reg = /[0-9]{1,2}/;
+  const lastDay = new Date(year, month, 0).getDate();
+  return reg.test(day) && day >= 1 && day <= lastDay;
+};
+
 const validateDttm = (year, month) =>
   // eslint-disable-next-line implicit-arrow-linebreak
   validateYear(year) && validateMonth(month);
@@ -57,4 +63,7 @@ const validateReq = (req, serviceName) => {
 
 export default {
   validateReq,
+  validateYear,
+  validateMonth,
+  validateMonthDay,
 };
