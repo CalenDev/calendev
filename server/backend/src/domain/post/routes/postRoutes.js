@@ -15,4 +15,7 @@ router
   .get(authController.authJWT, postControllers.getTargetPost);
 
 router.route('/dataType/simple').get(postControllers.getSimplePostData);
+
+// api/v1/posts/search
+router.route('/search').post(postControllers.searchPost);
 export default router;
