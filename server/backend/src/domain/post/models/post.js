@@ -129,6 +129,35 @@ export default {
       throw err;
     }
   },
+  findAllById: async (target) => {
+    try {
+      const multiplePosts = await PostModel.find({
+        _id: {
+          $in: [...target],
+        },
+      });
+      return multiplePosts;
+    } catch (err) {
+      mongoErrorHandler(err);
+      throw err;
+    }
+  },
+  findAllByIdAndTags: async (target, constraints) => {
+    try {
+      const multiplePosts = await PostModel.find({
+        _id: {
+          $in: [...target],
+        },
+        postTag: {
+          $all: [...constraints],
+        },
+      });
+      return multiplePosts;
+    } catch (err) {
+      mongoErrorHandler(err);
+      throw err;
+    }
+  },
   removeOne: async (targetId) => {
     await PostModel.deleteOne({ _id: targetId })
       .then()
