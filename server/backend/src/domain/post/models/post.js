@@ -6,10 +6,6 @@ const Image = new mongoose.Schema({
   postId: { type: String },
   imgURL: { type: String, required: true, trim: true },
 });
-const Tag = new mongoose.Schema({
-  tagCategory: { type: String },
-  tags: [String],
-});
 
 const Post = new mongoose.Schema({
   postId: mongoose.Schema.Types.ObjectId,
@@ -26,10 +22,9 @@ const Post = new mongoose.Schema({
 
   postContent: { type: String },
 
-  // 커스텀 스키마 사용
   postThumbnailImg: [Image],
   postImg: [Image],
-  postTag: [Tag],
+  postTag: [String],
 
   // 위치 필수
   postPlace: {
@@ -82,7 +77,7 @@ export default {
       throw err;
     }
   },
-  find: async (targetPostId) => {
+  findOne: async (targetPostId) => {
     try {
       const postFindResult = await PostModel.find({ _id: targetPostId });
       return postFindResult;
@@ -91,7 +86,8 @@ export default {
       throw err;
     }
   },
-  update: async (targetId, postDto) => {
+
+  updateOne: async (targetId, postDto) => {
     const result = PostModel.findOneAndUpdate({ _id: targetId }, postDto, {
       new: true,
       runValidators: true,
@@ -103,7 +99,7 @@ export default {
       });
     return result;
   },
-  findInTimeRange: async (startDttm, endDttm) => {
+  findAllInTimeRange: async (startDttm, endDttm) => {
     try {
       const res = await PostModel.find({
         eventStartDttm: {
@@ -117,7 +113,7 @@ export default {
       throw err;
     }
   },
-  findInTimeRangeAndSort: async (startDttm, endDttm, sortVal) => {
+  findAllInTimeRangeAndSort: async (startDttm, endDttm, sortVal) => {
     try {
       const postFindResult = await PostModel.find({
         eventStartDttm: {
@@ -133,7 +129,7 @@ export default {
       throw err;
     }
   },
-  removePost: async (targetId) => {
+  removeOne: async (targetId) => {
     await PostModel.deleteOne({ _id: targetId })
       .then()
       .catch((err) => {
