@@ -1,13 +1,22 @@
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable no-param-reassign */
 import Post from '../models/post.js';
 import dttmBuilder from '../../user/utils/dttmBuilder.js';
 import AppError from '../../../global/utils/appError.js';
+import searchService from './searchService.js';
 
 export default {
   save: async (postReq) => {
-    // eslint-disable-next-line no-param-reassign
+    // 1) createdAt 필드에 현재시간 추가
     postReq.createdAtDttm = dttmBuilder.buildCurrentKSTDttm();
 
-    const res = Post.save(postReq);
+    // 2) Post DB에 게시물 저장
+    const res = await Post.save(postReq);
+
+    // 3) keyword Index DB에 게시물저장
+    postReq._id = res._id.toString();
+    await searchService.postSave(postReq);
+
     return res;
   },
   update: async (postUpdateReq) => {
@@ -16,7 +25,7 @@ export default {
     const targetPostId = postUpdateReq.getPostId;
 
     // 유저 정보와 포스트의 글쓴이 정보가 일치하는 지 확인.
-    const targetPost = await Post.find(targetPostId);
+    const targetPost = await Post.findOne(targetPostId);
     const targetPostWriterId = targetPost[0].userId;
 
     // 불일치 에러 리턴 권한없음.
@@ -28,10 +37,10 @@ export default {
       );
     }
 
-    return Post.update(targetPostId, postUpdateReq);
+    return Post.updateOne(targetPostId, postUpdateReq);
   },
   getTargetPost: (postDetailReq) => {
-    const targetPost = Post.find(postDetailReq);
+    const targetPost = Post.findOne(postDetailReq);
     return targetPost;
   },
   getSimpleMonthlyData: (simplePostDataReq) => {
@@ -40,7 +49,7 @@ export default {
 
     const dttmRange = dttmBuilder.buildSingleMonthDttm(targetYear, targetMonth);
 
-    return Post.findInTimeRange(dttmRange[0], dttmRange[1]);
+    return Post.findAllInTimeRange(dttmRange[0], dttmRange[1]);
   },
   getSortedSimpleMonthlyData: (simplePostDataReq, sortVal) => {
     const targetYear = simplePostDataReq.getYear;
@@ -48,15 +57,15 @@ export default {
 
     const dttmRange = dttmBuilder.buildSingleMonthDttm(targetYear, targetMonth);
 
-    return Post.findInTimeRangeAndSort(dttmRange[0], dttmRange[1], sortVal);
+    return Post.findAllInTimeRangeAndSort(dttmRange[0], dttmRange[1], sortVal);
   },
   removePost: (removeReq) => {
-    const targetPost = Post.find(removeReq.getPostId);
+    const targetPost = Post.findOne(removeReq.getPostId);
 
     if (targetPost.length === 0) {
       throw new AppError('Bad Request', 404, 'E404AF');
     }
 
-    return Post.removePost(removeReq.getPostId);
+    return Post.removeOne(removeReq.getPostId);
   },
 };
