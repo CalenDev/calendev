@@ -142,16 +142,22 @@ export default {
       throw err;
     }
   },
-  findAllByIdAndTags: async (target, constraints) => {
+  findAllByIdAndTags: async (target, tags, startDttm, endDttm, sortBy) => {
     try {
       const multiplePosts = await PostModel.find({
         _id: {
           $in: [...target],
         },
-        postTag: {
-          $all: [...constraints],
+        eventStartDttm: {
+          $gt: new Date(startDttm).toISOString(),
+          $lt: new Date(endDttm).toISOString(),
         },
-      });
+        postTag: {
+          $all: [...tags],
+        },
+      })
+        .sort([[sortBy, 1]])
+        .exec();
       return multiplePosts;
     } catch (err) {
       mongoErrorHandler(err);
