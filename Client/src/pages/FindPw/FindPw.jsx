@@ -1,9 +1,13 @@
+/* eslint-disable import/order */
+
 // import react
 import { useState } from 'react';
 // import module
 import { PropTypes } from 'prop-types';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { persistor } from '../../store';
 // import MUI Component
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
@@ -13,12 +17,14 @@ import Typography from '@mui/material/Typography';
 // import api
 import { postFindPw } from '../../api';
 // import utils
+import { commonErrorRes, commonFailRes } from '../../utils/commonApiRes';
 import { validateRegexEmail, commonMsgText } from '../../utils';
 // import components
 import { CommonPaper, CommonTextField } from '../../components';
 
 function FindPw() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [alertMsgObj, setAlertMsgObj] = useState({
     code: 100,
     arg1: '',
@@ -36,30 +42,30 @@ function FindPw() {
 
     const apiRes = await postFindPw(curEmail);
 
-    if (!apiRes.data || !apiRes.data.status) {
-      // axiosError 감지 - 서버로 아예 req가 가지 못한 경우
+    if (!apiRes) {
+      // 서버로 아예 req가 가지 못한 경우
       navigate('/error', {
         replace: false,
-        state: { errorTitle: 'Network Error!' },
+        state: { errorTitle: '네트워크 에러가 발생했습니다!' },
       });
       return;
     }
 
+    const code = apiRes.data.code || apiRes.data.errorCode;
     // response의 data.status기반의 결과처리
     switch (apiRes.data.status) {
       case 'success':
         setAlertMsgObj({ code: 120, arg1: '' });
         break;
       case 'fail':
+        await commonFailRes(dispatch, persistor, navigate, code);
         setAlertMsgObj({ code: 114, arg1: '이메일' });
         break;
       case 'error':
-      default:
+        await commonErrorRes(navigate, code);
         setAlertMsgObj({ code: 114, arg1: '이메일' });
-        navigate('/error', {
-          replace: true,
-          state: { errorTitle: apiRes.data.message },
-        });
+        break;
+      default:
         break;
     }
   };
