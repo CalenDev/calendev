@@ -22,16 +22,16 @@ import PeopleIcon from '@mui/icons-material/People';
 import EditIcon from '@mui/icons-material/Edit';
 import LockIcon from '@mui/icons-material/Lock';
 // import assets
+import { useDispatch, useSelector } from 'react-redux';
 import Logo from '../../assets/images/CalendevLogo.png';
-
-const mockUserInfo = {
-  email: 'suhwan2004@gmail.com',
-  nickname: 'kimsuhwan',
-};
+// import redux
+import { logoutUser, selectUser } from '../../features/User/UserSlice';
+import { persistor } from '../../store';
 
 function Header() {
+  const { isSignin, userNickname } = useSelector(selectUser);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const isLogin = true;
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleOpenUserMenu = (event) => {
@@ -44,6 +44,14 @@ function Header() {
   const handleClickToNavigate = (e, path) => {
     e.preventDefault();
     navigate(path);
+  };
+
+  const handleClickLogout = async () => {
+    setAnchorEl(null);
+    await persistor.purge();
+    sessionStorage.removeItem('accessToken');
+    dispatch(logoutUser());
+    navigate('/signin', { replace: true });
   };
 
   return (
@@ -59,7 +67,7 @@ function Header() {
         <IconButton className="headerIconButton">
           <DateRangeIcon sx={{ color: '#ffffff' }} fontSize="large" />
         </IconButton>
-        {isLogin ? (
+        {isSignin ? (
           <>
             <Tooltip title="프로필 보기">
               <IconButton
@@ -86,16 +94,7 @@ function Header() {
               <StyledMenuItem>
                 <Stack className="headerProfileTitle">
                   <Typography className="headerMainText" noWrap variant="body1">
-                    {mockUserInfo.nickname}
-                  </Typography>
-                  <Typography
-                    noWrap
-                    variant="body2"
-                    sx={{
-                      opacity: '0.6',
-                    }}
-                  >
-                    {mockUserInfo.email}
+                    {userNickname}
                   </Typography>
                 </Stack>
                 <EditIcon />
@@ -120,14 +119,17 @@ function Header() {
                 handleClick={handleClickToNavigate}
               />
               <Divider />
-              <StyledMenuItem>
-                <Typography variant="button">로그아웃</Typography>
+              <StyledMenuItem onClick={handleClickLogout}>
+                <Typography variant="button" textAlign="center">
+                  로그아웃
+                </Typography>
               </StyledMenuItem>
             </StyledMenu>
           </>
         ) : (
           <Button
             onClick={(e) => {
+              setAnchorEl(null);
               handleClickToNavigate(e, '/signin');
             }}
             size="small"

@@ -1,53 +1,65 @@
-import axios from 'axios';
+import instance from './instance';
 
 const postUserSignIn = async (userEmail, userPassword) => {
-  const API_END_POINT = `${process.env.REACT_APP_SERVER_URL}/api/v1/auth/login`;
   try {
-    const response = await axios.post(API_END_POINT, {
+    const response = await instance.post('/api/v1/auth/login', {
       userEmail,
       userPassword,
     });
-
     return response;
   } catch (e) {
-    return e;
+    return e.response;
   }
 };
 
 const getCheckResetPasswordToken = async (token) => {
-  const API_END_POINT = `${process.env.REACT_APP_SERVER_URL}/api/v1/auth/page/${token}`;
   try {
-    const response = await axios.get(API_END_POINT);
+    const response = await instance.get(`/api/v1/auth/page/${token}`);
     return response;
   } catch (e) {
-    return e;
+    return e.response;
+  }
+};
+
+const postUserLogout = async () => {
+  try {
+    const response = await instance.post('/api/v1/auth/logout');
+    return response;
+  } catch (e) {
+    return e.response;
   }
 };
 
 const putResetPw = async (token, userPassword) => {
-  const API_END_POINT = `${process.env.REACT_APP_SERVER_URL}/api/v1/auth/password/${token}`;
   try {
-    const response = await axios.patch(API_END_POINT, {
+    const response = await instance.patch(`/api/v1/auth/password/${token}`, {
       userPassword,
     });
     return response;
   } catch (e) {
-    return e;
+    return e.response;
   }
 };
 
 const postFindPw = async (userEmail) => {
-  const API_END_POINT = `${process.env.REACT_APP_SERVER_URL}/api/v1/user/signinOptions/forgotPassword`;
-
   try {
-    const response = await axios.post(API_END_POINT, {
-      userEmail,
-    });
+    const response = await instance.post(
+      '/api/v1/user/signinOptions/forgotPassword',
+      {
+        userEmail,
+      },
+    );
 
     return response;
   } catch (e) {
-    return e;
+    return e.response;
   }
 };
 
-export { postUserSignIn, putResetPw, postFindPw, getCheckResetPasswordToken };
+export {
+  postUserSignIn,
+  putResetPw,
+  postUserLogout,
+  postFindPw,
+  getCheckResetPasswordToken,
+};
