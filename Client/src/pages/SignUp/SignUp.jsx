@@ -329,6 +329,9 @@ export default function SignUp() {
               autoComplete="email"
               autoFocus
               helpermsgobj={emailMsgObj}
+              inputProps={{
+                maxLength: 100,
+              }}
               name="email"
               onChange={handleInputChange}
               placeholder="이메일"
