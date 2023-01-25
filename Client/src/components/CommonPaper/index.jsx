@@ -9,7 +9,7 @@ const CommonPaper = styled(Paper)`
   padding: ${(props) => props.theme.spacing(4, 4)};
   margin: ${(props) => props.theme.spacing(12, 1, 'auto')};
   ${(props) => props.theme.breakpoints.up('mobile')} {
-    width: 350px;
+    width: 414px;
     margin: ${(props) => props.theme.spacing(12, 'auto', 'auto')};
   }
 `;

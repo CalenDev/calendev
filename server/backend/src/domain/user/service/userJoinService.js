@@ -1,28 +1,10 @@
 /* eslint-disable no-param-reassign */
 import User from '../models/user.js';
-
-import encrypt from '../../../global/utils/encrypt.js';
-
-import dttmBuilder from '../utils/dttmBuilder.js';
 import UserJoinDto from '../dto/joinDto.js';
+import encrypt from '../../../global/utils/encrypt.js';
+import dttmBuilder from '../utils/dttmBuilder.js';
+import AppError from '../../../global/utils/appError.js';
 
-const findAll = async () => {
-  const usrs = await User.getAllUsers();
-
-  return usrs;
-};
-
-const checkDuplicate = async (duplicateValidationReq) => {
-  const targetUser = await User.findOne(
-    duplicateValidationReq.getTarget,
-    duplicateValidationReq.getAuthType,
-  );
-
-  const validateDuplicateRes = new UserJoinDto.DuplicateValidationRes();
-  validateDuplicateRes.setIsUserUnique = targetUser.length ? 'false' : 'true';
-
-  return validateDuplicateRes;
-};
 const controlParams = async (signupReq) => {
   const { hashedPassword, salt } = await encrypt.createHashedPassword(
     signupReq.getUserPassword,
@@ -31,10 +13,39 @@ const controlParams = async (signupReq) => {
   signupReq.salt = salt;
 };
 
-const create = async (signupReq) => {
-  await controlParams(signupReq);
-  signupReq.createdAtDttm = dttmBuilder();
-  await User.save(signupReq);
-};
+export default {
+  findAll: async () => {
+    const users = await User.getAllUsers();
 
-export default { findAll, checkDuplicate, create };
+    return users;
+  },
+  checkDuplicate: async (duplicateValidationReq) => {
+    const targetUser = await User.findOne(
+      duplicateValidationReq.getTarget,
+      duplicateValidationReq.getAuthType,
+    );
+
+    const duplicateValidationRes = new UserJoinDto.DuplicateValidationRes();
+    duplicateValidationRes.isUserUnique = targetUser.length === 0;
+    return duplicateValidationRes;
+  },
+  create: async (signupReq) => {
+    // 1) 이미 존재하는 유저가 있는지 확인.
+    const targetUser = await User.findOne(signupReq.getUserEmail, 'userEmail');
+    if (targetUser.length !== 0) {
+      throw new AppError('Bad Request', 400, 'E400AF');
+    }
+
+    await controlParams(signupReq);
+    signupReq.createdAtDttm = dttmBuilder.buildCurrentUTCDttm();
+    await User.save(signupReq);
+  },
+  remove: async (userData) => {
+    // 1) 유저정보의 유저가 실제로 존재하는 지 확인.
+    const targetUser = await User.findOne(userData.userId, 'userId');
+    if (targetUser.length === 0) {
+      throw new AppError('Bad Request', 404, 'E404AD');
+    }
+    await User.remove(userData.userId);
+  },
+};

@@ -1,4 +1,17 @@
-import postUserSignIn from './auth';
-import getSearchTags from './event';
+import {
+  postUserSignIn,
+  putResetPw,
+  getCheckResetPasswordToken,
+  postFindPw,
+} from './auth';
 
-export { postUserSignIn, getSearchTags };
+import { postUserDuplicate, postUserSignUp } from './user';
+
+export {
+  postUserSignIn,
+  putResetPw,
+  getCheckResetPasswordToken,
+  postFindPw,
+  postUserDuplicate,
+  postUserSignUp,
+};

@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-no-duplicate-props */
+
 // import react
 import { useState } from 'react';
 // import module
@@ -17,7 +19,7 @@ import { postUserSignIn } from '../../api';
 // import utils
 import { validateRegexEmail, validateRegexPassword } from '../../utils';
 // import components
-import { CustomTextField, CommonPaper } from '../../components';
+import { CommonTextField, CommonPaper } from '../../components';
 
 function SignIn() {
   const navigate = useNavigate();
@@ -56,11 +58,17 @@ function SignIn() {
       userPassword: curPassword,
     });
 
-    if (apiRes.status === 'success') {
-      navigate('/', { replace: true });
-    } else if (apiRes.status === 'failure') {
-      setEmailMsgObj({ code: 112, arg1: '' });
-      setPasswordMsgObj({ code: 112, arg1: '' });
+    switch (apiRes.status) {
+      case 200:
+        navigate('/', { replace: true });
+        break;
+      case 401:
+        setEmailMsgObj({ code: 112, arg1: '' });
+        setPasswordMsgObj({ code: 112, arg1: '' });
+        break;
+      default:
+        // server Error! go to error page
+        break;
     }
   };
 
@@ -71,18 +79,24 @@ function SignIn() {
       </StyledTitle>
       <Stack component="form" onSubmit={handleSubmit} spacing={2}>
         <Stack spacing={1}>
-          <CustomTextField
+          <CommonTextField
             name="email"
             autoComplete="email"
             placeholder="이메일"
             helpermsgobj={emailMsgObj}
+            inputProps={{
+              maxLength: 100,
+            }}
           />
-          <CustomTextField
+          <CommonTextField
             name="password"
             autoComplete="current-password"
             placeholder="비밀번호"
             helpermsgobj={passwordMsgObj}
             type={showConfirmPassword ? 'text' : 'password'}
+            inputProps={{
+              maxLength: 20,
+            }}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">

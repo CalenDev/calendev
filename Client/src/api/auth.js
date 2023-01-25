@@ -3,17 +3,51 @@ import axios from 'axios';
 const postUserSignIn = async (userEmail, userPassword) => {
   const API_END_POINT = `${process.env.REACT_APP_SERVER_URL}/api/v1/auth/login`;
   try {
-    const { data } = await axios.post(API_END_POINT, {
+    const response = await axios.post(API_END_POINT, {
       userEmail,
       userPassword,
     });
 
-    return data;
+    return response;
   } catch (e) {
-    return {
-      error: e,
-    };
+    return e;
   }
 };
 
-export default postUserSignIn;
+const getCheckResetPasswordToken = async (token) => {
+  const API_END_POINT = `${process.env.REACT_APP_SERVER_URL}/api/v1/auth/page/${token}`;
+  try {
+    const response = await axios.get(API_END_POINT);
+    return response;
+  } catch (e) {
+    return e;
+  }
+};
+
+const putResetPw = async (token, userPassword) => {
+  const API_END_POINT = `${process.env.REACT_APP_SERVER_URL}/api/v1/auth/password/${token}`;
+  try {
+    const response = await axios.patch(API_END_POINT, {
+      userPassword,
+    });
+    return response;
+  } catch (e) {
+    return e;
+  }
+};
+
+const postFindPw = async (userEmail) => {
+  const API_END_POINT = `${process.env.REACT_APP_SERVER_URL}/api/v1/user/signinOptions/forgotPassword`;
+
+  try {
+    const response = await axios.post(API_END_POINT, {
+      userEmail,
+    });
+
+    return response;
+  } catch (e) {
+    return e;
+  }
+};
+
+export { postUserSignIn, putResetPw, postFindPw, getCheckResetPasswordToken };
