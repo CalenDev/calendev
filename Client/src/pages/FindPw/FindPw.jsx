@@ -80,7 +80,7 @@ function FindPw() {
             name="email"
             autoFocus
             inputProps={{
-              maxLength: 20,
+              maxLength: 100,
             }}
           />
           <FindPwButton alertMsgObj={alertMsgObj} value="비밀번호 찾기" />
