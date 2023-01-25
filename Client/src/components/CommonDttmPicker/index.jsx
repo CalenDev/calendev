@@ -11,12 +11,7 @@ export default function CommonDttmPicker(props) {
       <DateTimePicker
         ampm={false}
         inputFormat="YYYY-MM-DD HH:mm"
-        renderInput={(params) => (
-          <CommonTextField
-            {...params}
-            name={name}
-          />
-        )}
+        renderInput={(params) => <CommonTextField {...params} name={name} />}
         {...props}
       />
     </LocalizationProvider>
