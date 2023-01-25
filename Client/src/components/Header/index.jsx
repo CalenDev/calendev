@@ -22,7 +22,7 @@ import PeopleIcon from '@mui/icons-material/People';
 import EditIcon from '@mui/icons-material/Edit';
 import LockIcon from '@mui/icons-material/Lock';
 // import assets
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Logo from '../../assets/images/CalendevLogo.png';
 // import redux
 import { logoutUser, selectUser } from '../../features/User/UserSlice';
@@ -119,7 +119,11 @@ function Header() {
                 handleClick={handleClickToNavigate}
               />
               <Divider />
-              <MenuItem onClick={handleClickLogout}>로그아웃</MenuItem>
+              <StyledMenuItem onClick={handleClickLogout}>
+                <Typography variant="button" textAlign="center">
+                  로그아웃
+                </Typography>
+              </StyledMenuItem>
             </StyledMenu>
           </>
         ) : (
