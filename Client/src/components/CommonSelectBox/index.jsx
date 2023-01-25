@@ -1,3 +1,5 @@
+/* eslint-disable implicit-arrow-linebreak */
+/* eslint-disable react/jsx-curly-newline */
 import PropTypes from 'prop-types';
 import Autocomplete from '@mui/material/Autocomplete';
 import CommonTextField from '../CommonTextField';
@@ -7,13 +9,11 @@ export default function CommonSelectBox(props) {
   return (
     <Autocomplete
       getOptionLabel={(option) => option.value}
-      isOptionEqualToValue={(option, newValue) => option.value === newValue.value}
+      isOptionEqualToValue={(option, newValue) =>
+        option.value === newValue.value
+      }
       renderInput={(params) => (
-        <CommonTextField
-          {...params}
-          label={label}
-          name={name}
-        />
+        <CommonTextField {...params} label={label} name={name} />
       )}
       {...props}
     />
