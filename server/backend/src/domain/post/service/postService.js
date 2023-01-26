@@ -26,6 +26,9 @@ export default {
 
     // 유저 정보와 포스트의 글쓴이 정보가 일치하는 지 확인.
     const targetPost = await Post.findOne(targetPostId);
+    if (targetPost.length === 0) {
+      throw new AppError('Bad Request', 404, 'E404AF');
+    }
     const targetPostWriterId = targetPost[0].userId;
 
     // 불일치 에러 리턴 권한없음.
@@ -40,7 +43,7 @@ export default {
     return Post.updateOne(targetPostId, postUpdateReq);
   },
   getTargetPost: (postDetailReq) => {
-    const targetPost = Post.findOne(postDetailReq);
+    const targetPost = Post.findOne(postDetailReq.getPostId);
     return targetPost;
   },
   getSimpleMonthlyData: (simplePostDataReq) => {
