@@ -133,7 +133,8 @@ export default {
     // eslint-disable-next-line no-underscore-dangle
     editPostReq.postId = req.body._id;
 
-    const payload = TokenProvider.getPayload(req.headers.authorization);
+    const accessToken = TokenProvider.resolveToken(req);
+    const payload = TokenProvider.getJwtPayLoadData(accessToken);
     payloadDataToDto(payload, editPostReq);
 
     // 2. 수정사항 서비스단에서 처리후 갱신된 게시물 데이터 반환
