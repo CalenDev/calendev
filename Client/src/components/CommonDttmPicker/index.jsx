@@ -5,13 +5,20 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import CommonTextField from '../CommonTextField';
 
 export default function CommonDttmPicker(props) {
-  const { name } = props;
+  const { name, error, helperText } = props;
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ko">
       <DateTimePicker
         ampm={false}
         inputFormat="YYYY-MM-DD HH:mm"
-        renderInput={(params) => <CommonTextField {...params} name={name} />}
+        renderInput={(params) => (
+          <CommonTextField
+            {...params}
+            error={error}
+            helperText={helperText}
+            name={name}
+          />
+        )}
         {...props}
       />
     </LocalizationProvider>
@@ -20,8 +27,12 @@ export default function CommonDttmPicker(props) {
 
 CommonDttmPicker.propTypes = {
   name: PropTypes.string,
+  error: PropTypes.bool,
+  helperText: PropTypes.string,
 };
 
 CommonDttmPicker.defaultProps = {
   name: '',
+  error: false,
+  helperText: '',
 };
