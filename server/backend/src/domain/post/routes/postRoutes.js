@@ -10,9 +10,7 @@ router
   .post(authController.authJWT, postControllers.savePost)
   .patch(authController.authJWT, postControllers.editPost);
 
-router
-  .route('/details')
-  .get(authController.authJWT, postControllers.getTargetPost);
+router.route('/details/:postId').get(postControllers.getTargetPost);
 
 router.route('/dataType/simple').get(postControllers.getSimplePostData);
 
