@@ -107,15 +107,13 @@ class PostEditReq {
 
 class PostDetailReq {
   postId;
-  postTitle;
 
-  constructor() {}
+  constructor(postId) {
+    this.postId = postId;
+  }
 
   get getPostId() {
     return this.postId;
-  }
-  get getPostTitle() {
-    return this.postTitle;
   }
 }
 
