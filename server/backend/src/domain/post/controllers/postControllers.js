@@ -29,7 +29,7 @@ export default {
 
     // 2. 저장을 위한 try catch > 추후에 에러 정리하면 에러핸들러에서 한번에..\
     const saveResult = await postService.save(postReq);
-    res.status(200).json({
+    return res.status(200).json({
       status: 'success',
     });
   }),
@@ -68,13 +68,17 @@ export default {
   // 특정 post의 정보를 원하는 요청.
   getTargetPost: catchAsync(async (req, res, next) => {
     // 1. 특정 post의 고유 id와 제목이 넘어옴
-    const postDetailReq = new PostDto.PostDetailReq();
+    const targetId = req.params.postId;
 
-    objectMapper.map(req.body, postDetailReq);
+    // 2. 아이디가 param으로 들어왔는지 확인.
+    if (!targetId) {
+      return next(new AppError('Bad Request', 400, 'E400AG'));
+    }
+    const postDetailReq = new PostDto.PostDetailReq(targetId);
 
     const postDetail = await postService.getTargetPost(postDetailReq);
 
-    res.status(200).json({
+    return res.status(200).json({
       status: 'success',
       postDetail,
     });
@@ -120,7 +124,7 @@ export default {
     }
 
     // 6) 검색 결과를 리턴한다.
-    res.status(200).json({
+    return res.status(200).json({
       status: 'success',
       searchResult,
     });
