@@ -113,7 +113,7 @@ export default {
 
     let searchResult = [];
     // 6) default Search : relative
-    if (queryObj.sortBy === undefined) {
+    if (!queryObj.sortBy) {
       searchResult = await searchService.relativeSearch(searchQuery);
     } else {
       searchResult = await searchService.search(searchQuery);
