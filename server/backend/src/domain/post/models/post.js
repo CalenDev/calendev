@@ -99,31 +99,17 @@ export default {
       });
     return result;
   },
-  findAllInTimeRange: async (startDttm, endDttm) => {
+  findSimpleDataInTimeRange: async (startDttm, endDttm) => {
     try {
       const res = await PostModel.find({
         eventStartDttm: {
           $gt: new Date(startDttm).toISOString(),
           $lt: new Date(endDttm).toISOString(),
         },
-      }).select(process.env.SIMPLE_POST_PROPERTIES);
-      return res;
-    } catch (err) {
-      mongoErrorHandler(err);
-      throw err;
-    }
-  },
-  findAllInTimeRangeAndSort: async (startDttm, endDttm, sortVal) => {
-    try {
-      const postFindResult = await PostModel.find({
-        eventStartDttm: {
-          $gt: new Date(startDttm).toISOString(),
-          $lt: new Date(endDttm).toISOString(),
-        },
       })
-        .sort([[sortVal, 1]])
-        .exec();
-      return postFindResult;
+        .sort([['eventStartDttm', 1]])
+        .select(process.env.SIMPLE_POST_PROPERTIES);
+      return res;
     } catch (err) {
       mongoErrorHandler(err);
       throw err;
@@ -142,21 +128,23 @@ export default {
       throw err;
     }
   },
-  findAllByIdAndTags: async (target, tags, startDttm, endDttm, sortBy) => {
+  findAllByIdAndTags: async (target, searchQuery) => {
     try {
       const multiplePosts = await PostModel.find({
         _id: {
           $in: [...target],
         },
         eventStartDttm: {
-          $gt: new Date(startDttm).toISOString(),
-          $lt: new Date(endDttm).toISOString(),
+          $gt: new Date(searchQuery.getStartDttm).toISOString(),
+          $lt: new Date(searchQuery.getEndDttm).toISOString(),
         },
         postTag: {
-          $all: [...tags],
+          $all: [...searchQuery.getTags],
         },
       })
-        .sort([[sortBy, 1]])
+        .sort([[searchQuery.getSort, 1]])
+        .skip(searchQuery.getLimit * (searchQuery.getPage - 1))
+        .limit(searchQuery.getLimit)
         .exec();
       return multiplePosts;
     } catch (err) {
