@@ -9,6 +9,8 @@ export default function handleError(mongoError) {
     mongoError instanceof mongoose.Error.MongooseServerSelectionError
   ) {
     throw new AppError('Internal Server Error', 500, 'E500AC');
+  } else if (mongoError instanceof mongoose.Error.CastError) {
+    throw new AppError(`Cast Error : ${mongoError.message}`, 400, 'E400AG');
   } else {
     throw new AppError('Internal Server Error', 500, 'E500AF');
   }
