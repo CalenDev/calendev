@@ -42,8 +42,11 @@ export default {
 
     return Post.updateOne(targetPostId, postUpdateReq);
   },
-  getTargetPost: (postDetailReq) => {
-    const targetPost = Post.findOne(postDetailReq.getPostId);
+  getTargetPost: async (postDetailReq) => {
+    const targetPost = await Post.findOne(postDetailReq.getPostId);
+    if (targetPost.length === 0) {
+      throw new AppError('Bad Request', 404, 'E404AF');
+    }
     return targetPost;
   },
   getSimpleMonthlyData: (simplePostDataReq) => {
