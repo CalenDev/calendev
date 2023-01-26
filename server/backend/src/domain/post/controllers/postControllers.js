@@ -55,19 +55,9 @@ export default {
       );
     }
 
-    // sorting
-    let simplePostDataList = [];
-
-    if (queryObj.sort) {
-      simplePostDataList = await postService.getSortedSimpleMonthlyData(
-        simplePostDataReq,
-        queryObj.sort,
-      );
-    } else {
-      simplePostDataList = await postService.getSimpleMonthlyData(
-        simplePostDataReq,
-      );
-    }
+    const simplePostDataList = await postService.getSimpleMonthlyData(
+      simplePostDataReq,
+    );
 
     return res.status(200).json({
       status: 'success',
@@ -95,7 +85,7 @@ export default {
     const queryObj = { ...req.query };
 
     // 2) 쿼리파라매터 중 제외할 필드를 지정한다.
-    const excludedFields = ['page', 'limit', 'fields'];
+    const excludedFields = ['fields'];
     excludedFields.forEach((el) => delete queryObj[el]);
 
     // 3) dttm 정보가 유효한지 확인한다.
@@ -114,17 +104,20 @@ export default {
     }
 
     // 4) 사용자 검색의 제한사항 (날짜 범위, 태그)을 객체로 저장한다.
-    const constraintsData = {};
-    constraintsData.startDttm = queryObj.since;
-    constraintsData.endDttm = queryObj.end;
-    constraintsData.tagData = req.body.tags;
-    constraintsData.sortBy = queryObj.sort;
+    const constraintsData = { ...queryObj };
+    constraintsData.tags = req.body.tags;
 
     // 5) 검색에 사용될 SearchQuery 클래스 객체 생성 후 검색 서비스로 넘겨준다.
     const searchQuery = new SearchQuery(queryObj.inputString);
     searchQuery.addConstraints(constraintsData);
 
-    const searchResult = await searchService.search(searchQuery);
+    let searchResult = [];
+    // 6) default Search : relative
+    if (queryObj.sortBy === undefined) {
+      searchResult = await searchService.relativeSearch(searchQuery);
+    } else {
+      searchResult = await searchService.search(searchQuery);
+    }
 
     // 6) 검색 결과를 리턴한다.
     res.status(200).json({
