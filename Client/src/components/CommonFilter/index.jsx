@@ -13,13 +13,13 @@ import FormGroup from '@mui/material/FormGroup';
 import { useTheme } from '@mui/material';
 import CommonGroupChips from '../CommonGroupChips/index';
 import CommonDttmPicker from '../CommonDttmPicker';
+import { validateSinceAndEnd } from '../../utils/validationCheck';
 
 function CommonFilter(props) {
   const { openFilter, setOpenFilter, option, setOption, tags, checkBoxs } =
     props;
 
   const theme = useTheme();
-
   const handleChangeTag = (e, value, detail, reason) => {
     if (detail === 'selectOption' || detail === 'removeOption') {
       const curKey = reason.option.code[0];
@@ -29,6 +29,7 @@ function CommonFilter(props) {
       }));
     }
   };
+
   return (
     <Stack position="relative" onChange={handleChangeTag}>
       <StyledFilterChip
@@ -69,14 +70,28 @@ function CommonFilter(props) {
           >
             <CommonDttmPicker
               name="searchStartDttm"
+              value={option.since}
+              error={!validateSinceAndEnd(option.since, option.end)}
+              helperText={
+                validateSinceAndEnd(option.since, option.end)
+                  ? ''
+                  : '날짜를 다시 확인해주세요.'
+              }
               onChange={(newStartDttm) => {
-                setOption((prev) => ({ ...prev, since: newStartDttm }));
+                setOption((prev) => ({ ...prev, since: newStartDttm.$d }));
               }}
             />
             <CommonDttmPicker
               name="searchEndDttm"
+              value={option.end}
+              error={!validateSinceAndEnd(option.since, option.end)}
+              helperText={
+                validateSinceAndEnd(option.since, option.end)
+                  ? ''
+                  : '날짜를 다시 확인해주세요.'
+              }
               onChange={(newEndDttm) => {
-                setOption((prev) => ({ ...prev, end: newEndDttm }));
+                setOption((prev) => ({ ...prev, end: newEndDttm.$d }));
               }}
             />
           </Stack>
@@ -109,7 +124,7 @@ function CustomTagStack(props) {
       <CommonGroupChips
         options={tagArr}
         onChange={onChange}
-        defaultValue={option.tag[curTagKey]}
+        value={option.tag[curTagKey] || null}
       />
     </StyledTagStack>
   );
