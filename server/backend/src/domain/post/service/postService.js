@@ -49,15 +49,7 @@ export default {
 
     const dttmRange = dttmBuilder.buildSingleMonthDttm(targetYear, targetMonth);
 
-    return Post.findAllInTimeRange(dttmRange[0], dttmRange[1]);
-  },
-  getSortedSimpleMonthlyData: (simplePostDataReq, sortVal) => {
-    const targetYear = simplePostDataReq.getYear;
-    const targetMonth = simplePostDataReq.getMonth;
-
-    const dttmRange = dttmBuilder.buildSingleMonthDttm(targetYear, targetMonth);
-
-    return Post.findAllInTimeRangeAndSort(dttmRange[0], dttmRange[1], sortVal);
+    return Post.findSimpleDataInTimeRange(dttmRange[0], dttmRange[1]);
   },
   removePost: (removeReq) => {
     const targetPost = Post.findOne(removeReq.getPostId);
