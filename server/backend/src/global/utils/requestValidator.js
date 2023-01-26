@@ -23,9 +23,25 @@ const validateMonth = (month) => {
   return reg.test(month) && Number(month) >= 1 && Number(month) <= 12;
 };
 
-const validateDttm = (year, month) =>
-  // eslint-disable-next-line implicit-arrow-linebreak
-  validateYear(year) && validateMonth(month);
+const validateMonthDay = (year, month, day) => {
+  const reg = /[0-9]{1,2}/;
+  const lastDay = new Date(year, month, 0).getDate();
+  return reg.test(day) && day >= 1 && day <= lastDay;
+};
+
+/**
+ * dttm 정보를 string으로 입력하면 유효성을 판단.
+ * @param {string} dttm yyyy-mm-dd 형태의 dttm 데이터를 입력
+ * @returns 입력한 데이터가 유효한 정보인지 확인.
+ */
+const validateDttm = (dttm) => {
+  const dttmArr = dttm.split('-');
+  const validationResult =
+    validateYear(dttmArr[0]) &&
+    validateMonth(dttmArr[1]) &&
+    validateMonthDay(dttmArr[0], dttmArr[1], dttmArr[2]);
+  return validationResult;
+};
 
 const validateReq = (req, serviceName) => {
   switch (serviceName) {
@@ -44,12 +60,6 @@ const validateReq = (req, serviceName) => {
       return validateEmail(req.getUserEmail);
     case 'resetPW':
       return validatePassword(req.getUserPassword);
-    case 'year':
-      return validateYear(req.getYear);
-    case 'month':
-      return validateMonth(req.getMonth);
-    case 'dttm':
-      return validateDttm(req.getYear, req.getMonth);
     default:
       return false;
   }
@@ -57,4 +67,8 @@ const validateReq = (req, serviceName) => {
 
 export default {
   validateReq,
+  validateYear,
+  validateMonth,
+  validateMonthDay,
+  validateDttm,
 };

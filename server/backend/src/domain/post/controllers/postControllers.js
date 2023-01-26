@@ -4,8 +4,10 @@ import AppError from '../../../global/utils/appError.js';
 import objectMapper from '../../../global/utils/objectMapper.js';
 import PostDto from '../dto/postDto.js';
 import postService from '../service/postService.js';
-import validator from '../../../global/utils/requestValidator.js';
 import TokenProvider from '../../../global/security/jwt.js';
+import SearchQuery from '../searchSystem/SearchQuery.js';
+import requestValidator from '../../../global/utils/requestValidator.js';
+import searchService from '../service/searchService.js';
 
 const payloadDataToDto = (payload, dto) => {
   if (payload) {
@@ -21,7 +23,8 @@ export default {
     const postReq = new PostDto.PostSaveReq();
     objectMapper.map(req.body, postReq);
 
-    const payload = TokenProvider.getPayload(req.headers.authorization);
+    const accessToken = TokenProvider.resolveToken(req);
+    const payload = TokenProvider.getJwtPayLoadData(accessToken);
     payloadDataToDto(payload, postReq);
 
     // 2. 저장을 위한 try catch > 추후에 에러 정리하면 에러핸들러에서 한번에..\
@@ -43,25 +46,21 @@ export default {
     simplePostDataReq.month = req.query.month;
 
     // 2. 입력값 검증
-    if (!validator.validateReq(simplePostDataReq, 'dttm')) {
-      return next(new AppError('Please provide valid Date data', 401, 'E404E'));
-    }
-
-    // sorting
-    let simplePostDataList = [];
-
-    if (queryObj.sort) {
-      simplePostDataList = await postService.getSortedSimpleMonthlyData(
-        simplePostDataReq,
-        queryObj.sort,
-      );
-    } else {
-      simplePostDataList = await postService.getSimpleMonthlyData(
-        simplePostDataReq,
+    if (
+      !requestValidator.validateYear(simplePostDataReq.getYear) ||
+      !requestValidator.validateMonth(simplePostDataReq.getMonth)
+    ) {
+      return next(
+        new AppError('Please provide valid Date data', 400, 'E400AH'),
       );
     }
+
+    const simplePostDataList = await postService.getSimpleMonthlyData(
+      simplePostDataReq,
+    );
 
     return res.status(200).json({
+      status: 'success',
       simplePostDataList,
     });
   }),
@@ -76,11 +75,57 @@ export default {
     const postDetail = await postService.getTargetPost(postDetailReq);
 
     res.status(200).json({
+      status: 'success',
       postDetail,
     });
   }),
 
-  // 수정 페이지로 들어가는 요청 x, 수정버튼 누를 때 요청
+  searchPost: catchAsync(async (req, res, next) => {
+    // 1) 쿼리파라매터로 사용자 입력과 날짜범위 지정 정보를 받아온다.
+    const queryObj = { ...req.query };
+
+    // 2) 쿼리파라매터 중 제외할 필드를 지정한다.
+    const excludedFields = ['fields'];
+    excludedFields.forEach((el) => delete queryObj[el]);
+
+    // 3) dttm 정보가 유효한지 확인한다.
+    const sinceValidateRes =
+      queryObj.since !== undefined
+        ? requestValidator.validateDttm(queryObj.since)
+        : true;
+    const endValidateRes =
+      queryObj.end !== undefined
+        ? requestValidator.validateDttm(queryObj.end)
+        : true;
+    if (!sinceValidateRes || !endValidateRes) {
+      return next(
+        new AppError('Please provide valid Date data', 400, 'E400AH'),
+      );
+    }
+
+    // 4) 사용자 검색의 제한사항 (날짜 범위, 태그)을 객체로 저장한다.
+    const constraintsData = { ...queryObj };
+    constraintsData.tags = req.body.tags;
+
+    // 5) 검색에 사용될 SearchQuery 클래스 객체 생성 후 검색 서비스로 넘겨준다.
+    const searchQuery = new SearchQuery(queryObj.inputString);
+    searchQuery.addConstraints(constraintsData);
+
+    let searchResult = [];
+    // 6) default Search : relative
+    if (!queryObj.sortBy) {
+      searchResult = await searchService.relativeSearch(searchQuery);
+    } else {
+      searchResult = await searchService.search(searchQuery);
+    }
+
+    // 6) 검색 결과를 리턴한다.
+    res.status(200).json({
+      status: 'success',
+      searchResult,
+    });
+  }),
+
   editPost: catchAsync(async (req, res, next) => {
     // 1. jwt authentication을 거쳐서 온 요청으로 dto 생성
     const editPostReq = new PostDto.PostEditReq();
@@ -91,24 +136,27 @@ export default {
     const payload = TokenProvider.getPayload(req.headers.authorization);
     payloadDataToDto(payload, editPostReq);
 
-    // 2. 수정사항 서비스단에서 처리
-    // 2-1. 자신의 게시물인지 확인하는 단계가 필요한데 컨트롤러에서 맡는지?
+    // 2. 수정사항 서비스단에서 처리후 갱신된 게시물 데이터 반환
     try {
       const postUpdateResponse = await postService.update(editPostReq);
-      res.status(200).json({
+
+      return res.status(200).json({
         status: 'success',
         postUpdateResponse,
       });
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }),
   deletePost: catchAsync(async (req, res, next) => {
+    // 1) dto 매핑
     const deletePostReq = new PostDto.PostDeleteReq();
     objectMapper.map(req.body, deletePostReq);
 
+    // 2) dto를 포스트 서비스단으로 넘겨준다.
     await postService.removePost(deletePostReq);
 
+    // 3) 삭제는 성공여부만 반환한다.
     return res.status(200).json({
       status: 'success',
     });
