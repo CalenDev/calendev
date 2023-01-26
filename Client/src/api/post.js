@@ -35,9 +35,12 @@ const postSearchByOptions = async (props) => {
   };
 
   try {
-    const response = await instance.post(`/search?${makeQueryString()}`, {
-      tags,
-    });
+    const response = await instance.post(
+      `/api/v1/posts/search?${makeQueryString()}`,
+      {
+        tags,
+      },
+    );
     return response;
   } catch (e) {
     return e.response;
