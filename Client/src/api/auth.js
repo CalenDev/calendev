@@ -44,7 +44,7 @@ const putResetPw = async (token, userPassword) => {
 const postFindPw = async (userEmail) => {
   try {
     const response = await instance.post(
-      '/api/v1/user/signinOptions/forgotPassword',
+      '/api/v1/users/signinOptions/forgotPassword',
       {
         userEmail,
       },
