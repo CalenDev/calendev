@@ -1,11 +1,7 @@
 /* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
 /* eslint-disable implicit-arrow-linebreak */
-/* eslint-disable react/jsx-curly-newline */
-/* eslint-disable no-restricted-syntax */
 /* eslint-disable react/function-component-definition */
 /* eslint-disable no-underscore-dangle */
-/* eslint-disable function-paren-newline */
 /* eslint-disable import/no-extraneous-dependencies */
 
 // import react
@@ -43,8 +39,10 @@ import {
   patchRemoveBookmark,
 } from '../../../api';
 // import utils
+import { commonErrorRes, commonFailRes } from '../../../utils/commonApiRes';
 // import components
 import { CommonFilter } from '../../../components';
+// import etc...
 import {
   selectBookmark,
   setBookmark,
@@ -52,7 +50,6 @@ import {
 import EventTag from '../../../config/eventTag';
 import SkillTag from '../../../config/skillTag';
 import TechFieldTag from '../../../config/techFieldTag';
-import { commonErrorRes, commonFailRes } from '../../../utils/commonApiRes';
 import { persistor } from '../../../store';
 
 const CustomToolbar = ({
@@ -159,8 +156,9 @@ const filterEventPost = (data, bookmark, option, isBookmark) =>
       bool = false;
     }
 
-    const filteringTag = Object.values(
-      option.reduce((acc, cur) => [...acc, ...cur], []),
+    const filteringTag = Object.values(option.tag).reduce(
+      (acc, cur) => [...acc, ...cur],
+      [],
     );
     const curTag = curData.postTag;
 
@@ -321,7 +319,6 @@ const StyledStack = styled(Stack)`
   width: 100%;
   height: 100%;
   justify-content: center;
-  //align-items: flex-start;
   flex-direction: row;
 
   .rbc-calendar {
@@ -364,7 +361,7 @@ function PostcalendarModal(props) {
 
       if (!apiRes) {
         navigate('/error', {
-          state: '네트워크 에러가 발생했습니다!',
+          state: { errorTitle: '네트워크 에러가 발생했습니다!' },
         });
       }
       const { code } = apiRes.data;
@@ -469,7 +466,7 @@ function CustomModalCard(props) {
             <Typography variant="h5" noWrap>
               {`행사명 : ${schedule.postTitle}`}
             </Typography>
-            {bookmark.has(schedule._id) ? (
+            {bookmark.bookmarkSet.has(schedule._id) ? (
               <BookmarkIcon />
             ) : (
               <BookmarkBorderIcon />
