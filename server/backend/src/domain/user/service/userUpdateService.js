@@ -18,7 +18,7 @@ export default {
       throw new AppError('Not Authorized', 401, 'E401AD');
     }
 
-    const userUpdateResult = await User.updateColumn(
+    const userUpdateResult = await User.updateOne(
       users[0].userId,
       hashedPassword,
       'userPassword',
