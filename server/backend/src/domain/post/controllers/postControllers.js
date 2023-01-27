@@ -8,6 +8,7 @@ import TokenProvider from '../../../global/security/jwt.js';
 import SearchQuery from '../searchSystem/SearchQuery.js';
 import requestValidator from '../../../global/utils/requestValidator.js';
 import searchService from '../service/searchService.js';
+import bookmarkService from '../service/bookmarkService.js';
 
 const payloadDataToDto = (payload, dto) => {
   if (payload) {
@@ -152,6 +153,43 @@ export default {
     } catch (error) {
       return next(error);
     }
+  }),
+  addBookmark: catchAsync(async (req, res, next) => {
+    // 1. get from jwt
+    const accessToken = TokenProvider.resolveToken(req);
+    const payloadData = TokenProvider.getJwtPayLoadData(accessToken);
+    const { postId } = req.body;
+
+    if (!payloadData.userId || !postId) {
+      return next(new AppError('Bad Request', 400, 'E400AG'));
+    }
+    // 2. 북마크 추가
+    const bookmarkAdditionResult = await bookmarkService.saveBookmark(
+      payloadData.userId,
+      postId,
+    );
+
+    return res.status(200).json({
+      status: 'success',
+      bookmarkList: bookmarkAdditionResult.postIds,
+    });
+  }),
+  deleteBookmark: catchAsync(async (req, res, next) => {
+    // 1. get from jwt
+    const accessToken = TokenProvider.resolveToken(req);
+    const payloadData = TokenProvider.getJwtPayLoadData(accessToken);
+    const { postId } = req.body;
+
+    // 2. 북마크에서 삭제
+
+    const deleteBookmarkResult = await bookmarkService.removeBookmark(
+      payloadData.userId,
+      postId,
+    );
+    return res.status(200).json({
+      status: 'success',
+      bookmarkList: deleteBookmarkResult.postIds,
+    });
   }),
   deletePost: catchAsync(async (req, res, next) => {
     // 1) dto 매핑
