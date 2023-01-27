@@ -101,7 +101,6 @@ app.use(globalErrorHandler);
 process.on('unhandledRejection', (err) => {
   console.log('UNHANDLED REJECTION! ❌ Shutting Down...');
   console.log(err.name, err.message);
-  console.log(err.stack);
   server.close(() => {
     process.exit(1);
   });
