@@ -36,7 +36,7 @@ instance.interceptors.response.use(
       return error.response; // 에러 페이지로 갈 거임. 렌더링은 이럴 때만 e.response.data.message로
     }
 
-    const code = response.data.code || response.data.errorCode;
+    const { code } = response.data;
     switch (code) {
       case 'E400AA':
       case 'E401AB':

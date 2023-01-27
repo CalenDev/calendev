@@ -41,7 +41,9 @@ function Error() {
       >
         <StyledBackgroundWrapper />
         <Typography variant="h4" noWrap fontWeight="bold">
-          {state.errorTitle}
+          {state && state.errorTitle
+            ? state.errorTitle
+            : '타이틀이 존재하지 않음!'}
         </Typography>
         <Stack
           gap={theme.spacing(1)}

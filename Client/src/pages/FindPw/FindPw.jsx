@@ -51,7 +51,7 @@ function FindPw() {
       return;
     }
 
-    const code = apiRes.data.code || apiRes.data.errorCode;
+    const { code } = apiRes.data;
     // response의 data.status기반의 결과처리
     switch (apiRes.data.status) {
       case 'success':
