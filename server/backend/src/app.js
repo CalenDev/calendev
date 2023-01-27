@@ -8,6 +8,7 @@ import logger from 'morgan';
 import dotenv from 'dotenv';
 import userRouter from './domain/user/routes/userRoutes.js';
 import authRouter from './domain/user/routes/authRoutes.js';
+import postRouter from './domain/post/routes/postRoutes.js';
 import AppError from './global/utils/appError.js';
 import globalErrorHandler from './domain/user/controllers/errorController.js';
 import mongoose from './global/config/mongoConfig.js';
@@ -83,6 +84,7 @@ app.use((req, res, next) => {
 // ROUTES
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/posts', postRouter);
 
 app.all('*', (req, res, next) =>
   next(
