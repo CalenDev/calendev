@@ -16,8 +16,14 @@ import CommonDttmPicker from '../CommonDttmPicker';
 import { validateSinceAndEnd } from '../../utils/validationCheck';
 
 function CommonFilter(props) {
-  const { openFilter, setOpenFilter, option, setOption, tags, checkBoxs } =
-    props;
+  const {
+    openFilter,
+    setOpenFilter,
+    option,
+    setOption,
+    tags,
+    checkBoxs = [],
+  } = props;
 
   const theme = useTheme();
   const handleChangeTag = (e, value, detail, reason) => {
@@ -41,18 +47,22 @@ function CommonFilter(props) {
       />
       {openFilter ? (
         <StyledFilterStack>
-          <StyledFormGroup>
-            {Object.entries(checkBoxs).map(([curProperty, boxArr]) => (
-              <FormControlLabel
-                control={<Checkbox checked={boxArr[0]} />}
-                label={curProperty}
-                key={curProperty}
-                onChange={() => {
-                  boxArr[1]((prev) => !prev);
-                }}
-              />
-            ))}
-          </StyledFormGroup>
+          {checkBoxs.length !== 0 ? (
+            <StyledFormGroup>
+              {Object.entries(checkBoxs).map(([curProperty, boxArr]) => (
+                <FormControlLabel
+                  control={<Checkbox checked={boxArr[0]} />}
+                  label={curProperty}
+                  key={curProperty}
+                  onChange={() => {
+                    boxArr[1]((prev) => !prev);
+                  }}
+                />
+              ))}
+            </StyledFormGroup>
+          ) : (
+            <div />
+          )}
           {Object.entries(tags).map(([curCategory, curTag]) => (
             <CustomTagStack
               category={curCategory}
@@ -62,39 +72,43 @@ function CommonFilter(props) {
               option={option}
             />
           ))}
-          <Stack
-            flexDirection="row"
-            justifyContent="space-between"
-            alignItems="center"
-            gap={theme.spacing(2)}
-          >
-            <CommonDttmPicker
-              name="searchStartDttm"
-              value={option.since}
-              error={!validateSinceAndEnd(option.since, option.end)}
-              helperText={
-                validateSinceAndEnd(option.since, option.end)
-                  ? ''
-                  : '날짜를 다시 확인해주세요.'
-              }
-              onChange={(newStartDttm) => {
-                setOption((prev) => ({ ...prev, since: newStartDttm.$d }));
-              }}
-            />
-            <CommonDttmPicker
-              name="searchEndDttm"
-              value={option.end}
-              error={!validateSinceAndEnd(option.since, option.end)}
-              helperText={
-                validateSinceAndEnd(option.since, option.end)
-                  ? ''
-                  : '날짜를 다시 확인해주세요.'
-              }
-              onChange={(newEndDttm) => {
-                setOption((prev) => ({ ...prev, end: newEndDttm.$d }));
-              }}
-            />
-          </Stack>
+          {option.since !== undefined && option.end !== undefined ? (
+            <Stack
+              flexDirection="row"
+              justifyContent="space-between"
+              alignItems="center"
+              gap={theme.spacing(2)}
+            >
+              <CommonDttmPicker
+                name="searchStartDttm"
+                value={option.since}
+                error={!validateSinceAndEnd(option.since, option.end)}
+                helperText={
+                  validateSinceAndEnd(option.since, option.end)
+                    ? ''
+                    : '날짜를 다시 확인해주세요.'
+                }
+                onChange={(newStartDttm) => {
+                  setOption((prev) => ({ ...prev, since: newStartDttm.$d }));
+                }}
+              />
+              <CommonDttmPicker
+                name="searchEndDttm"
+                value={option.end}
+                error={!validateSinceAndEnd(option.since, option.end)}
+                helperText={
+                  validateSinceAndEnd(option.since, option.end)
+                    ? ''
+                    : '날짜를 다시 확인해주세요.'
+                }
+                onChange={(newEndDttm) => {
+                  setOption((prev) => ({ ...prev, end: newEndDttm.$d }));
+                }}
+              />
+            </Stack>
+          ) : (
+            <div />
+          )}
         </StyledFilterStack>
       ) : (
         <div />
