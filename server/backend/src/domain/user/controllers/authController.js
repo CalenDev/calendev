@@ -23,10 +23,10 @@ export default {
 
     try {
       // 2) 헤더에서 액세스 토큰을 꺼내서 유효성 검사를 실시한다.
-      const token = tokenProvider.resolveToken(req);
-      const verificationResult = tokenProvider.verifyAccessToken(token);
-
+      const accessToken = tokenProvider.resolveToken(req);
+      const verificationResult = tokenProvider.verifyAccessToken(accessToken);
       req.body.userId = verificationResult.userId;
+
       return next();
     } catch (error) {
       return next(new AppError(error.message, 401, 'E401AB'));
@@ -119,7 +119,7 @@ export default {
 
     // 2) 레디스를 통해, 토큰에 대해 일치하는 유저가 있는지 확인해본다.
     const authorizedUser = await redisCli.get(passwordResetToken);
-    if (authorizedUser.length === 0) {
+    if (authorizedUser === null) {
       next(new AppError('Password-Reset Token Error', 400, 'E400AE'));
     }
 
