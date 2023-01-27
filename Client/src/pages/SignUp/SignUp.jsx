@@ -215,7 +215,7 @@ export default function SignUp() {
       });
       return -1;
     }
-    const code = responseEmail.data.code || responseEmail.data.errorCode;
+    const { code } = responseEmail.data;
     if (responseEmail.status !== 200) {
       switch (responseEmail.data.staus) {
         case 'fail':
@@ -255,7 +255,7 @@ export default function SignUp() {
       return -1;
     }
 
-    const code = responseNickname.data.code || responseNickname.data.errorCode;
+    const { code } = responseNickname.data;
     if (responseNickname.status !== 200) {
       switch (responseNickname.data.staus) {
         case 'fail':
@@ -297,7 +297,7 @@ export default function SignUp() {
       return -1;
     }
 
-    const code = responseSignUp.data.code || responseSignUp.data.errorCode;
+    const { code } = responseSignUp.data;
     if (responseSignUp.status !== 201) {
       switch (responseSignUp.data.staus) {
         case 'fail':

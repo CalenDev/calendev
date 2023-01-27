@@ -78,7 +78,7 @@ function SignIn() {
       return;
     }
 
-    const code = apiRes.data.code || apiRes.data.errorCode;
+    const { code } = apiRes.data;
     switch (apiRes.data.status) {
       case 'success':
         sessionStorage.setItem('accessToken', apiRes.data.data.accessToken); // token을 sessionStorage에 저장.

@@ -74,7 +74,7 @@ function ResetPw() {
         return;
       }
 
-      const code = apiRes.data.code || apiRes.data.errorCode;
+      const { code } = apiRes.data;
       switch (apiRes.data.status) {
         case 'success':
           break;
@@ -133,7 +133,7 @@ function ResetPw() {
       });
       return;
     }
-    const code = apiRes.data.code || apiRes.data.errorCode;
+    const { code } = apiRes.data;
     switch (apiRes.data.status) {
       case 'success':
         navigate('/signin', { replace: true });
