@@ -21,6 +21,7 @@ class UserLoginRes {
   accessToken;
   refreshToken;
   userRoleCd;
+  userId;
 
   constructor() {}
 
@@ -32,6 +33,9 @@ class UserLoginRes {
   }
   get getUserRoleCd() {
     return this.userRoleCd;
+  }
+  get getUserId() {
+    return this.userId;
   }
   set setAccessToken(accessToken) {
     this.accessToken = accessToken;
