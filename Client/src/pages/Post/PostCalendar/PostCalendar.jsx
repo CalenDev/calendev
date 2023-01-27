@@ -6,6 +6,7 @@
 /* eslint-disable react/function-component-definition */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable function-paren-newline */
+/* eslint-disable import/no-extraneous-dependencies */
 
 // import react
 import { useState, useEffect } from 'react';
