@@ -47,4 +47,42 @@ const postSearchByOptions = async (props) => {
   }
 };
 
-export default postSearchByOptions;
+const getSimplePostData = async (props) => {
+  const { year, month } = props;
+  try {
+    const response = await instance.get(
+      `/api/v1/posts/dataType/simple?year=${year}&month=${month}`,
+    );
+    return response;
+  } catch (e) {
+    return e.response;
+  }
+};
+
+const postAddBookmark = async (postId) => {
+  try {
+    const response = await instance.post('/api/v1/posts/bookmark', {
+      postId,
+    });
+    return response;
+  } catch (e) {
+    return e.response;
+  }
+};
+const patchRemoveBookmark = async (postId) => {
+  try {
+    const response = await instance.patch('/api/v1/posts/bookmark', {
+      postId,
+    });
+    return response;
+  } catch (e) {
+    return e.response;
+  }
+};
+
+export {
+  getSimplePostData,
+  postAddBookmark,
+  patchRemoveBookmark,
+  postSearchByOptions,
+};
