@@ -63,7 +63,7 @@ export default {
   authorize: async (userLogInReq) => {
     const { userEmail, userPassword } = userLogInReq;
     const user = await findUserByEmailAndPassword(userLogInReq);
-    const userLoginRes = await authenticate(user);
+    const userLoginRes = authenticate(user);
 
     return userLoginRes;
   },
