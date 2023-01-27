@@ -11,6 +11,7 @@ import refreshService from '../../../global/security/refresh.js';
 import tokenProvider from '../../../global/security/jwt.js';
 import objectMapper from '../../../global/utils/objectMapper.js';
 import validator from '../../../global/utils/requestValidator.js';
+import bookmarkService from '../../post/service/bookmarkService.js';
 
 const { redisCli } = redisCofig;
 
@@ -68,7 +69,13 @@ export default {
     if (!(userLogInRes instanceof UserLogInDto.UserLoginRes)) {
       return next(userLogInRes);
     }
-    // 4) 리프레시 토큰은 http-only쿠키로 넣어서 리턴, 액세스토큰은 json으로 리턴
+
+    // 4) 유저 북마크 리스트를 가져온다.
+    const userBookmarkList = await bookmarkService.getBookmarkList(
+      userLogInRes.getUserId,
+    );
+
+    // 5) 리프레시 토큰은 http-only쿠키로 넣어서 리턴, 액세스토큰은 json으로 리턴
     res.cookie('refreshToken', userLogInRes.getRefreshToken, {
       httpOnly: true,
     });
@@ -76,6 +83,7 @@ export default {
       status: 'success',
       data: {
         accessToken: userLogInRes.getAccessToken,
+        bookmarkService: userBookmarkList,
       },
     });
   }),

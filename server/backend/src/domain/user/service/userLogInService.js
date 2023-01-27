@@ -4,6 +4,7 @@ import User from '../models/user.js';
 import UserLoginDto from '../dto/loginDto.js';
 import TokenProvider from '../../../global/security/jwt.js';
 import passwordEncoder from '../../../global/utils/passwordEncoder.js';
+import objectMapper from '../../../global/utils/objectMapper.js';
 
 const findUserByEmail = (userEmail) => {
   // knex를 이용하여 일치하는 사용자 정보를 배열의 형태로 리턴받는다.
@@ -51,8 +52,9 @@ const authenticate = async (user) => {
   );
 
   const userLoginRes = new UserLoginDto.UserLoginRes();
-  userLoginRes.setAccessToken = accessToken;
-  userLoginRes.setRefreshToken = refreshToken;
+  objectMapper.map(user, userLoginRes);
+  userLoginRes.accessToken = accessToken;
+  userLoginRes.refreshToken = refreshToken;
 
   return userLoginRes;
 };

@@ -16,4 +16,10 @@ router.route('/dataType/simple').get(postControllers.getSimplePostData);
 
 // api/v1/posts/search
 router.route('/search').post(postControllers.searchPost);
+
+router
+  .route('/bookmark')
+  .post(authController.authJWT, postControllers.addBookmark)
+  .patch(authController.authJWT, postControllers.deleteBookmark);
+
 export default router;
