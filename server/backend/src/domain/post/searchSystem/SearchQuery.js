@@ -47,7 +47,7 @@ class SearchQuery {
     this.endDttm = endDttm || '2999-12-31';
     this.sortBy = sortBy;
     this.page = page === undefined ? 1 : page;
-    this.authorized = authorized ? true : false;
+    this.authorized = authorized ? ['RB'] : ['RA', 'RB'];
     this.limit = limit;
     if (!tags) return;
     this.tags = [...tags];

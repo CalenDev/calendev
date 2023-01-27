@@ -130,12 +130,14 @@ export default {
   },
   findAllByIdAndTags: async (target, searchQuery) => {
     try {
-      const constraint = searchQuery.authorized ? 'RB' : 'RA';
       const multiplePosts = await PostModel.find({
         _id: {
           $in: [...target],
         },
-        userRoleCd: constraint,
+        userRoleCd: {
+          $in: [...searchQuery.getAuthorized],
+        },
+
         eventStartDttm: {
           $gt: new Date(searchQuery.getStartDttm).toISOString(),
           $lt: new Date(searchQuery.getEndDttm).toISOString(),
