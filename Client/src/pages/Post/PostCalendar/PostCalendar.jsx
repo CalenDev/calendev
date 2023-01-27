@@ -52,6 +52,8 @@ import {
 import EventTag from '../../../config/eventTag';
 import SkillTag from '../../../config/skillTag';
 import TechFieldTag from '../../../config/techFieldTag';
+import { commonErrorRes, commonFailRes } from '../../../utils/commonApiRes';
+import { persistor } from '../../../store';
 
 const CustomToolbar = ({
   changeDate,
@@ -186,6 +188,7 @@ const filterEventPost = (data, bookmark, option, isBookmark) =>
 function PostCalendar() {
   const curDate = new Date();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const bookmark = useSelector(selectBookmark);
   const [curYear, setCurYear] = useState(curDate.getFullYear());
   const [curMonth, setCurMonth] = useState(curDate.getMonth() + 1);
@@ -233,10 +236,10 @@ function PostCalendar() {
           setScheduleData(apiRes.data.data.post);
           break;
         case 'fail':
-          // commonFailRes();
+          commonFailRes(dispatch, persistor, navigate, code);
           break;
         case 'error':
-          // commonErrorRes();
+          commonErrorRes(navigate, code);
           break;
         default:
           break;
@@ -371,10 +374,10 @@ function PostcalendarModal(props) {
           dispatch(setBookmark(apiRes.data.bookmarkList));
           break;
         case 'fail':
-          // commonFailRes(...)
+          commonFailRes(dispatch, persistor, navigate, code);
           break;
         case 'error':
-          // commonErrorRes(...)
+          commonErrorRes(navigate, code);
           break;
         default:
           break;
