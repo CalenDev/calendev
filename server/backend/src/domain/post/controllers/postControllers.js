@@ -75,7 +75,10 @@ export default {
     if (!targetId) {
       return next(new AppError('Bad Request', 400, 'E400AG'));
     }
-    const postDetailReq = new PostDto.PostDetailReq(targetId);
+    const remoteIP =
+      req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+
+    const postDetailReq = new PostDto.PostDetailReq(targetId, remoteIP);
 
     const postDetail = await postService.getTargetPost(postDetailReq);
 
