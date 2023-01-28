@@ -38,6 +38,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(dirname, 'public')));
 app.use(allowCrossDomain);
+app.set('trust proxy', true);
 
 // init database server
 redis.connect();
