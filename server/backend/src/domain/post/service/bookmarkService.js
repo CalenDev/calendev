@@ -11,7 +11,7 @@ export default {
 
     return removeBookmarkResult;
   },
-  getBookmarkList: (userId, postId) => {
+  getBookmarkList: (userId) => {
     const bookmarkList = Bookmark.findAll(userId);
 
     return bookmarkList;
