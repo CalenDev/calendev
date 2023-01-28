@@ -437,7 +437,7 @@ function PostcalendarModal(props) {
           <Pagination
             count={currentPageScheduleData.length}
             page={modalPage}
-            onChange={(_e, value) => setModalPage(value)}
+            onChange={(e, value) => setModalPage(value)}
           />
         </Stack>
       </StyledModalWrapper>
