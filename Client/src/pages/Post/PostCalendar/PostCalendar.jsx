@@ -152,29 +152,36 @@ const filterEventPost = (data, bookmark, option, isBookmark) =>
     let bool = true; // filter에 통과하는 post인지 여부.
 
     // 북마크 필터가 되어 있을 시에, 현재 이 글이 북마크가 안되어 있는 글이라면 bool = false
-    if (isBookmark && !bookmark.bookmarkSet.has(curData._id)) {
+    if (isBookmark && !bookmark.has(curData._id)) {
       bool = false;
     }
 
-    const filteringTag = Object.values(option.tag).reduce(
-      (acc, cur) => [...acc, ...cur],
-      [],
-    );
+    const filteringTag = Object.values(option.tag);
+
+    let transArr = [];
+    for (let i = 0; i < filteringTag.length; i += 1) {
+      transArr = [...transArr, ...filteringTag[i]];
+    }
+
+    transArr = transArr.reduce((acc, cur) => [...acc, cur.code], []);
+
     const curTag = curData.postTag;
 
-    if (
-      filteringTag.length !== 0 ||
-      filteringTag.length !== curTag.length ||
-      !bool
-    ) {
+    // 조건이 없으면 그냥 뒤를 볼 필요 없이 반환
+    // 조건이 있으면 길이비교
+    if (transArr.length === 0) {
+      return bool;
+    }
+    if (transArr.length !== curTag.length || !bool) {
+      bool = false;
       return bool;
     }
 
-    filteringTag.sort((a, b) => a - b);
+    transArr.sort((a, b) => a - b);
     curTag.sort((a, b) => a - b);
 
-    for (let i = 0; i < filteringTag.length; i += 1) {
-      if (filteringTag[i] !== curTag[i]) {
+    for (let i = 0; i < transArr.length; i += 1) {
+      if (transArr[i] !== curTag[i]) {
         bool = false;
         break;
       }
@@ -187,7 +194,11 @@ function PostCalendar() {
   const curDate = new Date();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const bookmark = useSelector(selectBookmark);
+
+  const { bookmarkArr } = useSelector(selectBookmark);
+  const bookmark = new Set();
+  bookmarkArr.forEach((cur) => bookmark.add(cur));
+
   const [curYear, setCurYear] = useState(curDate.getFullYear());
   const [curMonth, setCurMonth] = useState(curDate.getMonth() + 1);
   const [openModal, setOpenModal] = useState(false);
@@ -211,7 +222,10 @@ function PostCalendar() {
   const [modalPage, setModalPage] = useState(1);
   const localizer = momentLocalizer(moment);
   const handleClickEvent = () => setOpenModal(true);
-  const handleCloseModal = () => setOpenModal(false);
+  const handleCloseModal = () => {
+    setModalPage(1);
+    setOpenModal(false);
+  };
   moment.locale('ko-KR');
 
   // 달이 변화했거나, navigate 발생 시 useEffect를 거쳐야 한다.
@@ -231,7 +245,7 @@ function PostCalendar() {
       const { code } = apiRes.data;
       switch (apiRes.data.status) {
         case 'success':
-          setScheduleData(apiRes.data.data.post);
+          setScheduleData(apiRes.data.simplePostDataList);
           break;
         case 'fail':
           commonFailRes(dispatch, persistor, navigate, code);
@@ -289,6 +303,8 @@ function PostCalendar() {
         setModalPage={setModalPage}
         handleClose={handleCloseModal}
         scheduleData={scheduleData}
+        option={option}
+        isBookmark={isBookmark}
       />
       <Calendar
         localizer={localizer}
@@ -305,10 +321,11 @@ function PostCalendar() {
             setIsBookmark,
           }),
         }}
-        popupOffset={2}
+        onDrillDown={handleClickEvent}
         eventPropGetter={CustomEventPropGetter}
         events={createPostCalendarEvents()}
         onSelectEvent={handleClickEvent}
+        drilldownView="null"
       />
     </StyledStack>
   );
@@ -342,6 +359,8 @@ function PostcalendarModal(props) {
     handleClose,
     scheduleData,
     bookmark,
+    isBookmark,
+    option,
   } = props;
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -353,7 +372,7 @@ function PostcalendarModal(props) {
     // 특정 postCard의 bookmark 버튼을 눌렀을 경우
     if (currentBookMark) {
       let apiRes;
-      if (bookmark.bookmarkSet.has(currentCard.id)) {
+      if (bookmark.has(currentCard.id)) {
         apiRes = await patchRemoveBookmark(currentCard.id);
       } else {
         apiRes = await postAddBookmark(currentCard.id);
@@ -388,8 +407,20 @@ function PostcalendarModal(props) {
   if (scheduleData.length === 0) return <div />;
 
   const currentPageScheduleData = [];
-  for (let i = 0; i < scheduleData.length; i += 5) {
-    currentPageScheduleData.push(scheduleData.slice(i, i + 5));
+
+  const filteredScheduleData = filterEventPost(
+    scheduleData,
+    bookmark,
+    option,
+    isBookmark,
+  );
+
+  if (filteredScheduleData.length <= 5) {
+    currentPageScheduleData.push(filteredScheduleData);
+  } else {
+    for (let i = 0; i < filteredScheduleData.length; i += 5) {
+      currentPageScheduleData.push(filteredScheduleData.slice(i, i + 5));
+    }
   }
   return (
     <Modal open={openModal} onClose={handleClose}>
@@ -453,11 +484,11 @@ const StyledModalWrapper = styled(Stack)`
 
 function CustomModalCard(props) {
   const { schedule, bookmark } = props;
-
   const currentCardTags = schedule.postTag.reduce(
-    (acc, cur) => [...acc, ...cur.tags],
+    (acc, cur) => [...acc, cur],
     [],
   );
+
   return (
     <StyledCard id={schedule._id}>
       <CardContent>
@@ -466,7 +497,7 @@ function CustomModalCard(props) {
             <Typography variant="h5" noWrap>
               {`행사명 : ${schedule.postTitle}`}
             </Typography>
-            {bookmark.bookmarkSet.has(schedule._id) ? (
+            {bookmark.has(schedule._id) ? (
               <BookmarkIcon />
             ) : (
               <BookmarkBorderIcon />

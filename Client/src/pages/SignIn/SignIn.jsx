@@ -25,6 +25,7 @@ import { commonFailRes, commonErrorRes } from '../../utils/commonApiRes';
 import { CommonTextField, CommonPaper } from '../../components';
 import { signinUser, selectUser } from '../../features/User/UserSlice';
 import { persistor } from '../../store';
+import { setBookmark } from '../../features/Bookmark/BookmarkSlice';
 
 function SignIn() {
   const { isSignin } = useSelector(selectUser);
@@ -92,6 +93,8 @@ function SignIn() {
             userRoleCd: payload.userRoleCd,
           }),
         ); // store에 정보 저장.
+
+        dispatch(setBookmark({ bookmarkList: apiRes.data.data.bookmarkList }));
         navigate('/', { replace: true }); // redirect to home
         break;
       case 'fail':
