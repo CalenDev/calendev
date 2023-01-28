@@ -59,4 +59,16 @@ export default {
       throw err;
     }
   },
+  removePostIdFromAllUser: async (postId) => {
+    try {
+      const queryResult = await BookmarkModel.updateMany({
+        $pull: {
+          postIds: postId,
+        },
+      });
+    } catch (err) {
+      mongoErrorHandler(err);
+      throw err;
+    }
+  },
 };

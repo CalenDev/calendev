@@ -5,6 +5,7 @@ import Post from '../models/post.js';
 import dttmBuilder from '../../user/utils/dttmBuilder.js';
 import AppError from '../../../global/utils/appError.js';
 import searchService from './searchService.js';
+import bookmark from '../models/bookmark.js';
 import redis from '../../../global/config/redisCofig.js';
 
 const { REDIS_POST_VIEW_DATA_ALIVE_TIME } = process.env;
@@ -88,6 +89,8 @@ export default {
     if (targetPost.length === 0) {
       throw new AppError('Bad Request', 404, 'E404AF');
     }
+
+    bookmark.removePostIdFromAllUser(removeReq.getPostId);
 
     return Post.removeOne(removeReq.getPostId);
   },

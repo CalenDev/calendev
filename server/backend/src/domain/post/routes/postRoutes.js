@@ -22,4 +22,8 @@ router
   .post(authController.authJWT, postControllers.addBookmark)
   .patch(authController.authJWT, postControllers.deleteBookmark);
 
+router
+  .route('/delete')
+  .post(authController.authJWT, postControllers.deletePost);
+
 export default router;
