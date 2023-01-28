@@ -1,8 +1,9 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
+import { PURGE } from 'redux-persist';
 
 const initialState = {
-  bookmarkSet: new Set(),
+  bookmarkArr: [],
 };
 
 export const BookmarkSlice = createSlice({
@@ -11,21 +12,24 @@ export const BookmarkSlice = createSlice({
   reducers: {
     addBookmark: (state, actions) => {
       const { postId } = actions.payload;
-      state.bookmarkSet.add(postId);
+      state.bookmarkArr.push(postId);
     },
 
     setBookmark: (state, actions) => {
       const { bookmarkList } = actions.payload;
-      state.bookmarkSet = new Set(bookmarkList);
+      state.bookmarkArr = [...bookmarkList];
     },
 
     deleteBookmark: (state, actions) => {
       const { postId } = actions.payload;
-      state.bookmarkSet.delete(postId);
+      state.bookmarkArr = state.bookmarkArr.filter((cur) => cur !== postId);
     },
 
     clearBookmark: (state) => {
-      state.bookmarkSet.clear();
+      state.bookmarkArr = [];
+    },
+    extraReducers: (builder) => {
+      builder.addCase(PURGE, () => initialState);
     },
   },
 });

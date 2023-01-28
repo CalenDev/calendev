@@ -83,7 +83,7 @@ export default {
       status: 'success',
       data: {
         accessToken: userLogInRes.getAccessToken,
-        bookmarkService: userBookmarkList,
+        bookmarkList: userBookmarkList,
       },
     });
   }),

@@ -8,7 +8,7 @@ import Bookmark from '../features/Bookmark/BookmarkSlice';
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['User'],
+  whitelist: ['User', 'Bookmark'],
 };
 
 const rootReducer = combineReducers({
