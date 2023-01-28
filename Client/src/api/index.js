@@ -1,17 +1,16 @@
 import {
-  postSearchByOptions,
-  getSimplePostData,
-  postAddBookmark,
-  patchRemoveBookmark,
-} from './post';
-
-import {
   postUserSignIn,
   putResetPw,
   getCheckResetPasswordToken,
   postFindPw,
 } from './auth';
-
+import { postEventPost, postEventPostImageUpload } from './eventPost';
+import {
+  postSearchByOptions,
+  getSimplePostData,
+  postAddBookmark,
+  patchRemoveBookmark,
+} from './post';
 import { postUserDuplicate, postUserSignUp } from './user';
 
 export {
@@ -19,10 +18,12 @@ export {
   putResetPw,
   getCheckResetPasswordToken,
   postFindPw,
-  postUserDuplicate,
-  postUserSignUp,
+  postEventPost, 
+  postEventPostImageUpload,
   postSearchByOptions,
   getSimplePostData,
   postAddBookmark,
   patchRemoveBookmark,
+  postUserDuplicate,
+  postUserSignUp,
 };

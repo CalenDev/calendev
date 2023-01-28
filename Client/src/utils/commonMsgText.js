@@ -25,6 +25,8 @@ function commonMsgText(code, arg1) {
     112: '이메일 또는 비밀번호가 일치하지 않습니다.',
     113: '비밀번호 양식에 맞춰 입력하세요.',
     114: `존재하지 않는 ${arg1}입니다.`,
+    115: `정상적인 ${arg1}을(를) 입력해주세요.`,
+    116: '이미 진행된 이벤트는 추가할 수 없습니다.',  
   };
 
   return textScript[code] === undefined ? '' : textScript[code];
