@@ -99,6 +99,21 @@ export default {
       });
     return result;
   },
+  updateViewCnt: async (targetId) => {
+    try {
+      const viewIncrementResult = PostModel.findOneAndUpdate(
+        {
+          _id: targetId,
+        },
+        { $inc: { postViewCnt: 1 } },
+        { new: true },
+      ).exec();
+      return viewIncrementResult;
+    } catch (err) {
+      mongoErrorHandler(err);
+      throw err;
+    }
+  },
   findSimpleDataInTimeRange: async (startDttm, endDttm) => {
     try {
       const res = await PostModel.find({

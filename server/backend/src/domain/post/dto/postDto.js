@@ -107,13 +107,18 @@ class PostEditReq {
 
 class PostDetailReq {
   postId;
+  remoteIP;
 
-  constructor(postId) {
+  constructor(postId, remoteIP) {
     this.postId = postId;
+    this.remoteIP = remoteIP;
   }
 
   get getPostId() {
     return this.postId;
+  }
+  get getRemoteIP() {
+    return this.remoteIP;
   }
 }
 
