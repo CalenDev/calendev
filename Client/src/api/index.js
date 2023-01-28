@@ -8,6 +8,7 @@ import { postEventPost, postEventPostImageUpload } from './eventPost';
 import {
   postSearchByOptions,
   getSimplePostData,
+  postAddPost,
   postAddBookmark,
   patchRemoveBookmark,
 } from './post';
@@ -18,10 +19,11 @@ export {
   putResetPw,
   getCheckResetPasswordToken,
   postFindPw,
-  postEventPost, 
+  postEventPost,
   postEventPostImageUpload,
   postSearchByOptions,
   getSimplePostData,
+  postAddPost,
   postAddBookmark,
   patchRemoveBookmark,
   postUserDuplicate,

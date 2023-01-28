@@ -28,4 +28,10 @@ function validateSinceAndEnd(since, end) {
   return dayjs(since).isSameOrBefore(dayjs(end));
 }
 
-export { validateRegexEmail, validateRegexPassword, validateRegexPhone, validateRegexPlace, validateSinceAndEnd };
+export {
+  validateRegexEmail,
+  validateRegexPassword,
+  validateRegexPhone,
+  validateRegexPlace,
+  validateSinceAndEnd,
+};
