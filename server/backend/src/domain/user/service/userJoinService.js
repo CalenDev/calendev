@@ -4,6 +4,7 @@ import UserJoinDto from '../dto/joinDto.js';
 import encrypt from '../../../global/utils/encrypt.js';
 import dttmBuilder from '../utils/dttmBuilder.js';
 import AppError from '../../../global/utils/appError.js';
+import bookmark from '../../post/models/bookmark.js';
 
 const controlParams = async (signupReq) => {
   const { hashedPassword, salt } = await encrypt.createHashedPassword(
@@ -36,9 +37,13 @@ export default {
       throw new AppError('Bad Request', 400, 'E400AF');
     }
 
+    // 2) 유저 저장
     await controlParams(signupReq);
     signupReq.createdAtDttm = dttmBuilder.buildCurrentUTCDttm();
-    await User.save(signupReq);
+    const savedUser = await User.save(signupReq);
+
+    // 3) 북마크데이터베이스에 유저 정보저장
+    await bookmark.save(savedUser[0]);
   },
   remove: async (userData) => {
     // 1) 유저정보의 유저가 실제로 존재하는 지 확인.
