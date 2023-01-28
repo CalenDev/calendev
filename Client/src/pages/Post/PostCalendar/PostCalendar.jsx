@@ -321,10 +321,11 @@ function PostCalendar() {
             setIsBookmark,
           }),
         }}
-        popupOffset={2}
+        onDrillDown={handleClickEvent}
         eventPropGetter={CustomEventPropGetter}
         events={createPostCalendarEvents()}
         onSelectEvent={handleClickEvent}
+        drilldownView="null"
       />
     </StyledStack>
   );
