@@ -59,6 +59,18 @@ const getSimplePostData = async (props) => {
   }
 };
 
+const postAddPost = async (eventPost) => {
+  try {
+    const response = await instance.post('/api/v1/posts', eventPost);
+
+    return response;
+  } catch (e) {
+    return {
+      status: e.response.status,
+    };
+  }
+};
+
 const postAddBookmark = async (postId) => {
   try {
     const response = await instance.post('/api/v1/posts/bookmark', {
@@ -69,6 +81,7 @@ const postAddBookmark = async (postId) => {
     return e.response;
   }
 };
+
 const patchRemoveBookmark = async (postId) => {
   try {
     const response = await instance.patch('/api/v1/posts/bookmark', {
@@ -82,6 +95,7 @@ const patchRemoveBookmark = async (postId) => {
 
 export {
   getSimplePostData,
+  postAddPost,
   postAddBookmark,
   patchRemoveBookmark,
   postSearchByOptions,

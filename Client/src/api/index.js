@@ -1,17 +1,17 @@
 import {
-  postSearchByOptions,
-  getSimplePostData,
-  postAddBookmark,
-  patchRemoveBookmark,
-} from './post';
-
-import {
   postUserSignIn,
   putResetPw,
   getCheckResetPasswordToken,
   postFindPw,
 } from './auth';
 
+import {
+  postSearchByOptions,
+  getSimplePostData,
+  postAddPost,
+  postAddBookmark,
+  patchRemoveBookmark,
+} from './post';
 import { postUserDuplicate, postUserSignUp } from './user';
 
 export {
@@ -19,10 +19,11 @@ export {
   putResetPw,
   getCheckResetPasswordToken,
   postFindPw,
-  postUserDuplicate,
-  postUserSignUp,
   postSearchByOptions,
   getSimplePostData,
+  postAddPost,
   postAddBookmark,
   patchRemoveBookmark,
+  postUserDuplicate,
+  postUserSignUp,
 };
