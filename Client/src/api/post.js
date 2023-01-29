@@ -2,6 +2,63 @@ import instance from './instance';
 import { validateSinceAndEnd } from '../utils/validationCheck';
 import changeDefaultTimeFormat from '../utils/change';
 
+const getPostDetails = async (postId) => {
+  try {
+    const response = await instance.get(
+      `/api/v1/posts/details/${postId}`,
+    );
+    return response;
+  } catch (e) {
+    return e.response;
+  }
+};
+
+const getSimplePostData = async (props) => {
+  const { year, month } = props;
+  try {
+    const response = await instance.get(
+      `/api/v1/posts/dataType/simple?year=${year}&month=${month}`,
+    );
+    return response;
+  } catch (e) {
+    return e.response;
+  }
+};
+
+const postAddBookmark = async (postId) => {
+  try {
+    const response = await instance.post('/api/v1/posts/bookmark', {
+      postId,
+    });
+    return response;
+  } catch (e) {
+    return e.response;
+  }
+};
+
+const postAddPost = async (eventPost) => {
+  try {
+    const response = await instance.post('/api/v1/posts', eventPost);
+
+    return response;
+  } catch (e) {
+    return {
+      status: e.response.status,
+    };
+  }
+};
+
+const postDeletePost = async (postId) => {
+  try {
+    const response = await instance.post('/api/v1/posts/delete', {
+      postId,
+    });
+    return response;
+  } catch (e) {
+    return e.response;
+  }
+};
+
 const postSearchByOptions = async (props) => {
   const { since, end, page, limit, sortBy, inputString, tags } = props;
   const makeQueryString = () => {
@@ -47,52 +104,6 @@ const postSearchByOptions = async (props) => {
   }
 };
 
-const getSimplePostData = async (props) => {
-  const { year, month } = props;
-  try {
-    const response = await instance.get(
-      `/api/v1/posts/dataType/simple?year=${year}&month=${month}`,
-    );
-    return response;
-  } catch (e) {
-    return e.response;
-  }
-};
-
-const getPostDetails = async (postId) => {
-  try {
-    const response = await instance.get(
-      `/api/v1/posts/details/${postId}`,
-    );
-    return response;
-  } catch (e) {
-    return e.response;
-  }
-};
-
-const postAddPost = async (eventPost) => {
-  try {
-    const response = await instance.post('/api/v1/posts', eventPost);
-
-    return response;
-  } catch (e) {
-    return {
-      status: e.response.status,
-    };
-  }
-};
-
-const postAddBookmark = async (postId) => {
-  try {
-    const response = await instance.post('/api/v1/posts/bookmark', {
-      postId,
-    });
-    return response;
-  } catch (e) {
-    return e.response;
-  }
-};
-
 const patchRemoveBookmark = async (postId) => {
   try {
     const response = await instance.patch('/api/v1/posts/bookmark', {
@@ -103,12 +114,12 @@ const patchRemoveBookmark = async (postId) => {
     return e.response;
   }
 };
-
 export {
-  getSimplePostData,
   getPostDetails,
-  postAddPost,
+  getSimplePostData,
   postAddBookmark,
-  patchRemoveBookmark,
+  postAddPost,
+  postDeletePost,
   postSearchByOptions,
+  patchRemoveBookmark,
 };
