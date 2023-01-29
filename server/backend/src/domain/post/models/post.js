@@ -26,10 +26,8 @@ const Post = new mongoose.Schema({
   postImg: [Image],
   postTag: [String],
 
-  // 위치 필수
   postPlace: {
     type: String,
-    required: true,
     default: '',
     maxlength: 40,
   },
