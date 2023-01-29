@@ -20,7 +20,7 @@ import { persistor } from '../../store';
 import 'dayjs/locale/ko';
 import { CommonTextField, CommonStack } from '../../components';
 import { commonFailRes, commonErrorRes } from '../../utils/commonApiRes';
-import { getPostDetails } from '../../api';
+import { getPostDetails, postDeletePost } from '../../api';
 import EventTag from '../../config/eventTag';
 import SkillTag from '../../config/skillTag';
 import TechFieldTag from '../../config/techFieldTag';
@@ -69,8 +69,35 @@ function PostDetail() {
     settingPostDetailData();
   }, [dispatch, navigate, postId]);
 
-  const handleDelete = () => {
-    navigate(-1, { replace: true }); // go to prevPage
+  const handleDelete = async (event) => {
+    event.preventDefault();
+    const responseDeletePost = await postDeletePost(postId);
+    if (!responseDeletePost) {
+      // network Error!
+      navigate('/error', {
+        replace: true,
+        errorTitle: '네트워크 에러가 발생했습니다!',
+      });
+      return -1;
+    }
+
+    if (responseDeletePost.status === 200) {
+      navigate(-1, { replace: true }); // go to prevPage
+      return 0;
+    }
+
+    const { code } = responseDeletePost.data;
+    switch (responseDeletePost.data.staus) {
+      case 'fail':
+        await commonFailRes(dispatch, persistor, navigate, code);
+        break;
+      case 'error':
+        await commonErrorRes(navigate, code);
+        break;
+      default:
+        break;
+    }
+    return -1;
   };
 
   const handleEvent = () => {

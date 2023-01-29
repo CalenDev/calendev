@@ -1,31 +1,34 @@
 import {
-  postUserSignIn,
-  putResetPw,
   getCheckResetPasswordToken,
   postFindPw,
+  postUserSignIn,
+  putResetPw,
 } from './auth';
 
 import {
-  postSearchByOptions,
   getPostDetails,
   getSimplePostData,
-  postAddPost,
   postAddBookmark,
+  postAddPost,
+  postDeletePost,
+  postSearchByOptions,
   patchRemoveBookmark,
 } from './post';
 import { postUserDuplicate, postUserSignUp } from './user';
 
 export {
-  postUserSignIn,
-  putResetPw,
   getCheckResetPasswordToken,
+  getPostDetails,
+  getSimplePostData,
+  postAddBookmark,
+  postAddPost,
+  postDeletePost,
   postFindPw,
   postSearchByOptions,
-  getSimplePostData,
-  getPostDetails,
-  postAddPost,
-  postAddBookmark,
-  patchRemoveBookmark,
   postUserDuplicate,
+  postUserSignIn,
+
   postUserSignUp,
+  patchRemoveBookmark,
+  putResetPw,
 };
