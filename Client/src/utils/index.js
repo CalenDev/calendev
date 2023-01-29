@@ -10,6 +10,7 @@ import urlQueryParser from './url';
 import { commonErrorRes, commonFailRes } from './commonApiRes';
 import changeDefaultTimeFormat from './change';
 import dttmFormatter from './formatter';
+import commonEventPropGetter from './commonEventGetter';
 
 export {
   validateRegexEmail,
@@ -20,6 +21,7 @@ export {
   commonMsgText,
   commonErrorRes,
   commonFailRes,
+  commonEventPropGetter,
   urlQueryParser,
   changeDefaultTimeFormat,
   dttmFormatter,
