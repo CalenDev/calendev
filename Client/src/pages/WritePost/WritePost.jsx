@@ -9,7 +9,7 @@ import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
 import Typography from '@mui/material/Typography';
 import ChevronRight from '@mui/icons-material/ChevronRight';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Editor } from '@toast-ui/react-editor';
@@ -19,7 +19,6 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { postAddPost } from '../../api';
 import { CommonTextField, CommonStack, CommonGroupChips, CommonSelectBox } from '../../components';
 import { EventTag, SkillTag, TechFieldTag } from '../../config';
-import { openModal } from '../../features/GlobalModal/GlobalModalSlice';
 import { selectUser } from '../../features/User/UserSlice';
 import { persistor } from '../../store';
 import { commonFailRes, commonErrorRes } from '../../utils/commonApiRes';
@@ -36,18 +35,6 @@ function EditPost() {
   const [phoneNumMsgObj, setPhoneNumMsgObj] = useState({ code: 0, arg1: '' });
   const editorRef = useRef();
   const user = useSelector(selectUser);
-  const handleOpenModal = (modalCode) => {
-    dispatch(openModal({ modalCode }));
-  };
-
-  useEffect(() => {
-    // 이미 로그아웃 상태일 경우, 홈 페이지로 돌아감.
-    if (!sessionStorage.getItem('accessToken') || !user.isSignin) {
-      navigate('/', { replace: true });
-      handleOpenModal(1);
-    }
-  }, []);
-
   const arrEventTag = [];
   const arrEventTagKey = Object.keys(EventTag);
   for (let i = 0; i < arrEventTagKey.length; i += 1) {
