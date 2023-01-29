@@ -14,6 +14,7 @@ import SignIn from './pages/SignIn/SignIn';
 import SignUp from './pages/SignUp/SignUp';
 import GlobalModal from './features/GlobalModal';
 import PostCalendar from './pages/Post/PostCalendar/PostCalendar';
+import PrivateRoute from './components/PrivateRoute/index';
 
 function App() {
   const theme = responsiveFontSizes(createTheme(themes));
@@ -24,12 +25,14 @@ function App() {
       <GlobalModal />
       <Routes>
         <Route path="/" exact element={<Home />} />
-        <Route path="/signin" exact element={<SignIn />} />
-        <Route path="/signup" exact element={<SignUp />} />
-        <Route path="/resetpw" exact element={<ResetPw />} />
-        <Route path="/error" exact element={<Error />} />
-        <Route path="/findpw" exact element={<FindPw />} />
         <Route path="/post" element={<PostCalendar />} />
+        <Route path="/error" exact element={<Error />} />
+        <Route element={<PrivateRoute />}>
+          <Route path="/signin" exact element={<SignIn />} />
+          <Route path="/signup" exact element={<SignUp />} />
+          <Route path="/findpw" exact element={<FindPw />} />
+          <Route path="/resetpw" exact element={<ResetPw />} />
+        </Route>
       </Routes>
     </ThemeProvider>
   );
