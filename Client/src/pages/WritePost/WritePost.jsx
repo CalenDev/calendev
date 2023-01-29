@@ -1,5 +1,7 @@
-import { useState, useRef } from 'react';
+import dayjs from 'dayjs';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+// import redux
 import { useDispatch, useSelector } from 'react-redux';
 import styled from '@emotion/styled';
 import Button from '@mui/material/Button';
@@ -7,44 +9,46 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
-import '@toast-ui/editor/dist/toastui-editor.css';
 import ChevronRight from '@mui/icons-material/ChevronRight';
+import { Editor } from '@toast-ui/react-editor';
+import '@toast-ui/editor/dist/i18n/ko-kr';
+import '@toast-ui/editor/dist/toastui-editor.css';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { selectUser } from '../../features/User/UserSlice';
+import { persistor } from '../../store';
+import { openModal } from '../../features/GlobalModal/GlobalModalSlice';
 import 'dayjs/locale/ko';
-import dayjs from 'dayjs';
-import { Editor } from '@toast-ui/react-editor';
-import '@toast-ui/editor/dist/i18n/ko-kr';
 import { CommonTextField, CommonStack, CommonGroupChips, CommonSelectBox } from '../../components';
+import { commonFailRes, commonErrorRes } from '../../utils/commonApiRes';
+import { postAddPost } from '../../api';
 import EventTag from '../../config/eventTag';
 import SkillTag from '../../config/skillTag';
 import TechFieldTag from '../../config/techFieldTag';
-import { commonFailRes, commonErrorRes } from '../../utils/commonApiRes';
-import { postAddPost } from '../../api';
-import { persistor } from '../../store';
-import { selectUser } from '../../features/User/UserSlice';
-/*
-1. editor 관련 props는 아래 링크를 확인
-https://nhn.github.io/tui.editor/latest/ToastUIEditorCore
-todos
-1. validation => me
-2. style 정리
-3. handlesubmit event 완성 => me
-4. dropdown으로 되어 있는 tag를 원래 고려형태로 변경...
-5. 썸네일 추후 적용
-*/
 
 function EditPost() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [startDttm, setStartDttm] = useState(dayjs('2022-04-07'));
-  const [endDttm, setEndDttm] = useState(dayjs('2022-04-07'));
+  const [startDttm, setStartDttm] = useState(dayjs());
+  const [endDttm, setEndDttm] = useState(dayjs());
   const [online, setOnline] = useState(true);
+  const [eventOptions, setEventOptions] = useState([]);
   const [skillOptions, setSkillOptions] = useState([]);
-  const [skillFieldOptions, setSkillFieldOptions] = useState([]);
+  const [techFieldOptions, setSkillFieldOptions] = useState([]);
   const editorRef = useRef();
   const user = useSelector(selectUser);
+  const handleOpenModal = (modalCode) => {
+    dispatch(openModal({ modalCode }));
+  };
+
+  useEffect(() => {
+    // 이미 로그아웃 상태일 경우, 홈 페이지로 돌아감.
+    if (!sessionStorage.getItem('accessToken') || !user.isSignin) {
+      navigate('/', { replace: true });
+      handleOpenModal(1);
+    }
+  }, []);
 
   const arrEventTag = [];
   const arrEventTagKey = Object.keys(EventTag);
@@ -77,6 +81,8 @@ function EditPost() {
     setEndDttm(newEndDttm);
   };
 
+  const handleEventChange = (event, newSkillVal) => setEventOptions(newSkillVal);
+
   const handleSkillChange = (event, newSkillVal) => setSkillOptions(newSkillVal);
 
   const handleSkillFieldChange = (event, newSillFieldVal) => setSkillFieldOptions(newSillFieldVal);
@@ -86,28 +92,25 @@ function EditPost() {
     const data = new FormData(e.currentTarget);
     const postText = editorRef.current.getInstance().getHTML();
 
-    // userId, organizerId, postTitle, postContent, postThumbnailImg
-    // postImg, postTag, postPlace, postContactPhone
-    // eventStartDttm, eventEndDttm
-    // 온라인은 어떻게 처리하시나요
-    console.log(`
-    ${data.get('postTitle')}
-    ${data.get('postStartDttm')}
-    ${data.get('postEndDttm')}
-    ${data.get('postPhoneNumber')}
-    ${data.get('postAddress')}
-    ${data.get('postEventTag')}
-    ${skillOptions}
-    ${skillFieldOptions}
-    ${postText}`);
-    console.log(user.userRoleCd);
+    const arrTagCode = [];
+
+    arrTagCode.push(eventOptions.code);
+
+    for (let i = 0; i < skillOptions.length; i += 1) {
+      arrTagCode.push(skillOptions[i].code);
+    }
+
+    for (let i = 0; i < techFieldOptions.length; i += 1) {
+      arrTagCode.push(techFieldOptions[i].code);
+    }
+
     const responseAddPost = await postAddPost(
       {
         postTitle: data.get('postTitle'),
         postThumbnailImg: [],
         postImg: [],
         postContent: postText,
-        postTag: [],
+        postTag: arrTagCode,
         postPlace: data.get('postAddress'),
         postContactPhone: data.get('postPhoneNumber'),
         eventStartDttm: data.get('postStartDttm'),
@@ -126,7 +129,7 @@ function EditPost() {
     }
 
     const { code } = responseAddPost.data;
-    if (responseAddPost.status !== 201) {
+    if (responseAddPost.status !== 200) {
       switch (responseAddPost.data.staus) {
         case 'fail':
           await commonFailRes(dispatch, persistor, navigate, code);
@@ -155,7 +158,7 @@ function EditPost() {
         행사등록
       </Typography>
       <Stack component="form" onSubmit={handleSubmit} spacing={2}>
-        <StyledCustomTextField placeholder="제목" helperText="10/70자" name="postTitle" />
+        <StyledCustomTextField placeholder="제목" name="postTitle" />
         <Stack direction="row" sx={{ alignItems: 'center' }}>
           <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ko">
             <DateTimePicker
@@ -184,14 +187,19 @@ function EditPost() {
           </LocalizationProvider>
         </Stack>
         <Stack direction="row" spacing={1}>
-          <CommonTextField name="postPhoneNumber" placeholder="연락처" />
+          <CommonTextField
+            name="postPhoneNumber"
+            placeholder="연락처"
+            type="number"
+          />
         </Stack>
-        <StyledCustomTextField placeholder="장소" name="postAddress" helperText="0/150자" />
+        <StyledCustomTextField placeholder="장소" name="postAddress" />
         <FormControlLabel
           control={<Switch checked={online} onChange={handleSwitchChange} name="isOnline" />}
           label="온라인으로 진행"
         />
         <CommonSelectBox
+          onChange={handleEventChange}
           options={arrEventTag}
           label="행사 유형"
           name="postEventTag"

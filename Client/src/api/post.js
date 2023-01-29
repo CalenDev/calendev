@@ -61,11 +61,9 @@ const getSimplePostData = async (props) => {
 
 const postAddPost = async (eventPost) => {
   try {
-    const res = await instance.post('/api/v1/posts', eventPost);
+    const response = await instance.post('/api/v1/posts', eventPost);
 
-    return {
-      status: res.status,
-    };
+    return response;
   } catch (e) {
     return {
       status: e.response.status,
