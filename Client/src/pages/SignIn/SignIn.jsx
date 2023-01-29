@@ -1,13 +1,13 @@
 /* eslint-disable react/jsx-no-duplicate-props */
 
 // import react
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 // import module
 import jwtDecode from 'jwt-decode';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 // import MUI Component
 import Button from '@mui/material/Button';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -23,24 +23,16 @@ import { validateRegexEmail, validateRegexPassword } from '../../utils';
 import { commonFailRes, commonErrorRes } from '../../utils/commonApiRes';
 // import components
 import { CommonTextField, CommonPaper } from '../../components';
-import { signinUser, selectUser } from '../../features/User/UserSlice';
+import { signinUser } from '../../features/User/UserSlice';
 import { persistor } from '../../store';
 import { setBookmark } from '../../features/Bookmark/BookmarkSlice';
 
 function SignIn() {
-  const { isSignin } = useSelector(selectUser);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [emailMsgObj, setEmailMsgObj] = useState({ code: 0, arg1: '' });
   const [passwordMsgObj, setPasswordMsgObj] = useState({ code: 0, arg1: '' });
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-  useEffect(() => {
-    // 이미 로그인 상태일 경우, 홈 페이지로 돌아감.
-    if (sessionStorage.getItem('accessToken') && isSignin) {
-      navigate('/', { replace: true });
-    }
-  }, []);
 
   const handleClickShowConfirmPassword = () => {
     setShowConfirmPassword((prev) => !prev);
