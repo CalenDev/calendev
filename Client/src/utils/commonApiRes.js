@@ -22,7 +22,9 @@ async function commonErrorRes(navigate, code) {
     default:
       navigate('/error', {
         replace: true,
-        errorTitle: '네트워크 에러가 발생했습니다!',
+        state: {
+          errorTitle: '네트워크 에러가 발생했습니다!',
+        },
       });
       break;
   }

@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 // import redux
 import { useDispatch, useSelector } from 'react-redux';
@@ -18,9 +18,13 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { selectUser } from '../../features/User/UserSlice';
 import { persistor } from '../../store';
-import { openModal } from '../../features/GlobalModal/GlobalModalSlice';
 import 'dayjs/locale/ko';
-import { CommonTextField, CommonStack, CommonGroupChips, CommonSelectBox } from '../../components';
+import {
+  CommonTextField,
+  CommonStack,
+  CommonGroupChips,
+  CommonSelectBox,
+} from '../../components';
 import { commonFailRes, commonErrorRes } from '../../utils/commonApiRes';
 import { postAddPost } from '../../api';
 import EventTag from '../../config/eventTag';
@@ -38,35 +42,32 @@ function EditPost() {
   const [techFieldOptions, setSkillFieldOptions] = useState([]);
   const editorRef = useRef();
   const user = useSelector(selectUser);
-  const handleOpenModal = (modalCode) => {
-    dispatch(openModal({ modalCode }));
-  };
-
-  useEffect(() => {
-    // 이미 로그아웃 상태일 경우, 홈 페이지로 돌아감.
-    if (!sessionStorage.getItem('accessToken') || !user.isSignin) {
-      navigate('/', { replace: true });
-      handleOpenModal(1);
-    }
-  }, []);
 
   const arrEventTag = [];
   const arrEventTagKey = Object.keys(EventTag);
   for (let i = 0; i < arrEventTagKey.length; i += 1) {
-    arrEventTag.push({ code: arrEventTagKey[i], value: EventTag[arrEventTagKey[i]] });
+    arrEventTag.push({
+      code: arrEventTagKey[i],
+      value: EventTag[arrEventTagKey[i]],
+    });
   }
 
   const arrSkillTag = [];
   const arrSkillTagKey = Object.keys(SkillTag);
   for (let i = 0; i < arrSkillTagKey.length; i += 1) {
-    arrSkillTag.push({ code: arrSkillTagKey[i], value: SkillTag[arrSkillTagKey[i]] });
+    arrSkillTag.push({
+      code: arrSkillTagKey[i],
+      value: SkillTag[arrSkillTagKey[i]],
+    });
   }
 
   const arrSkillFieldTag = [];
   const arrSkillFieldTagKey = Object.keys(TechFieldTag);
   for (let i = 0; i < arrSkillFieldTagKey.length; i += 1) {
-    arrSkillFieldTag.push({ code: arrSkillFieldTagKey[i],
-      value: TechFieldTag[arrSkillFieldTagKey[i]] });
+    arrSkillFieldTag.push({
+      code: arrSkillFieldTagKey[i],
+      value: TechFieldTag[arrSkillFieldTagKey[i]],
+    });
   }
 
   const handleSwitchChange = (event) => {
@@ -81,11 +82,14 @@ function EditPost() {
     setEndDttm(newEndDttm);
   };
 
-  const handleEventChange = (event, newSkillVal) => setEventOptions(newSkillVal);
+  const handleEventChange = (event, newSkillVal) =>
+    setEventOptions(newSkillVal);
 
-  const handleSkillChange = (event, newSkillVal) => setSkillOptions(newSkillVal);
+  const handleSkillChange = (event, newSkillVal) =>
+    setSkillOptions(newSkillVal);
 
-  const handleSkillFieldChange = (event, newSillFieldVal) => setSkillFieldOptions(newSillFieldVal);
+  const handleSkillFieldChange = (event, newSillFieldVal) =>
+    setSkillFieldOptions(newSillFieldVal);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -104,20 +108,18 @@ function EditPost() {
       arrTagCode.push(techFieldOptions[i].code);
     }
 
-    const responseAddPost = await postAddPost(
-      {
-        postTitle: data.get('postTitle'),
-        postThumbnailImg: [],
-        postImg: [],
-        postContent: postText,
-        postTag: arrTagCode,
-        postPlace: data.get('postAddress'),
-        postContactPhone: data.get('postPhoneNumber'),
-        eventStartDttm: data.get('postStartDttm'),
-        eventEndDttm: data.get('postEndDttm'),
-        userRoleCd: user.userRoleCd,
-      },
-    );
+    const responseAddPost = await postAddPost({
+      postTitle: data.get('postTitle'),
+      postThumbnailImg: [],
+      postImg: [],
+      postContent: postText,
+      postTag: arrTagCode,
+      postPlace: data.get('postAddress'),
+      postContactPhone: data.get('postPhoneNumber'),
+      eventStartDttm: data.get('postStartDttm'),
+      eventEndDttm: data.get('postEndDttm'),
+      userRoleCd: user.userRoleCd,
+    });
 
     if (!responseAddPost) {
       // network Error!
@@ -165,10 +167,7 @@ function EditPost() {
               value={startDttm}
               onChange={handleStartDttmChange}
               renderInput={(params) => (
-                <CommonTextField
-                  {...params}
-                  name="postStartDttm"
-                />
+                <CommonTextField {...params} name="postStartDttm" />
               )}
               ampm={false}
             />
@@ -177,10 +176,7 @@ function EditPost() {
               value={endDttm}
               onChange={handleEndDttmChange}
               renderInput={(params) => (
-                <CommonTextField
-                  {...params}
-                  name="postEndDttm"
-                />
+                <CommonTextField {...params} name="postEndDttm" />
               )}
               ampm={false}
             />
@@ -195,7 +191,13 @@ function EditPost() {
         </Stack>
         <StyledCustomTextField placeholder="장소" name="postAddress" />
         <FormControlLabel
-          control={<Switch checked={online} onChange={handleSwitchChange} name="isOnline" />}
+          control={
+            <Switch
+              checked={online}
+              onChange={handleSwitchChange}
+              name="isOnline"
+            />
+          }
           label="온라인으로 진행"
         />
         <CommonSelectBox
@@ -260,7 +262,11 @@ const StyledCustomTextField = styled(CommonTextField)`
 `;
 
 const CommonEditorStack = styled(Stack)`
-  & > * > .toastui-editor-defaultUI > .toastui-editor-toolbar > .toastui-editor-defaultUI-toolbar {
+  &
+    > *
+    > .toastui-editor-defaultUI
+    > .toastui-editor-toolbar
+    > .toastui-editor-defaultUI-toolbar {
     flex-wrap: wrap;
     & .toastui-editor-dropdown-toolbar {
       flex-wrap: wrap;
