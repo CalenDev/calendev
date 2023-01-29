@@ -1,35 +1,28 @@
+import '@toast-ui/editor/dist/i18n/ko-kr';
+import '@toast-ui/editor/dist/toastui-editor.css';
+import 'dayjs/locale/ko';
 import dayjs from 'dayjs';
-import { useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-// import redux
-import { useDispatch, useSelector } from 'react-redux';
 import styled from '@emotion/styled';
 import Button from '@mui/material/Button';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
+import Typography from '@mui/material/Typography';
 import ChevronRight from '@mui/icons-material/ChevronRight';
+import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { Editor } from '@toast-ui/react-editor';
-import '@toast-ui/editor/dist/i18n/ko-kr';
-import '@toast-ui/editor/dist/toastui-editor.css';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { DateTimePicker, DateTimePickerTabs } from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { postAddPost } from '../../api';
+import { CommonTextField, CommonStack, CommonGroupChips, CommonSelectBox } from '../../components';
+import { EventTag, SkillTag, TechFieldTag } from '../../config';
+import { openModal } from '../../features/GlobalModal/GlobalModalSlice';
 import { selectUser } from '../../features/User/UserSlice';
 import { persistor } from '../../store';
-import 'dayjs/locale/ko';
-import {
-  CommonTextField,
-  CommonStack,
-  CommonGroupChips,
-  CommonSelectBox,
-} from '../../components';
 import { commonFailRes, commonErrorRes } from '../../utils/commonApiRes';
-import { postAddPost } from '../../api';
-import EventTag from '../../config/eventTag';
-import SkillTag from '../../config/skillTag';
-import TechFieldTag from '../../config/techFieldTag';
 
 function EditPost() {
   const navigate = useNavigate();
@@ -40,8 +33,20 @@ function EditPost() {
   const [eventOptions, setEventOptions] = useState([]);
   const [skillOptions, setSkillOptions] = useState([]);
   const [techFieldOptions, setSkillFieldOptions] = useState([]);
+  const [phoneNumMsgObj, setPhoneNumMsgObj] = useState({ code: 0, arg1: '' });
   const editorRef = useRef();
   const user = useSelector(selectUser);
+  const handleOpenModal = (modalCode) => {
+    dispatch(openModal({ modalCode }));
+  };
+
+  useEffect(() => {
+    // 이미 로그아웃 상태일 경우, 홈 페이지로 돌아감.
+    if (!sessionStorage.getItem('accessToken') || !user.isSignin) {
+      navigate('/', { replace: true });
+      handleOpenModal(1);
+    }
+  }, []);
 
   const arrEventTag = [];
   const arrEventTagKey = Object.keys(EventTag);
@@ -82,14 +87,27 @@ function EditPost() {
     setEndDttm(newEndDttm);
   };
 
-  const handleEventChange = (event, newSkillVal) =>
-    setEventOptions(newSkillVal);
+  const handleEventChange = (event, newSkillVal) => setEventOptions(newSkillVal);
 
-  const handleSkillChange = (event, newSkillVal) =>
-    setSkillOptions(newSkillVal);
+  const handleSkillChange = (event, newSkillVal) => setSkillOptions(newSkillVal);
 
-  const handleSkillFieldChange = (event, newSillFieldVal) =>
-    setSkillFieldOptions(newSillFieldVal);
+  const handleSkillFieldChange = (event, newSillFieldVal) => setSkillFieldOptions(newSillFieldVal);
+
+  function phoneNumValidateCheck(phoneNumInputVal) {
+    const phoneNumCode = (phoneNumInputVal.length > 8) ? 100 : 117;
+    setPhoneNumMsgObj({ code: phoneNumCode });
+  }
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    switch (name) {
+      case 'postPhoneNumber':
+        phoneNumValidateCheck(value);
+        break;
+      default:
+        break;
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -164,19 +182,27 @@ function EditPost() {
         <Stack direction="row" sx={{ alignItems: 'center' }}>
           <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ko">
             <DateTimePicker
-              value={startDttm}
+              inputFormat="YYYY-MM-DD HH:mm"
               onChange={handleStartDttmChange}
+              value={startDttm}
               renderInput={(params) => (
-                <CommonTextField {...params} name="postStartDttm" />
+                <CommonTextField
+                  {...params}
+                  name="postStartDttm"
+                />
               )}
               ampm={false}
             />
             <ChevronRight fontSize="small" />
-            <DateTimePicker
-              value={endDttm}
+            <DateTimePickerTabs
+              inputFormat="YYYY-MM-DD HH:mm"
               onChange={handleEndDttmChange}
+              value={endDttm}
               renderInput={(params) => (
-                <CommonTextField {...params} name="postEndDttm" />
+                <CommonTextField
+                  {...params}
+                  name="postEndDttm"
+                />
               )}
               ampm={false}
             />
@@ -187,17 +213,19 @@ function EditPost() {
             name="postPhoneNumber"
             placeholder="연락처"
             type="number"
+            helpermsgobj={phoneNumMsgObj}
+            onChange={handleInputChange}
           />
         </Stack>
         <StyledCustomTextField placeholder="장소" name="postAddress" />
         <FormControlLabel
-          control={
+          control={(
             <Switch
               checked={online}
               onChange={handleSwitchChange}
               name="isOnline"
             />
-          }
+          )}
           label="온라인으로 진행"
         />
         <CommonSelectBox
