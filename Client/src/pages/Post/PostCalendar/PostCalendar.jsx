@@ -400,7 +400,7 @@ function PostcalendarModal(props) {
       }
     }
     if (!currentCard) return 0;
-    navigate(`/detail?postId=${currentCard.id}`);
+    navigate(`/post/${currentCard.id}`);
     return 1;
   };
 

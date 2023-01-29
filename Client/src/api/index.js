@@ -7,6 +7,7 @@ import {
 
 import {
   postSearchByOptions,
+  getPostDetails,
   getSimplePostData,
   postAddPost,
   postAddBookmark,
@@ -21,6 +22,7 @@ export {
   postFindPw,
   postSearchByOptions,
   getSimplePostData,
+  getPostDetails,
   postAddPost,
   postAddBookmark,
   patchRemoveBookmark,

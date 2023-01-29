@@ -59,6 +59,17 @@ const getSimplePostData = async (props) => {
   }
 };
 
+const getPostDetails = async (postId) => {
+  try {
+    const response = await instance.get(
+      `/api/v1/posts/details/${postId}`,
+    );
+    return response;
+  } catch (e) {
+    return e.response;
+  }
+};
+
 const postAddPost = async (eventPost) => {
   try {
     const response = await instance.post('/api/v1/posts', eventPost);
@@ -95,6 +106,7 @@ const patchRemoveBookmark = async (postId) => {
 
 export {
   getSimplePostData,
+  getPostDetails,
   postAddPost,
   postAddBookmark,
   patchRemoveBookmark,
