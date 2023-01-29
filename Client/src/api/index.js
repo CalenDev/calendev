@@ -4,7 +4,7 @@ import {
   getCheckResetPasswordToken,
   postFindPw,
 } from './auth';
-import { postEventPost, postEventPostImageUpload } from './eventPost';
+
 import {
   postSearchByOptions,
   getSimplePostData,
@@ -19,8 +19,6 @@ export {
   putResetPw,
   getCheckResetPasswordToken,
   postFindPw,
-  postEventPost,
-  postEventPostImageUpload,
   postSearchByOptions,
   getSimplePostData,
   postAddPost,
