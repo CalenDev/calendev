@@ -3,6 +3,7 @@
 /* eslint-disable react/function-component-definition */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable no-nested-ternary */
 
 // import react
 import { useState, useEffect } from 'react';
@@ -47,10 +48,12 @@ import {
   selectBookmark,
   setBookmark,
 } from '../../../features/Bookmark/BookmarkSlice';
+import { selectUser } from '../../../features/User/UserSlice';
 import EventTag from '../../../config/eventTag';
 import SkillTag from '../../../config/skillTag';
 import TechFieldTag from '../../../config/techFieldTag';
 import { persistor } from '../../../store';
+import { commonEventPropGetter } from '../../../utils';
 
 const CustomToolbar = ({
   changeDate,
@@ -61,6 +64,7 @@ const CustomToolbar = ({
   tags,
   isBookmark,
   setIsBookmark,
+  user,
 }) =>
   function (props) {
     const { date, onNavigate } = props;
@@ -95,15 +99,19 @@ const CustomToolbar = ({
             setOpenFilter={setOpenFilter}
             tags={tags}
           />
-          <Stack flexDirection="row" alignItems="center">
-            <Typography variant="body1">북마크 보기</Typography>
-            <Switch
-              onChange={() => {
-                setIsBookmark((prev) => !prev);
-              }}
-              checked={isBookmark}
-            />
-          </Stack>
+          {user.isSignin ? (
+            <Stack flexDirection="row" alignItems="center">
+              <Typography variant="body1">북마크 보기</Typography>
+              <Switch
+                onChange={() => {
+                  setIsBookmark((prev) => !prev);
+                }}
+                checked={isBookmark}
+              />
+            </Stack>
+          ) : (
+            <div />
+          )}
         </Stack>
       </Stack>
     );
@@ -112,39 +120,6 @@ const CustomToolbar = ({
 CustomToolbar.propTypes = {
   date: Proptypes.instanceOf(Date).isRequired,
   onNavigate: Proptypes.func.isRequired,
-};
-
-const CustomEventPropGetter = (event) => {
-  const { eventType } = event.resource;
-
-  switch (eventType) {
-    case 'AAA':
-      return { style: { backgroundColor: '#E57373' } };
-    case 'AAB':
-      return { style: { backgroundColor: '#00ACC1' } };
-    case 'AAC':
-      return { style: { backgroundColor: '#80DEEA' } };
-    case 'AAD':
-      return { style: { backgroundColor: '#90A4AE' } };
-    case 'AAE':
-      return { style: { backgroundColor: '#80CBC4' } };
-    case 'AAF':
-      return { style: { backgroundColor: '#E57373' } };
-    case 'AAG':
-      return { style: { backgroundColor: '#00ACC1' } };
-    case 'AAH':
-      return { style: { backgroundColor: '#80DEEA' } };
-    case 'AAI':
-      return { style: { backgroundColor: '#90A4AE' } };
-    case 'AAJ':
-      return { style: { backgroundColor: '#80CBC4' } };
-    case 'AAK':
-      return { style: { backgroundColor: '#90A4AE' } };
-    case 'AAL':
-      return { style: { backgroundColor: '#80CBC4' } };
-    default:
-      return { styled: { backgroundColor: '#000' } };
-  }
 };
 
 const filterEventPost = (data, bookmark, option, isBookmark) =>
@@ -198,6 +173,7 @@ function PostCalendar() {
   const { bookmarkArr } = useSelector(selectBookmark);
   const bookmark = new Set();
   bookmarkArr.forEach((cur) => bookmark.add(cur));
+  const user = useSelector(selectUser);
 
   const [curYear, setCurYear] = useState(curDate.getFullYear());
   const [curMonth, setCurMonth] = useState(curDate.getMonth() + 1);
@@ -305,6 +281,7 @@ function PostCalendar() {
         scheduleData={scheduleData}
         option={option}
         isBookmark={isBookmark}
+        user={user}
       />
       <Calendar
         localizer={localizer}
@@ -319,10 +296,11 @@ function PostCalendar() {
             tags,
             isBookmark,
             setIsBookmark,
+            user,
           }),
         }}
         onDrillDown={handleClickEvent}
-        eventPropGetter={CustomEventPropGetter}
+        eventPropGetter={commonEventPropGetter}
         events={createPostCalendarEvents()}
         onSelectEvent={handleClickEvent}
         drilldownView="null"
@@ -361,6 +339,7 @@ function PostcalendarModal(props) {
     bookmark,
     isBookmark,
     option,
+    user,
   } = props;
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -431,7 +410,12 @@ function PostcalendarModal(props) {
       >
         <Stack width="100%" className="StyledModalUpperContent">
           {currentPageScheduleData[modalPage - 1].map((cur) => (
-            <CustomModalCard key={cur._id} schedule={cur} bookmark={bookmark} />
+            <CustomModalCard
+              key={cur._id}
+              schedule={cur}
+              bookmark={bookmark}
+              user={user}
+            />
           ))}
         </Stack>
         <Stack>
@@ -483,7 +467,7 @@ const StyledModalWrapper = styled(Stack)`
 `;
 
 function CustomModalCard(props) {
-  const { schedule, bookmark } = props;
+  const { schedule, bookmark, user } = props;
   const currentCardTags = schedule.postTag.reduce(
     (acc, cur) => [...acc, cur],
     [],
@@ -497,10 +481,14 @@ function CustomModalCard(props) {
             <Typography variant="h5" noWrap>
               {`행사명 : ${schedule.postTitle}`}
             </Typography>
-            {bookmark.has(schedule._id) ? (
-              <BookmarkIcon />
+            {user.isSignin ? (
+              bookmark.has(schedule._id) ? (
+                <BookmarkIcon />
+              ) : (
+                <BookmarkBorderIcon />
+              )
             ) : (
-              <BookmarkBorderIcon />
+              <div />
             )}
           </StyledCardContentTitleWrapper>
           <StyledCardContentStackWrapper>
