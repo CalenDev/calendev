@@ -16,6 +16,10 @@ function commonModalText(code) {
       title: '로그인 만료',
       description: '다시 로그인 해주세요.',
     },
+    4: {
+      title: '권한 없음',
+      description: '로그인 후, 이용해주세요',
+    },
   };
 
   return textScript[code] === undefined ? textScript[0] : textScript[code];
