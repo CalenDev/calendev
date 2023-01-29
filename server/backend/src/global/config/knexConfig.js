@@ -6,7 +6,7 @@ dotenv.config({ path: './.env' });
 const instance = knex({
   client: 'mysql2',
   connection: {
-    host: '127.0.0.1',
+    host: 'host',
     user: process.env.LOCAL_DATABASE_USER,
     password: process.env.LOCAL_DATABASE_PASSWORD,
     database: process.env.LOCAL_DATABASE_NAME,
