@@ -7,7 +7,10 @@ dotenv.config({ path: './.env' });
 const { REDIS_SERVER_HOST, REDIS_SERVER_PORT, REDIS_SERVER_PASSWORD } =
   process.env;
 
-const redisClient = redis.createClient({ legacyMode: true });
+const redisClient = redis.createClient({
+  url: `redis://${REDIS_SERVER_HOST}:${REDIS_SERVER_PORT}`,
+  legacyMode: true,
+});
 
 redisClient.on('connect', () => {
   console.info('Redis Connected!');
