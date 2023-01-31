@@ -7,29 +7,6 @@ import Tokenizer from '../searchSystem/PostTextTokenizer.js';
 import AppError from '../../../global/utils/appError.js';
 
 export default {
-  postSave: (postSaveDto) => {
-    // 1) 사용자의 게시물 입력을 받아 title, content의 내용을 토큰화한다.
-    const postTitle = postSaveDto.getPostTitle;
-    const postTitleTokenArr = Tokenizer.tokenizeByNouns(postTitle);
-
-    const postContent = postSaveDto.getPostContent;
-    // 2) 토큰을 키워드 데이터베이스에 [단어 : 포스트id] Key-value형태로 저장한다.
-    const postContentTokenArr = Tokenizer.tokenizeByNouns(postContent);
-
-    // 3) 문서 내 토큰 단어 출현빈도수를 위한 Map 자료구조 생성
-    const freqMap = new Map();
-    postTitleTokenArr.forEach((cur) => {
-      freqMap.set(cur, (freqMap.get(cur) || 0) + 1);
-    });
-    postContentTokenArr.forEach((cur) => {
-      freqMap.set(cur, (freqMap.get(cur) || 0) + 1);
-    });
-
-    // 4) 저장할 문서에 존재하는 단어 토큰의 출현 횟수를 index DB에 저장
-    freqMap.forEach((freq, token) => {
-      PostIndex.save(token, freq, postSaveDto._id);
-    });
-  },
   search: async (searchQuery) => {
     // 1. SearchQuery의 토큰들을 키워드 데이터베이스에 조회
     const { textTokens, tags, sortBy } = searchQuery;
