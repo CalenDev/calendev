@@ -9,6 +9,7 @@ const { REDIS_SERVER_HOST, REDIS_SERVER_PORT, REDIS_SERVER_PASSWORD } =
 
 const redisClient = redis.createClient({
   url: `redis://${REDIS_SERVER_HOST}:${REDIS_SERVER_PORT}`,
+  password: REDIS_SERVER_PASSWORD,
   legacyMode: true,
 });
 
