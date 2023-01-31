@@ -3,7 +3,6 @@
 /* eslint-disable no-underscore-dangle */
 import PostIndex from '../searchSystem/postIndex.js';
 import Post from '../models/post.js';
-import Tokenizer from '../searchSystem/PostTextTokenizer.js';
 import AppError from '../../../global/utils/appError.js';
 
 export default {
@@ -11,25 +10,25 @@ export default {
     // 1. SearchQuery의 토큰들을 키워드 데이터베이스에 조회
     const { textTokens, tags, sortBy } = searchQuery;
 
-    let searchPostIndices = [];
+    let postIndexMap = new Map();
+
+    // 2) 토큰을 통해 조회한 postID들의 중복을 제거
     for (const textToken of textTokens) {
       // eslint-disable-next-line no-await-in-loop
       const queryResult = await PostIndex.find(textToken);
       if (queryResult !== null) {
-        searchPostIndices = [...searchPostIndices, ...queryResult.documents];
+        for (const document of queryResult.documents) {
+          const curId = document._id;
+          if (!postIndexMap.has(curId)) {
+            postIndexMap.set(curId, document);
+          }
+        }
       }
     }
 
-    // 2) 토큰을 통해 조회한 postID들의 중복을 제거
-    let postIndexSet = new Set();
-    for (let cur of searchPostIndices) {
-      if (!postIndexSet.has(cur._id)) {
-        postIndexSet.add(cur._id);
-      }
-    }
     // 3) 해당하는 게시물 쿼리
     const matchedPosts = await Post.findAllByIdAndTags(
-      [...postIndexSet],
+      [...postIndexMap.keys()],
       searchQuery,
     );
 
