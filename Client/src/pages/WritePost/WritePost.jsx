@@ -14,10 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Editor } from '@toast-ui/react-editor';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import {
-  DateTimePicker,
-  DateTimePickerTabs,
-} from '@mui/x-date-pickers/DateTimePicker';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { postAddPost } from '../../api';
 import {
@@ -189,7 +186,7 @@ function EditPost() {
               ampm={false}
             />
             <ChevronRight fontSize="small" />
-            <DateTimePickerTabs
+            <DateTimePicker
               inputFormat="YYYY-MM-DD HH:mm"
               onChange={handleEndDttmChange}
               value={endDttm}
