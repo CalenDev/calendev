@@ -14,10 +14,18 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Editor } from '@toast-ui/react-editor';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DateTimePicker, DateTimePickerTabs } from '@mui/x-date-pickers/DateTimePicker';
+import {
+  DateTimePicker,
+  DateTimePickerTabs,
+} from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { postAddPost } from '../../api';
-import { CommonTextField, CommonStack, CommonGroupChips, CommonSelectBox } from '../../components';
+import {
+  CommonTextField,
+  CommonStack,
+  CommonGroupChips,
+  CommonSelectBox,
+} from '../../components';
 import { EventTag, SkillTag, TechFieldTag } from '../../config';
 import { selectUser } from '../../features/User/UserSlice';
 import { persistor } from '../../store';
@@ -74,14 +82,17 @@ function EditPost() {
     setEndDttm(newEndDttm);
   };
 
-  const handleEventChange = (event, newSkillVal) => setEventOptions(newSkillVal);
+  const handleEventChange = (event, newSkillVal) =>
+    setEventOptions(newSkillVal);
 
-  const handleSkillChange = (event, newSkillVal) => setSkillOptions(newSkillVal);
+  const handleSkillChange = (event, newSkillVal) =>
+    setSkillOptions(newSkillVal);
 
-  const handleSkillFieldChange = (event, newSillFieldVal) => setSkillFieldOptions(newSillFieldVal);
+  const handleSkillFieldChange = (event, newSillFieldVal) =>
+    setSkillFieldOptions(newSillFieldVal);
 
   function phoneNumValidateCheck(phoneNumInputVal) {
-    const phoneNumCode = (phoneNumInputVal.length > 8) ? 100 : 117;
+    const phoneNumCode = phoneNumInputVal.length > 8 ? 100 : 117;
     setPhoneNumMsgObj({ code: phoneNumCode });
   }
 
@@ -173,10 +184,7 @@ function EditPost() {
               onChange={handleStartDttmChange}
               value={startDttm}
               renderInput={(params) => (
-                <CommonTextField
-                  {...params}
-                  name="postStartDttm"
-                />
+                <CommonTextField {...params} name="postStartDttm" />
               )}
               ampm={false}
             />
@@ -186,10 +194,7 @@ function EditPost() {
               onChange={handleEndDttmChange}
               value={endDttm}
               renderInput={(params) => (
-                <CommonTextField
-                  {...params}
-                  name="postEndDttm"
-                />
+                <CommonTextField {...params} name="postEndDttm" />
               )}
               ampm={false}
             />
@@ -206,13 +211,13 @@ function EditPost() {
         </Stack>
         <StyledCustomTextField placeholder="장소" name="postAddress" />
         <FormControlLabel
-          control={(
+          control={
             <Switch
               checked={online}
               onChange={handleSwitchChange}
               name="isOnline"
             />
-          )}
+          }
           label="온라인으로 진행"
         />
         <CommonSelectBox
