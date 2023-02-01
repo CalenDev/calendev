@@ -8,7 +8,7 @@ import { openModal } from '../../features/GlobalModal/GlobalModalSlice';
 function checkPageAuthentification(props) {
   const { pathname, userRoleCd, handleModal } = props;
 
-  const authPageList = ['profile', 'editPost', 'createPost'];
+  const authPageList = ['profile', 'writepost'];
   const certainlyUnAuthPageList = ['signin', 'signup', 'findpw', 'resetpw'];
   const basePath = pathname.split('/')[1]; // ex) /test/123 => ['', 'test', '123']
 
