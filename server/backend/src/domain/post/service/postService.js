@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-param-reassign */
-import redis from '../../../global/config/redisCofig.js';
+import redis from '../../../global/config/redisConfig.js';
 import Post from '../models/post.js';
 import PostIndex from '../searchSystem/postIndex.js';
 import dttmBuilder from '../../user/utils/dttmBuilder.js';

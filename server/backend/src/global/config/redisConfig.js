@@ -1,4 +1,4 @@
-import redis from 'redis';
+import * as redis from 'redis';
 import dotenv from 'dotenv';
 import AppError from '../utils/appError.js';
 
@@ -14,7 +14,7 @@ const redisClient = redis.createClient({
 });
 
 redisClient.on('connect', () => {
-  console.info('Redis Connected!');
+  // console.info('Redis Connected!');
 });
 
 redisClient.on('error', (err) => {
