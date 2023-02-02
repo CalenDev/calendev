@@ -16,6 +16,7 @@ import PostDetail from './pages/PostDetail/PostDetail';
 import PostCalendar from './pages/Post/PostCalendar/PostCalendar';
 import PrivateRoute from './components/PrivateRoute/index';
 import GlobalModal from './features/GlobalModal/index';
+import Profile from './pages/Profile/Profile';
 
 function App() {
   const theme = responsiveFontSizes(createTheme(themes));
@@ -34,6 +35,7 @@ function App() {
           <Route path="/findpw" exact element={<FindPw />} />
           <Route path="/resetpw" exact element={<ResetPw />} />
           <Route path="/writepost" exact element={<WritePost />} />
+          <Route path="/profile" exact element={<Profile />} />
         </Route>
       </Routes>
     </ThemeProvider>
