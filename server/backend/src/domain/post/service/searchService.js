@@ -28,7 +28,7 @@ export default {
 
     // 3) 해당하는 게시물 쿼리
     const matchedPosts = await Post.findAllByIdAndTags(
-      [...postIndexMap.keys()],
+      postIndexMap.keys(),
       searchQuery,
     );
 
