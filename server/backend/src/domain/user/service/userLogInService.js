@@ -61,7 +61,6 @@ const authenticate = async (user) => {
 
 export default {
   authorize: async (userLogInReq) => {
-    const { userEmail, userPassword } = userLogInReq;
     const user = await findUserByEmailAndPassword(userLogInReq);
     const userLoginRes = authenticate(user);
 
