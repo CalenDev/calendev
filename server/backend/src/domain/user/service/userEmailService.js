@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import crypto from 'crypto';
 import AppError from '../../../global/utils/appError.js';
-import redisCofig from '../../../global/config/redisCofig.js';
+import redisCofig from '../../../global/config/redisConfig.js';
 import User from '../models/user.js';
 import sendEmail from '../../../global/utils/sendEmail.js';
 

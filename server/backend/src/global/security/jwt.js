@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
-import redis from '../config/redisCofig.js';
+import redis from '../config/redisConfig.js';
 import AppError from '../utils/appError.js';
 
 dotenv.config({ path: './.env' });
