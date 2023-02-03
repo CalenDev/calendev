@@ -2,8 +2,7 @@ import mongoose, { mongo, trusted } from 'mongoose';
 import mongoErrorHandler from './mongoErrorHandler.js';
 
 const Image = new mongoose.Schema({
-  imgId: mongoose.Schema.Types.ObjectId,
-  postId: { type: String },
+  _id: mongoose.Schema.Types.ObjectId,
   imgURL: { type: String, required: true, trim: true },
 });
 
