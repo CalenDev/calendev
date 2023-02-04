@@ -142,10 +142,19 @@ class PostDeleteReq {
     return this.postId;
   }
 }
+class PresignedUrlReq {
+  fileName;
+  constructor() {}
+
+  get getFileName() {
+    return this.fileName;
+  }
+}
 export default {
   PostSaveReq,
   PostEditReq,
   PostDeleteReq,
   PostDetailReq,
   SimplePostDataReq,
+  PresignedUrlReq,
 };
