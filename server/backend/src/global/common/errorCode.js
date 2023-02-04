@@ -36,6 +36,7 @@ const ErrorCode = {
   E500AD: 'Internal Server Error : There was a Duplicate key Error',
   E500AE: 'Internal Server Error : Redis Error',
   E500AF: 'Internal Server Error : Mongoose Error',
+  E500AG: 'Internal Server Error : AWS S3 Error',
 };
 Object.freeze(ErrorCode);
 
