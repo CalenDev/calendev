@@ -17,10 +17,18 @@ const controlParams = async (signupReq) => {
 };
 
 export default {
-  findAll: async () => {
-    const users = await User.getAllUsers();
+  getProfileData: async (targetId) => {
+    const targetUserId = targetId;
 
-    return users;
+    const targetUser = await User.findOne(targetId, 'userId');
+
+    if (targetUser.length === 0) {
+      throw new AppError('Not found', 404, 'E404AD');
+    }
+
+    return {
+      userNickname: targetUser[0].userNickname,
+    };
   },
   getUserData: async (req) => {
     let user = [];

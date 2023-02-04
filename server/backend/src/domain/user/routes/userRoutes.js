@@ -4,7 +4,9 @@ import userControllers from '../controllers/userController.js';
 
 const router = express.Router();
 
-router.route('/').get(authControllers.authJWT, userControllers.getAllUsers);
+router
+  .route('/profile')
+  .get(authControllers.authJWT, userControllers.getUserProfile);
 
 router.route('/').post(userControllers.signupUser);
 
