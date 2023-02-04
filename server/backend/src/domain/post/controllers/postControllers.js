@@ -9,6 +9,7 @@ import SearchQuery from '../searchSystem/SearchQuery.js';
 import requestValidator from '../../../global/utils/requestValidator.js';
 import searchService from '../service/searchService.js';
 import bookmarkService from '../service/bookmarkService.js';
+import s3 from '../../../global/utils/s3.js';
 
 const payloadDataToDto = (payload, dto) => {
   if (payload) {
@@ -194,6 +195,22 @@ export default {
       bookmarkList: deleteBookmarkResult.postIds,
     });
   }),
+  getPresignedUrl: catchAsync(async (req, res, next) => {
+    // 1)dto 매핑
+    const { fileName } = req.params;
+
+    const presignedUrlReq = new PostDto.PresignedUrlReq();
+    presignedUrlReq.fileName = fileName;
+
+    // 2) aws s3 get presigned url.
+    const presignedUrl = await s3.getSignedUrl(presignedUrlReq);
+
+    return res.status(200).json({
+      status: 'success',
+      presignedUrl,
+    });
+  }),
+
   deletePost: catchAsync(async (req, res, next) => {
     // 1) dto 매핑
     const deletePostReq = new PostDto.PostDeleteReq();
