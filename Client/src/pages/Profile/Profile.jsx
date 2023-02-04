@@ -1,37 +1,227 @@
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import styled from '@emotion/styled';
-import TextField from '@mui/material/TextField';
 import { PropTypes } from 'prop-types';
 import Box from '@mui/material/Box';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button, Checkbox, useTheme } from '@mui/material';
+import TextField from '@mui/material/TextField';
 import { selectUser } from '../../features/User/UserSlice';
 import CommonStack from '../../components/CommonStack/index';
 import CommonPaper from '../../components/CommonPaper/index';
-/*
-  width: 100%;
-  justify-content: flex-start;
-  align-items: center;
-  flex-direction: column;
-*/
+import { getUserProfile } from '../../api';
+import {
+  changeUserRoleToGrade,
+  commonErrorRes,
+  commonFailRes,
+} from '../../utils';
+import { persistor } from '../../store';
+
 function Profile() {
   const user = useSelector(selectUser);
-  /* isSignin: false,
-  userId: 0,
-  userEmail: '',
-  userNickname: '',
-  userRoleCd: '', */
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const theme = useTheme();
+
+  const [defaultUserInfo, setDefaultUserInfo] = useState({
+    userEmail: '',
+    userNickname: '',
+    userRoleCd: '',
+  });
+
+  const [userInfo, setUserInfo] = useState({
+    userEmail: '',
+    userNickname: '',
+    userRoleCd: '',
+  });
+
+  const [userNicknameHelperObj, setUserNicknameHelperObj] = useState({
+    code: 101,
+    arg1: '이메일',
+  });
+
+  const [prevUserPwhelperObj, setPrevUserPwHelperObj] = useState({
+    code: 101,
+    arg1: '이메일',
+  });
+  const [changedUserPwObj, setChangedUserPwHelperObj] = useState({
+    code: 101,
+    arg1: '이메일',
+  });
+
+  const [withdrawCheck, setWithdraw] = useState(false);
+
+  useEffect(() => {
+    async function getEmail() {
+      const apiRes = await getUserProfile();
+
+      if (!apiRes) {
+        navigate('/error', {
+          replace: true,
+          state: { errorTitle: '네트워크 에러가 발생했습니다!' },
+        });
+      }
+
+      const { code } = apiRes.data;
+      switch (apiRes.data.status) {
+        case 'success':
+          setUserInfo((prev) => ({
+            ...prev,
+            userNickname: user.userNickname,
+            userEmail: apiRes.data.data.userEmail || '',
+            userRoleCd: user.userRoleCd,
+          }));
+          setDefaultUserInfo((prev) => ({
+            ...prev,
+            userNickname: user.userNickname,
+            userEmail: apiRes.data.data.userEmail || '',
+            userRoleCd: user.userRoleCd,
+          }));
+          break;
+        case 'failure':
+          commonFailRes(dispatch, persistor, navigate, code);
+          break;
+        case 'error':
+          commonErrorRes(navigate, code);
+          break;
+        default:
+          break;
+      }
+    }
+    getEmail();
+  }, []);
+
+  const handleSubmitToChangeNickname = async () => {
+    // nickname 변경 로직 작성 예정
+  };
+
+  const handleSubmitToChangePassword = async () => {};
+
+  const handleChange = (e, name) => {
+    setUserInfo((prev) => ({ ...prev, [name]: e.target.value }));
+  };
+
+  const handleResetUserInfo = () => {
+    setUserInfo({ ...defaultUserInfo });
+  };
   return (
     <CommonStack>
       <StyledBox>
         <CommonPaper>
           <StyledProfileWrapper>
-            <Typography variant="h4">사용자님 반갑습니다!</Typography>
+            <Typography variant="h5">{`${user.userNickname}님 반갑습니다!`}</Typography>
+            <StyledProfileUserInfoWrapper
+              component="form"
+              onSubmit={handleSubmitToChangeNickname}
+            >
+              <CommonLine
+                property="닉네임"
+                name="userNickname"
+                helpermsgobj={userNicknameHelperObj}
+                content={userInfo.userNickname}
+                handleChange={handleChange}
+              />
+              <CommonLine
+                property="이메일"
+                name="userEmail"
+                content={userInfo.userEmail}
+                disabled
+              />
+              <CommonLine
+                property="유저등급"
+                name="userGrade"
+                content={changeUserRoleToGrade(userInfo.userRoleCd)}
+                disabled
+              />
+              <Stack
+                justifyContent="flex-end"
+                flexDirection="row"
+                gap={theme.spacing(2)}
+                marginTop={theme.spacing(1)}
+              >
+                <StyledProfileButton
+                  variant="contained"
+                  size="small"
+                  color="warning"
+                  onClick={handleResetUserInfo}
+                >
+                  초기화
+                </StyledProfileButton>
+                <StyledProfileButton
+                  type="submit"
+                  variant="contained"
+                  size="small"
+                >
+                  회원정보 수정
+                </StyledProfileButton>
+              </Stack>
+            </StyledProfileUserInfoWrapper>
+
+            <Typography variant="h5">비밀번호 초기화</Typography>
+            <StyledProfileUserInfoWrapper
+              component="form"
+              onSubmit={handleSubmitToChangePassword}
+            >
+              <CommonLine
+                property="현재 비밀번호"
+                name="prevPassword"
+                helpermsgobj={prevUserPwhelperObj}
+                content=""
+              />
+              <CommonLine
+                property="새 비밀번호"
+                name="changedPassword"
+                helpermsgobj={changedUserPwObj}
+                content=""
+              />
+              <Stack
+                justifyContent="flex-end"
+                flexDirection="row"
+                marginTop={theme.spacing(1)}
+              >
+                <StyledProfileButton
+                  type="submit"
+                  variant="contained"
+                  size="small"
+                >
+                  비밀번호 변경
+                </StyledProfileButton>
+              </Stack>
+            </StyledProfileUserInfoWrapper>
             <StyledProfileUserInfoWrapper>
-              <CommonLine property="닉네임" content={user.userNickname} />
-              <CommonLine property="이메일" content={user.userEmail} />
-              <CommonLine property="유저등급" content={user.userNickname} />
-              <CommonLine property="이메일" content={user.userEmail} />
+              <Typography variant="h5">회원탈퇴</Typography>
+              <Stack
+                flexDirection="row"
+                alignItems="center"
+                justifyContent="space-between"
+              >
+                <Typography variant="subtitle1" color="red">
+                  정말, 회원 탈퇴를 하시겠습니까?
+                </Typography>
+                <Checkbox
+                  value={withdrawCheck}
+                  onChange={(e) => {
+                    setWithdraw(e.target.checked);
+                  }}
+                />
+              </Stack>
+              <Stack
+                justifyContent="flex-end"
+                flexDirection="row"
+                gap={theme.spacing(2)}
+                marginTop={theme.spacing(1)}
+              >
+                <StyledProfileButton
+                  variant="contained"
+                  size="small"
+                  disabled={!withdrawCheck}
+                  color="error"
+                >
+                  회원탈퇴
+                </StyledProfileButton>
+              </Stack>
             </StyledProfileUserInfoWrapper>
           </StyledProfileWrapper>
         </CommonPaper>
@@ -54,12 +244,24 @@ const StyledProfileUserInfoWrapper = styled(Stack)`
   gap: ${(props) => props.theme.spacing(2)};
 `;
 
+const StyledProfileButton = styled(Button)`
+  width: 96px;
+`;
 function CommonLine(props) {
-  const { property, content } = props;
+  const { property, content, name, helpermsgobj, disabled, handleChange } =
+    props;
+
   return (
     <StyledContentStack>
-      <Typography variant="h5">{property}</Typography>
-      <TextField variant="standard" value={content} />
+      <Typography variant="h6">{property}</Typography>
+      <TextField
+        size="small"
+        helpermsgobj={helpermsgobj}
+        name={name}
+        value={content}
+        disabled={disabled}
+        onChange={(e) => handleChange(e, name)}
+      />
     </StyledContentStack>
   );
 }
@@ -73,14 +275,19 @@ const StyledContentStack = styled(Stack)`
 CommonLine.propTypes = {
   property: PropTypes.string.isRequired,
   content: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  helpermsgobj: PropTypes.shape({
+    code: PropTypes.number.isRequired,
+    arg1: PropTypes.string,
+  }),
+  disabled: PropTypes.bool,
+  handleChange: PropTypes.func,
 };
 
-// const StyledStack = styled(Stack)`
-//   height: 800px;
-//   width: 100%;
-//   justify-content: start;
-//   flex-direction: column;
-//   background-color: red;
-// `;
+CommonLine.defaultProps = {
+  disabled: false,
+  handleChange: () => {},
+  helpermsgobj: { code: 0 },
+};
 
 export default Profile;
