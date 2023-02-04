@@ -29,12 +29,19 @@ export const UserSlice = createSlice({
       state.userNickname = '';
       state.userRoleCd = '';
     },
+    reloadUser: (state, actions) => {
+      const { userEmail, userNickname, userRoleCd } = actions.payload;
+
+      if (userEmail) state.userEmail = userEmail;
+      if (userNickname) state.userNickname = userNickname;
+      if (userRoleCd) state.userRoleCd = userRoleCd;
+    },
     extraReducers: (builder) => {
       builder.addCase(PURGE, () => initialState);
     },
   },
 });
 
-export const { signinUser, logoutUser } = UserSlice.actions;
+export const { signinUser, logoutUser, changeUser } = UserSlice.actions;
 export const selectUser = (state) => state.User;
 export default UserSlice.reducer;

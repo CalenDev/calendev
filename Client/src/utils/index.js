@@ -8,7 +8,7 @@ import {
 import commonMsgText from './commonMsgText';
 import urlQueryParser from './url';
 import { commonErrorRes, commonFailRes } from './commonApiRes';
-import changeDefaultTimeFormat from './change';
+import { changeDefaultTimeFormat, changeUserRoleToGrade } from './change';
 import dttmFormatter from './formatter';
 import commonEventPropGetter from './commonEventGetter';
 
@@ -24,5 +24,6 @@ export {
   commonEventPropGetter,
   urlQueryParser,
   changeDefaultTimeFormat,
+  changeUserRoleToGrade,
   dttmFormatter,
 };

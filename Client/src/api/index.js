@@ -3,6 +3,7 @@ import {
   postFindPw,
   postUserSignIn,
   putResetPw,
+  postWithdrawUser,
 } from './auth';
 
 import {
@@ -14,7 +15,13 @@ import {
   postSearchByOptions,
   patchRemoveBookmark,
 } from './post';
-import { postUserDuplicate, postUserSignUp } from './user';
+import {
+  postUserDuplicate,
+  postUserSignUp,
+  getUserProfile,
+  patchUserNickname,
+  patchUserPassword,
+} from './user';
 
 export {
   getCheckResetPasswordToken,
@@ -27,8 +34,11 @@ export {
   postSearchByOptions,
   postUserDuplicate,
   postUserSignIn,
-
   postUserSignUp,
+  getUserProfile,
   patchRemoveBookmark,
   putResetPw,
+  patchUserNickname,
+  patchUserPassword,
+  postWithdrawUser,
 };
