@@ -1,26 +1,47 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-param-reassign */
-import dotenv from 'dotenv';
+import redis from '../../../global/config/redisConfig.js';
 import Post from '../models/post.js';
+import PostIndex from '../searchSystem/postIndex.js';
 import dttmBuilder from '../../user/utils/dttmBuilder.js';
 import AppError from '../../../global/utils/appError.js';
-import searchService from './searchService.js';
 import bookmark from '../models/bookmark.js';
-import redis from '../../../global/config/redisCofig.js';
+import Tokenizer from '../searchSystem/PostTextTokenizer.js';
 
 const { REDIS_POST_VIEW_DATA_ALIVE_TIME } = process.env;
 
 export default {
-  save: async (postReq) => {
+  save: async (postSaveReq) => {
     // 1) createdAt 필드에 현재시간 추가
-    postReq.createdAtDttm = dttmBuilder.buildCurrentKSTDttm();
+    postSaveReq.createdAtDttm = dttmBuilder.buildCurrentKSTDttm();
 
     // 2) Post DB에 게시물 저장
-    const res = await Post.save(postReq);
+    const res = await Post.save(postSaveReq);
 
     // 3) keyword Index DB에 게시물저장
-    postReq._id = res._id.toString();
-    await searchService.postSave(postReq);
+    postSaveReq._id = res._id.toString();
+
+    // 3-1) 사용자의 게시물 입력을 받아 title, content의 내용을 토큰화한다.
+    const postTitle = postSaveReq.getPostTitle;
+    const postTitleTokenArr = Tokenizer.tokenizeByNouns(postTitle);
+
+    const postContent = postSaveReq.getPostContent;
+    // 3-2) 토큰을 키워드 데이터베이스에 [단어 : 포스트id] Key-value형태로 저장한다.
+    const postContentTokenArr = Tokenizer.tokenizeByNouns(postContent);
+
+    // 3-3) 문서 내 토큰 단어 출현빈도수를 위한 Map 자료구조 생성
+    const freqMap = new Map();
+    postTitleTokenArr.forEach((cur) => {
+      freqMap.set(cur, (freqMap.get(cur) || 0) + 1);
+    });
+    postContentTokenArr.forEach((cur) => {
+      freqMap.set(cur, (freqMap.get(cur) || 0) + 1);
+    });
+
+    // 4) 저장할 문서에 존재하는 단어 토큰의 출현 횟수를 index DB에 저장
+    freqMap.forEach((freq, token) => {
+      PostIndex.save(token, freq, postSaveReq._id);
+    });
 
     return res;
   },

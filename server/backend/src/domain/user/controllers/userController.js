@@ -26,10 +26,10 @@ export default {
       return next(new AppError('Bad Request', 400, 'E400AG'));
     }
 
-    await userJoinService.create(signupReq);
-
+    const createResult = await userJoinService.create(signupReq);
     return res.status(201).json({
       status: 'success',
+      createResult,
     });
   }),
 

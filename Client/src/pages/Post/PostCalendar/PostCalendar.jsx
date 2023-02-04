@@ -124,11 +124,12 @@ CustomToolbar.propTypes = {
 
 const filterEventPost = (data, bookmark, option, isBookmark) =>
   data.filter((curData) => {
-    let bool = true; // filter에 통과하는 post인지 여부.
+    let filterCondition = true; // filter에 통과하는 post인지 여부.
 
     // 북마크 필터가 되어 있을 시에, 현재 이 글이 북마크가 안되어 있는 글이라면 bool = false
     if (isBookmark && !bookmark.has(curData._id)) {
-      bool = false;
+      filterCondition = false;
+      return filterCondition;
     }
 
     const filteringTag = Object.values(option.tag);
@@ -137,7 +138,6 @@ const filterEventPost = (data, bookmark, option, isBookmark) =>
     for (let i = 0; i < filteringTag.length; i += 1) {
       transArr = [...transArr, ...filteringTag[i]];
     }
-
     transArr = transArr.reduce((acc, cur) => [...acc, cur.code], []);
 
     const curTag = curData.postTag;
@@ -145,24 +145,19 @@ const filterEventPost = (data, bookmark, option, isBookmark) =>
     // 조건이 없으면 그냥 뒤를 볼 필요 없이 반환
     // 조건이 있으면 길이비교
     if (transArr.length === 0) {
-      return bool;
-    }
-    if (transArr.length !== curTag.length || !bool) {
-      bool = false;
-      return bool;
+      return true;
     }
 
-    transArr.sort((a, b) => a - b);
-    curTag.sort((a, b) => a - b);
+    const curTagSet = new Set(curTag);
 
     for (let i = 0; i < transArr.length; i += 1) {
-      if (transArr[i] !== curTag[i]) {
-        bool = false;
+      if (!curTagSet.has(transArr[i])) {
+        filterCondition = false;
         break;
       }
     }
 
-    return bool;
+    return filterCondition;
   });
 
 function PostCalendar() {
@@ -363,11 +358,10 @@ function PostcalendarModal(props) {
         });
       }
       const { code } = apiRes.data;
-
       switch (apiRes.data.status) {
         case 'success':
-          dispatch(setBookmark(apiRes.data.bookmarkList));
-          break;
+          dispatch(setBookmark({ bookmarkList: apiRes.data.bookmarkList }));
+          return;
         case 'fail':
           commonFailRes(dispatch, persistor, navigate, code);
           break;
@@ -377,10 +371,10 @@ function PostcalendarModal(props) {
         default:
           break;
       }
+      return;
     }
-    if (!currentCard) return 0;
+    if (!currentCard) return;
     navigate(`/post/${currentCard.id}`);
-    return 1;
   };
 
   if (scheduleData.length === 0) return <div />;
@@ -509,9 +503,18 @@ function CustomModalCard(props) {
           </StyledCardContentStackWrapper>
         </Stack>
         <Stack className="StyledCardLowerContent" flexDirection="row" gap="8px">
-          {currentCardTags.map((curTag) => (
-            <Chip label={curTag} />
-          ))}
+          {currentCardTags.map((curTag) => {
+            switch (curTag[0]) {
+              case 'A':
+                return <Chip label={EventTag[curTag]} />;
+              case 'C':
+                return <Chip label={SkillTag[curTag]} />;
+              case 'D':
+                return <Chip label={TechFieldTag[curTag]} />;
+              default:
+                return <div />;
+            }
+          })}
         </Stack>
       </CardContent>
     </StyledCard>

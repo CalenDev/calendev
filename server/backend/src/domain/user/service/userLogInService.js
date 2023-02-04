@@ -1,5 +1,5 @@
 import AppError from '../../../global/utils/appError.js';
-import redis from '../../../global/config/redisCofig.js';
+import redis from '../../../global/config/redisConfig.js';
 import User from '../models/user.js';
 import UserLoginDto from '../dto/loginDto.js';
 import TokenProvider from '../../../global/security/jwt.js';
@@ -61,7 +61,6 @@ const authenticate = async (user) => {
 
 export default {
   authorize: async (userLogInReq) => {
-    const { userEmail, userPassword } = userLogInReq;
     const user = await findUserByEmailAndPassword(userLogInReq);
     const userLoginRes = authenticate(user);
 
