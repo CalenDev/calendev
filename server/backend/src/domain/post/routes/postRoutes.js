@@ -10,6 +10,10 @@ router
   .post(authController.authJWT, postControllers.savePost)
   .patch(authController.authJWT, postControllers.editPost);
 
+router
+  .route('/presignedUrl/:fileName')
+  .get(authController.authJWT, postControllers.getPresignedUrl);
+
 router.route('/details/:postId').get(postControllers.getTargetPost);
 
 router.route('/dataType/simple').get(postControllers.getSimplePostData);
