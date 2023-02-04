@@ -12,6 +12,7 @@ import tokenProvider from '../../../global/security/jwt.js';
 import objectMapper from '../../../global/utils/objectMapper.js';
 import validator from '../../../global/utils/requestValidator.js';
 import bookmarkService from '../../post/service/bookmarkService.js';
+import userJoinService from '../service/userJoinService.js';
 
 const { redisCli } = redisCofig;
 
@@ -120,28 +121,58 @@ export default {
       });
     }
   }),
-
   resetPassword: catchAsync(async (req, res, next) => {
-    // 1) 토큰을 뺀다
-    const passwordResetToken = req.params.token;
-
-    // 2) 레디스를 통해, 토큰에 대해 일치하는 유저가 있는지 확인해본다.
-    const authorizedUser = await redisCli.get(passwordResetToken);
-    if (authorizedUser === null) {
-      next(new AppError('Password-Reset Token Error', 400, 'E400AE'));
-    }
-
-    // 3) DTO로 넘겨준다.
+    // 1) dto 생성
     const resetPasswordReq = new UserUpdateDto.ResetPasswordReq();
-    resetPasswordReq.userEmail = authorizedUser;
-    resetPasswordReq.userPassword = req.body.userPassword;
+    objectMapper.map(req.body, resetPasswordReq);
 
-    // 4) 비밀번호 validation 진행 후 업데이트
-    if (!validator.validateReq(resetPasswordReq.getUserPassword, 'resetPW')) {
+    // 2) 해당 유저 정보 조회
+    const userData = await userJoinService.getUserData(resetPasswordReq);
+
+    // 3) 새로운 비밀번호 validate 후 발급받고 save한다.
+    if (!validator.validatePassword(resetPasswordReq.getChangedUserPassword)) {
       return next(new AppError('Bad Request', 400, 'E400AG'));
     }
 
-    await userUpdateService.resetPassword(resetPasswordReq);
+    // 4) 비밀번호 수정
+    const updateResult = await userUpdateService.resetPassword(
+      userData,
+      resetPasswordReq.getChangedUserPassword,
+    );
+
+    return res.status(200).json({
+      status: 'success',
+      message: 'Password Reset!',
+    });
+  }),
+
+  resetPasswordWithPageToken: catchAsync(async (req, res, next) => {
+    // 1) 토큰을 뺀다
+    const passwordResetToken = req.params.token;
+    const forgotPasswordReq = new UserUpdateDto.ForgotPasswordReq();
+    objectMapper.map(req.body, forgotPasswordReq);
+
+    // 2) 레디스를 통해, 토큰에 대해 일치하는 유저가 있는지 확인해본다.
+    const authorizedUserEmail = await redisCli.get(passwordResetToken);
+    if (authorizedUserEmail === null) {
+      next(new AppError('Password-Reset Token Error', 400, 'E400AE'));
+    }
+    forgotPasswordReq.userEmail = authorizedUserEmail;
+
+    // 3) 해당 유저 정보 조회
+    const userData = await userJoinService.getUserData(forgotPasswordReq);
+
+    // 4) 비밀번호 validation 진행
+    if (!validator.validatePassword(forgotPasswordReq.getUserPassword)) {
+      return next(new AppError('Bad Request', 400, 'E400AG'));
+    }
+
+    // 5) 비밀번호 재설정
+    await userUpdateService.resetPassword(
+      userData,
+      forgotPasswordReq.getUserPassword,
+    );
+
     return res.status(200).json({
       status: 'success',
       message: 'Password Reset!',
