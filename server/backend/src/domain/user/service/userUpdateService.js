@@ -5,24 +5,25 @@ import redisConfig from '../../../global/config/redisConfig.js';
 
 export default {
   resetPassword: async (user, changedPassword) => {
+    const curUser = user[0];
     // 이전 비밀번호와 같으면 에러 리턴
     const hashedPassword = await encrypt.createHashedPasswordBySalt(
       changedPassword,
-      user[0].salt,
+      curUser.salt,
     );
 
-    if (hashedPassword === user[0].userPassword) {
+    if (hashedPassword === curUser.userPassword) {
       throw new AppError('Not Authorized', 401, 'E401AD');
     }
 
     // 레디스에 refresh 토큰 있으면 삭제
-    redisConfig.redisClient.exists(user[0].userId, (err, ok) => {
+    redisConfig.redisClient.exists(curUser.userId, (err, ok) => {
       if (err) throw err;
-      redisConfig.redisCli.del(`${user[0].userId}`);
+      redisConfig.redisCli.del(`${curUser.userId}`);
     });
 
     const userUpdateResult = await User.updateOne(
-      user[0].userId,
+      curUser.userId,
       hashedPassword,
       'userPassword',
     );
