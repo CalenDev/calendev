@@ -58,8 +58,6 @@ const validateReq = (req, serviceName) => {
       );
     case 'email':
       return validateEmail(req.getUserEmail);
-    case 'resetPW':
-      return validatePassword(req.getUserPassword);
     default:
       return false;
   }
@@ -71,4 +69,5 @@ export default {
   validateMonth,
   validateMonthDay,
   validateDttm,
+  validatePassword,
 };
