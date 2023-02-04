@@ -65,7 +65,7 @@ class UpdateRes {
   }
 }
 
-class ResetPasswordReq {
+class ForgotPasswordReq {
   userEmail;
   userPassword;
   constructor() {}
@@ -83,9 +83,26 @@ class ResetPasswordReq {
     this.userPassword = userPassword;
   }
 }
+class ResetPasswordReq {
+  userId;
+  prevUserPassword;
+  changedUserPassword;
+  constructor() {}
+
+  get getUserId() {
+    return this.userId;
+  }
+  get getPrevUserPassword() {
+    return this.prevUserPassword;
+  }
+  get getChangedUserPassword() {
+    return this.changedUserPassword;
+  }
+}
 
 export default {
   UpdateReq,
   UpdateRes,
+  ForgotPasswordReq,
   ResetPasswordReq,
 };
