@@ -8,7 +8,13 @@ router.route('/').get(authControllers.authJWT, userControllers.getAllUsers);
 
 router.route('/').post(userControllers.signupUser);
 
-router.route('/password/:token').patch(authControllers.resetPassword);
+router
+  .route('/password')
+  .post(authControllers.authJWT, userControllers.resetPassword);
+
+router
+  .route('/password/:token')
+  .patch(authControllers.resetPasswordWithPageToken);
 
 router.route('/:token').delete(userControllers.withdrawUser);
 

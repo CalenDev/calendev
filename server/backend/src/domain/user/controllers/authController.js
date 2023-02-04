@@ -121,7 +121,7 @@ export default {
     }
   }),
 
-  resetPassword: catchAsync(async (req, res, next) => {
+  resetPasswordWithPageToken: catchAsync(async (req, res, next) => {
     // 1) 토큰을 뺀다
     const passwordResetToken = req.params.token;
 
