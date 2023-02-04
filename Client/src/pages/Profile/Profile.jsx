@@ -29,6 +29,7 @@ import {
   validateRegexPassword,
 } from '../../utils';
 import { persistor } from '../../store';
+import { openModal } from '../../features/GlobalModal/GlobalModalSlice';
 
 function Profile() {
   const user = useSelector(selectUser);
@@ -112,6 +113,7 @@ function Profile() {
         break;
       case 'E404AD':
         dispatch(logoutUser());
+        dispatch(openModal({ modalCode: 5 }));
         navigate('/signin', {
           replace: true,
         });
