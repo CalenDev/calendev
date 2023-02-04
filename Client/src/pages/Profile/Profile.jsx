@@ -10,16 +10,26 @@ import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
 import { useTheme } from '@mui/material';
-import { selectUser } from '../../features/User/UserSlice';
+import {
+  logoutUser,
+  reloadUser,
+  selectUser,
+} from '../../features/User/UserSlice';
 import { CommonStack, CommonPaper } from '../../components';
-import { getUserProfile } from '../../api';
+import {
+  getUserProfile,
+  patchUserNickname,
+  patchUserPassword,
+} from '../../api';
 import {
   changeUserRoleToGrade,
   commonErrorRes,
   commonFailRes,
   commonMsgText,
+  validateRegexPassword,
 } from '../../utils';
 import { persistor } from '../../store';
+import { openModal } from '../../features/GlobalModal/GlobalModalSlice';
 
 function Profile() {
   const user = useSelector(selectUser);
@@ -95,11 +105,152 @@ function Profile() {
     getEmail();
   }, []);
 
-  const handleSubmitToChangeNickname = async () => {
-    // nickname 변경 로직 작성 예정
+  const setChangedPasswordHelperCode = (code) => {
+    switch (code) {
+      case 'E400AG':
+        setPrevUserPwHelperObj({ code: 113, arg1: '' });
+        setChangedUserPwHelperObj({ code: 113, arg1: '' });
+        break;
+      case 'E404AD':
+        dispatch(logoutUser());
+        dispatch(openModal({ modalCode: 5 }));
+        navigate('/signin', {
+          replace: true,
+        });
+        break;
+      case 'E401AE':
+        setPrevUserPwHelperObj({ code: 119, arg1: '비밀번호' });
+        setChangedUserPwHelperObj({ code: 100, arg1: '' });
+        break;
+      case 'E401AD':
+        setPrevUserPwHelperObj({ code: 118, arg1: '비밀번호' });
+        setChangedUserPwHelperObj({ code: 100, arg1: '' });
+        break;
+      default:
+        break;
+    }
   };
 
-  const handleSubmitToChangePassword = async () => {};
+  const handleSubmitToChangeNickname = async (e) => {
+    e.preventDefault();
+    const data = new FormData(e.currentTarget);
+
+    const inputNickname = data.get('nickname');
+
+    if (inputNickname === defaultUserInfo.userNickname) {
+      setUserNicknameHelperObj({ code: 118, arg1: '닉네임' });
+      return;
+    }
+
+    if (inputNickname.length > 30) {
+      setUserNicknameHelperObj({ code: 102, arg1: '30' });
+      return;
+    }
+
+    setUserNicknameHelperObj({ code: 100, arg1: '' });
+
+    const apiRes = await patchUserNickname(inputNickname);
+
+    if (!apiRes) {
+      navigate('/error', {
+        replace: true,
+        state: { errorTitle: '네트워크 에러가 발생했습니다!' },
+      });
+    }
+
+    const { userNickname } = apiRes.data.data;
+    const { code } = apiRes.data;
+
+    switch (apiRes.data.status) {
+      case 'success':
+        // defaultUserInfo, userInfo를 변경
+        setUserInfo((prev) => ({
+          ...prev,
+          userNickname,
+        }));
+        setDefaultUserInfo((prev) => ({
+          ...prev,
+          userNickname,
+        }));
+
+        // store내에 있는 개인 정보도 변경 필요
+        dispatch(reloadUser({ userNickname }));
+        break;
+      case 'failure':
+        commonFailRes(dispatch, persistor, navigate, code);
+        if (code === 'E400AG') {
+          setPrevUserPwHelperObj({ code: 115, arg1: '닉네임' });
+          setChangedUserPwHelperObj({ code: 115, arg1: '닉네임' });
+        }
+        break;
+      case 'error':
+        commonErrorRes(navigate, code);
+        break;
+      default:
+        break;
+    }
+  };
+
+  const handleSubmitToChangePassword = async (e) => {
+    e.preventDefault();
+    let validatedCheck = true;
+    const data = new FormData(e.currentTarget);
+    const inputPrevPassword = data.get('prevPassword');
+    const inputChangedPassword = data.get('changedPassword');
+
+    if (!validateRegexPassword(inputPrevPassword)) {
+      setPrevUserPwHelperObj({ code: 113, arg1: '' });
+      validatedCheck = false;
+    }
+
+    if (!validateRegexPassword(inputChangedPassword)) {
+      setChangedUserPwHelperObj({ code: 113, arg1: '' });
+      validatedCheck = false;
+    }
+
+    if (!validatedCheck) return;
+
+    const apiRes = await patchUserPassword(
+      inputPrevPassword,
+      inputChangedPassword,
+    );
+
+    if (!apiRes) {
+      navigate('/error', {
+        replace: true,
+        state: { errorTitle: '네트워크 에러가 발생했습니다!' },
+      });
+    }
+
+    const { userNickname } = apiRes.data.data;
+    const { code } = apiRes.data;
+
+    switch (apiRes.data.status) {
+      case 'success':
+        // defaultUserInfo, userInfo를 변경
+        setUserInfo((prev) => ({
+          ...prev,
+          userNickname,
+        }));
+        setDefaultUserInfo((prev) => ({
+          ...prev,
+          userNickname,
+        }));
+
+        // store내에 있는 개인 정보도 변경 필요
+        dispatch(reloadUser({ userNickname }));
+        break;
+      case 'failure':
+        commonFailRes(dispatch, persistor, navigate, code);
+        setChangedPasswordHelperCode(code);
+        break;
+      case 'error':
+        commonErrorRes(navigate, code);
+        break;
+      default:
+        break;
+    }
+  };
 
   const handleChange = (e, name) => {
     setUserInfo((prev) => ({ ...prev, [name]: e.target.value }));

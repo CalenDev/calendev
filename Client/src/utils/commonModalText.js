@@ -20,6 +20,10 @@ function commonModalText(code) {
       title: '권한 없음',
       description: '로그인 후, 이용해주세요',
     },
+    5: {
+      title: '유저가 존재하지 않음',
+      description: '다시 로그인 후, 이용해주세요.',
+    },
   };
 
   return textScript[code] === undefined ? textScript[0] : textScript[code];
