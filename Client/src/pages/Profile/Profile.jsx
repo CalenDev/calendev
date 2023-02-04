@@ -6,16 +6,18 @@ import { PropTypes } from 'prop-types';
 import Box from '@mui/material/Box';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Checkbox, useTheme } from '@mui/material';
+import Button from '@mui/material/Button';
+import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
+import { useTheme } from '@mui/material';
 import { selectUser } from '../../features/User/UserSlice';
-import CommonStack from '../../components/CommonStack/index';
-import CommonPaper from '../../components/CommonPaper/index';
+import { CommonStack, CommonPaper } from '../../components';
 import { getUserProfile } from '../../api';
 import {
   changeUserRoleToGrade,
   commonErrorRes,
   commonFailRes,
+  commonMsgText,
 } from '../../utils';
 import { persistor } from '../../store';
 
@@ -119,7 +121,7 @@ function Profile() {
               <CommonLine
                 property="닉네임"
                 name="userNickname"
-                helpermsgobj={userNicknameHelperObj}
+                helperMsgObj={userNicknameHelperObj}
                 content={userInfo.userNickname}
                 handleChange={handleChange}
               />
@@ -167,13 +169,13 @@ function Profile() {
               <CommonLine
                 property="현재 비밀번호"
                 name="prevPassword"
-                helpermsgobj={prevUserPwhelperObj}
+                helperMsgObj={prevUserPwhelperObj}
                 content=""
               />
               <CommonLine
                 property="새 비밀번호"
                 name="changedPassword"
-                helpermsgobj={changedUserPwObj}
+                helperMsgObj={changedUserPwObj}
                 content=""
               />
               <Stack
@@ -248,7 +250,7 @@ const StyledProfileButton = styled(Button)`
   width: 96px;
 `;
 function CommonLine(props) {
-  const { property, content, name, helpermsgobj, disabled, handleChange } =
+  const { property, content, name, helperMsgObj, disabled, handleChange } =
     props;
 
   return (
@@ -256,7 +258,7 @@ function CommonLine(props) {
       <Typography variant="h6">{property}</Typography>
       <TextField
         size="small"
-        helpermsgobj={helpermsgobj}
+        helperText={commonMsgText(helperMsgObj.code, helperMsgObj.arg1)}
         name={name}
         value={content}
         disabled={disabled}
@@ -276,7 +278,7 @@ CommonLine.propTypes = {
   property: PropTypes.string.isRequired,
   content: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
-  helpermsgobj: PropTypes.shape({
+  helperMsgObj: PropTypes.shape({
     code: PropTypes.number.isRequired,
     arg1: PropTypes.string,
   }),
@@ -287,7 +289,7 @@ CommonLine.propTypes = {
 CommonLine.defaultProps = {
   disabled: false,
   handleChange: () => {},
-  helpermsgobj: { code: 0 },
+  helperMsgObj: { code: 0 },
 };
 
 export default Profile;
