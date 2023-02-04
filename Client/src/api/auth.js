@@ -55,6 +55,14 @@ const postFindPw = async (userEmail) => {
     return e.response;
   }
 };
+const postWithdrawUser = async (accessToken) => {
+  try {
+    const response = await instance.delete(`/api/v1/users/${accessToken}`);
+    return response;
+  } catch (e) {
+    return e.response;
+  }
+};
 
 export {
   postUserSignIn,
@@ -62,4 +70,5 @@ export {
   postUserLogout,
   postFindPw,
   getCheckResetPasswordToken,
+  postWithdrawUser,
 };
