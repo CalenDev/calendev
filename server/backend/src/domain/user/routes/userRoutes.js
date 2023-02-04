@@ -10,7 +10,7 @@ router.route('/').post(userControllers.signupUser);
 
 router
   .route('/password')
-  .post(authControllers.authJWT, userControllers.resetPassword);
+  .post(authControllers.authJWT, authControllers.resetPassword);
 
 router
   .route('/password/:token')
