@@ -20,6 +20,7 @@ import {
   getUserProfile,
   patchUserNickname,
   patchUserPassword,
+  postWithdrawUser,
 } from '../../api';
 import {
   changeUserRoleToGrade,
@@ -50,17 +51,17 @@ function Profile() {
   });
 
   const [userNicknameHelperObj, setUserNicknameHelperObj] = useState({
-    code: 101,
-    arg1: '이메일',
+    code: 100,
+    arg1: '',
   });
 
   const [prevUserPwhelperObj, setPrevUserPwHelperObj] = useState({
-    code: 101,
-    arg1: '이메일',
+    code: 100,
+    arg1: '',
   });
   const [changedUserPwObj, setChangedUserPwHelperObj] = useState({
-    code: 101,
-    arg1: '이메일',
+    code: 100,
+    arg1: '',
   });
 
   const [withdrawCheck, setWithdraw] = useState(false);
@@ -252,6 +253,43 @@ function Profile() {
     }
   };
 
+  const handleSubmitToWithdraw = async () => {
+    if (!withdrawCheck) return;
+
+    const apiRes = await postWithdrawUser();
+
+    if (!apiRes) {
+      navigate('/error', {
+        replace: true,
+        state: { errorTitle: '네트워크 에러가 발생했습니다!' },
+      });
+    }
+
+    const { code } = apiRes.data;
+
+    switch (apiRes.data.status) {
+      case 'success':
+        dispatch(logoutUser());
+        navigate('/', {
+          replace: true,
+        });
+        break;
+      case 'failure':
+        commonFailRes(dispatch, persistor, navigate, code);
+        dispatch(logoutUser());
+        dispatch(openModal({ modalCode: 5 }));
+        navigate('/signin', {
+          replace: true,
+        });
+        break;
+      case 'error':
+        commonErrorRes(navigate, code);
+        break;
+      default:
+        break;
+    }
+  };
+
   const handleChange = (e, name) => {
     setUserInfo((prev) => ({ ...prev, [name]: e.target.value }));
   };
@@ -343,7 +381,10 @@ function Profile() {
                 </StyledProfileButton>
               </Stack>
             </StyledProfileUserInfoWrapper>
-            <StyledProfileUserInfoWrapper>
+            <StyledProfileUserInfoWrapper
+              component="form"
+              onSubmit={handleSubmitToWithdraw}
+            >
               <Typography variant="h5">회원탈퇴</Typography>
               <Stack
                 flexDirection="row"
@@ -367,6 +408,7 @@ function Profile() {
                 marginTop={theme.spacing(1)}
               >
                 <StyledProfileButton
+                  type="submit"
                   variant="contained"
                   size="small"
                   disabled={!withdrawCheck}
