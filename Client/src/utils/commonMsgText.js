@@ -28,6 +28,7 @@ function commonMsgText(code, arg1) {
     115: `정상적인 ${arg1}을(를) 입력해주세요.`,
     116: '이미 진행된 이벤트는 추가할 수 없습니다.',
     117: `${arg1}자 이상으로 입력해주세요.`,
+    118: `기존 ${arg1}과 같습니다.`,
   };
 
   return textScript[code] === undefined ? '' : textScript[code];
