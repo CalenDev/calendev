@@ -1,12 +1,10 @@
 import instance from './instance';
 import { validateSinceAndEnd } from '../utils/validationCheck';
-import changeDefaultTimeFormat from '../utils/change';
+import { changeDefaultTimeFormat } from '../utils/change';
 
 const getPostDetails = async (postId) => {
   try {
-    const response = await instance.get(
-      `/api/v1/posts/details/${postId}`,
-    );
+    const response = await instance.get(`/api/v1/posts/details/${postId}`);
     return response;
   } catch (e) {
     return e.response;
