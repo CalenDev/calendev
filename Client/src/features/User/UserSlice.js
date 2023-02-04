@@ -29,7 +29,7 @@ export const UserSlice = createSlice({
       state.userNickname = '';
       state.userRoleCd = '';
     },
-    changeUser: (state, actions) => {
+    reloadUser: (state, actions) => {
       const { userEmail, userNickname, userRoleCd } = actions.payload;
 
       if (userEmail) state.userEmail = userEmail;
