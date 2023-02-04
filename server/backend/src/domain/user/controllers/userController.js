@@ -8,12 +8,14 @@ import validator from '../../../global/utils/requestValidator.js';
 import objectMapper from '../../../global/utils/objectMapper.js';
 
 export default {
-  getAllUsers: catchAsync(async (req, res, next) => {
-    const users = await userJoinService.findAll();
+  getUserProfile: catchAsync(async (req, res, next) => {
+    const targetUserId = req.body.userId;
+    const userProfile = await userJoinService.getProfileData(targetUserId);
+
     return res.status(200).json({
       status: 'success',
       data: {
-        users,
+        userNickname: userProfile.userNickname,
       },
     });
   }),
