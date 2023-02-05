@@ -35,10 +35,10 @@ const getUserProfile = async () => {
   }
 };
 
-const patchUserNickname = async (userNickname) => {
+const postUserProfile = async (props) => {
   try {
-    const response = await instance.patch('/api/v1/users', {
-      userNickname,
+    const response = await instance.post('/api/v1/users', {
+      ...props,
     });
 
     return response;
@@ -47,9 +47,9 @@ const patchUserNickname = async (userNickname) => {
   }
 };
 
-const patchUserPassword = async (prevUserPassword, changedUserPassword) => {
+const postUserPassword = async (prevUserPassword, changedUserPassword) => {
   try {
-    const response = await instance.patch('/api/v1/users', {
+    const response = await instance.post('/api/v1/users/password', {
       prevUserPassword,
       changedUserPassword,
     });
@@ -64,6 +64,6 @@ export {
   postUserDuplicate,
   postUserSignUp,
   getUserProfile,
-  patchUserNickname,
-  patchUserPassword,
+  postUserPassword,
+  postUserProfile,
 };

@@ -19,8 +19,8 @@ import {
   postUserDuplicate,
   postUserSignUp,
   getUserProfile,
-  patchUserNickname,
-  patchUserPassword,
+  postUserProfile,
+  postUserPassword,
 } from './user';
 
 export {
@@ -38,7 +38,7 @@ export {
   getUserProfile,
   patchRemoveBookmark,
   putResetPw,
-  patchUserNickname,
-  patchUserPassword,
+  postUserProfile,
+  postUserPassword,
   postWithdrawUser,
 };
