@@ -86,13 +86,13 @@ function Profile() {
           setUserInfo((prev) => ({
             ...prev,
             userNickname: user.userNickname,
-            userEmail: apiRes.data.data.userEmail || '',
+            userEmail: apiRes.data.userEmail || '',
             userRoleCd: user.userRoleCd,
           }));
           setDefaultUserInfo((prev) => ({
             ...prev,
             userNickname: user.userNickname,
-            userEmail: apiRes.data.data.userEmail || '',
+            userEmail: apiRes.data.userEmail || '',
             userRoleCd: user.userRoleCd,
           }));
           break;
