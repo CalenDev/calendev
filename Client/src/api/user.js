@@ -35,9 +35,9 @@ const getUserProfile = async () => {
   }
 };
 
-const postUserProfile = async (props) => {
+const patchUserProfile = async (props) => {
   try {
-    const response = await instance.post('/api/v1/users', {
+    const response = await instance.patch('/api/v1/users/profile', {
       ...props,
     });
 
@@ -65,5 +65,5 @@ export {
   postUserSignUp,
   getUserProfile,
   postUserPassword,
-  postUserProfile,
+  patchUserProfile,
 };

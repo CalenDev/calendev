@@ -3,7 +3,7 @@ import {
   postFindPw,
   postUserSignIn,
   putResetPw,
-  postWithdrawUser,
+  deleteWithdrawUser,
 } from './auth';
 
 import {
@@ -19,7 +19,7 @@ import {
   postUserDuplicate,
   postUserSignUp,
   getUserProfile,
-  postUserProfile,
+  patchUserProfile,
   postUserPassword,
 } from './user';
 
@@ -38,7 +38,7 @@ export {
   getUserProfile,
   patchRemoveBookmark,
   putResetPw,
-  postUserProfile,
+  patchUserProfile,
   postUserPassword,
-  postWithdrawUser,
+  deleteWithdrawUser,
 };
