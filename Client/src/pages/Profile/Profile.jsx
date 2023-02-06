@@ -47,7 +47,7 @@ function Profile() {
   });
 
   const [userInfo, setUserInfo] = useState({
-    userEmail: 'test',
+    userEmail: '',
     userNickname: '',
     userRoleCd: '',
     userPrevPassword: '',
