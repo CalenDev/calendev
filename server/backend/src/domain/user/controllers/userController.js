@@ -2,10 +2,12 @@
 import catchAsync from '../../../global/utils/catchAsync.js';
 import AppError from '../../../global/utils/appError.js';
 import UserJoinDto from '../dto/joinDto.js';
+import UserUpdateDto from '../dto/updateDto.js';
 import userJoinService from '../service/userJoinService.js';
 import TokenProvider from '../../../global/security/jwt.js';
 import validator from '../../../global/utils/requestValidator.js';
 import objectMapper from '../../../global/utils/objectMapper.js';
+import userUpdateService from '../service/userUpdateService.js';
 
 export default {
   getUserProfile: catchAsync(async (req, res, next) => {
@@ -47,6 +49,17 @@ export default {
       data: {
         duplicateValidationRes,
       },
+    });
+  }),
+
+  updateUserProfile: catchAsync(async (req, res, next) => {
+    const profileUpdateReq = new UserUpdateDto.UpdateReq();
+    objectMapper.map(req.body, profileUpdateReq);
+
+    const updateRes = await userUpdateService.update(profileUpdateReq);
+
+    return res.status(200).json({
+      status: 'success',
     });
   }),
 

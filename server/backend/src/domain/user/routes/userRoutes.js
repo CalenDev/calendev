@@ -6,7 +6,8 @@ const router = express.Router();
 
 router
   .route('/profile')
-  .get(authControllers.authJWT, userControllers.getUserProfile);
+  .get(authControllers.authJWT, userControllers.getUserProfile)
+  .patch(authControllers.authJWT, userControllers.updateUserProfile);
 
 router.route('/').post(userControllers.signupUser);
 
