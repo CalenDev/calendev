@@ -18,9 +18,9 @@ import {
 import { CommonStack, CommonPaper } from '../../components';
 import {
   getUserProfile,
-  postUserProfile,
+  patchUserProfile,
   postUserPassword,
-  postWithdrawUser,
+  deleteWithdrawUser,
 } from '../../api';
 import {
   changeUserRoleToGrade,
@@ -154,7 +154,7 @@ function Profile() {
 
     setUserNicknameHelperObj({ code: 100, arg1: '' });
 
-    const apiRes = await postUserProfile({ userNickname: inputNickname });
+    const apiRes = await patchUserProfile({ userNickname: inputNickname });
 
     if (!apiRes) {
       navigate('/error', {
@@ -163,7 +163,6 @@ function Profile() {
       });
     }
 
-    const { userNickname } = apiRes.data.data;
     const { code } = apiRes.data;
 
     switch (apiRes.data.status) {
@@ -171,21 +170,20 @@ function Profile() {
         // defaultUserInfo, userInfo를 변경
         setUserInfo((prev) => ({
           ...prev,
-          userNickname,
+          userNickname: inputNickname,
         }));
         setDefaultUserInfo((prev) => ({
           ...prev,
-          userNickname,
+          userNickname: inputNickname,
         }));
 
         // store내에 있는 개인 정보도 변경 필요
-        dispatch(reloadUser({ userNickname }));
+        dispatch(reloadUser({ userNickname: inputNickname }));
         break;
       case 'fail':
         commonFailRes(dispatch, persistor, navigate, code);
         if (code === 'E400AG') {
-          setPrevUserPwHelperObj({ code: 115, arg1: '닉네임' });
-          setChangedUserPwHelperObj({ code: 115, arg1: '닉네임' });
+          setUserNicknameHelperObj({ code: 115, arg1: '닉네임' });
         }
         break;
       case 'error':
@@ -258,7 +256,9 @@ function Profile() {
   const handleSubmitToWithdraw = async () => {
     if (!withdrawCheck) return;
 
-    const apiRes = await postWithdrawUser();
+    const apiRes = await deleteWithdrawUser(
+      sessionStorage.getItem('accessToken'),
+    );
 
     if (!apiRes) {
       navigate('/error', {
@@ -272,10 +272,10 @@ function Profile() {
     switch (apiRes.data.status) {
       case 'success':
         dispatch(logoutUser());
-        navigate('/', {
+        navigate('/signin', {
           replace: true,
         });
-        break;
+        return;
       case 'fail':
         commonFailRes(dispatch, persistor, navigate, code);
         dispatch(logoutUser());
@@ -283,7 +283,7 @@ function Profile() {
         navigate('/signin', {
           replace: true,
         });
-        break;
+        return;
       case 'error':
         commonErrorRes(navigate, code);
         break;
