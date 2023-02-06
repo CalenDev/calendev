@@ -27,6 +27,7 @@ export default {
     }
 
     return {
+      userEmail: targetUser[0].userEmail,
       userNickname: targetUser[0].userNickname,
     };
   },
