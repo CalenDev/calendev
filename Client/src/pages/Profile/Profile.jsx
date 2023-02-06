@@ -18,9 +18,9 @@ import {
 import { CommonStack, CommonPaper } from '../../components';
 import {
   getUserProfile,
-  patchUserNickname,
-  patchUserPassword,
-  postWithdrawUser,
+  patchUserProfile,
+  postUserPassword,
+  deleteWithdrawUser,
 } from '../../api';
 import {
   changeUserRoleToGrade,
@@ -42,12 +42,16 @@ function Profile() {
     userEmail: '',
     userNickname: '',
     userRoleCd: '',
+    userPrevPassword: '',
+    userChangedPassword: '',
   });
 
   const [userInfo, setUserInfo] = useState({
     userEmail: '',
     userNickname: '',
     userRoleCd: '',
+    userPrevPassword: '',
+    userChangedPassword: '',
   });
 
   const [userNicknameHelperObj, setUserNicknameHelperObj] = useState({
@@ -69,7 +73,6 @@ function Profile() {
   useEffect(() => {
     async function getEmail() {
       const apiRes = await getUserProfile();
-
       if (!apiRes) {
         navigate('/error', {
           replace: true,
@@ -83,17 +86,17 @@ function Profile() {
           setUserInfo((prev) => ({
             ...prev,
             userNickname: user.userNickname,
-            userEmail: apiRes.data.data.userEmail || '',
+            userEmail: apiRes.data.userEmail || '',
             userRoleCd: user.userRoleCd,
           }));
           setDefaultUserInfo((prev) => ({
             ...prev,
             userNickname: user.userNickname,
-            userEmail: apiRes.data.data.userEmail || '',
+            userEmail: apiRes.data.userEmail || '',
             userRoleCd: user.userRoleCd,
           }));
           break;
-        case 'failure':
+        case 'fail':
           commonFailRes(dispatch, persistor, navigate, code);
           break;
         case 'error':
@@ -124,8 +127,8 @@ function Profile() {
         setChangedUserPwHelperObj({ code: 100, arg1: '' });
         break;
       case 'E401AD':
-        setPrevUserPwHelperObj({ code: 118, arg1: '비밀번호' });
-        setChangedUserPwHelperObj({ code: 100, arg1: '' });
+        setPrevUserPwHelperObj({ code: 100, arg1: '' });
+        setChangedUserPwHelperObj({ code: 118, arg1: '비밀번호' });
         break;
       default:
         break;
@@ -136,7 +139,8 @@ function Profile() {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
 
-    const inputNickname = data.get('nickname');
+    const inputNickname = data.get('userNickname');
+    setUserNicknameHelperObj({ code: 100, arg1: '' });
 
     if (inputNickname === defaultUserInfo.userNickname) {
       setUserNicknameHelperObj({ code: 118, arg1: '닉네임' });
@@ -150,7 +154,7 @@ function Profile() {
 
     setUserNicknameHelperObj({ code: 100, arg1: '' });
 
-    const apiRes = await patchUserNickname(inputNickname);
+    const apiRes = await patchUserProfile({ userNickname: inputNickname });
 
     if (!apiRes) {
       navigate('/error', {
@@ -159,7 +163,6 @@ function Profile() {
       });
     }
 
-    const { userNickname } = apiRes.data.data;
     const { code } = apiRes.data;
 
     switch (apiRes.data.status) {
@@ -167,21 +170,20 @@ function Profile() {
         // defaultUserInfo, userInfo를 변경
         setUserInfo((prev) => ({
           ...prev,
-          userNickname,
+          userNickname: inputNickname,
         }));
         setDefaultUserInfo((prev) => ({
           ...prev,
-          userNickname,
+          userNickname: inputNickname,
         }));
 
         // store내에 있는 개인 정보도 변경 필요
-        dispatch(reloadUser({ userNickname }));
+        dispatch(reloadUser({ userNickname: inputNickname }));
         break;
-      case 'failure':
+      case 'fail':
         commonFailRes(dispatch, persistor, navigate, code);
         if (code === 'E400AG') {
-          setPrevUserPwHelperObj({ code: 115, arg1: '닉네임' });
-          setChangedUserPwHelperObj({ code: 115, arg1: '닉네임' });
+          setUserNicknameHelperObj({ code: 115, arg1: '닉네임' });
         }
         break;
       case 'error':
@@ -196,8 +198,10 @@ function Profile() {
     e.preventDefault();
     let validatedCheck = true;
     const data = new FormData(e.currentTarget);
-    const inputPrevPassword = data.get('prevPassword');
-    const inputChangedPassword = data.get('changedPassword');
+    const inputPrevPassword = data.get('userPrevPassword');
+    const inputChangedPassword = data.get('userChangedPassword');
+    setPrevUserPwHelperObj({ code: 100, arg1: '' });
+    setChangedUserPwHelperObj({ code: 100, arg1: '' });
 
     if (!validateRegexPassword(inputPrevPassword)) {
       setPrevUserPwHelperObj({ code: 113, arg1: '' });
@@ -211,7 +215,7 @@ function Profile() {
 
     if (!validatedCheck) return;
 
-    const apiRes = await patchUserPassword(
+    const apiRes = await postUserPassword(
       inputPrevPassword,
       inputChangedPassword,
     );
@@ -223,25 +227,21 @@ function Profile() {
       });
     }
 
-    const { userNickname } = apiRes.data.data;
     const { code } = apiRes.data;
-
     switch (apiRes.data.status) {
       case 'success':
-        // defaultUserInfo, userInfo를 변경
         setUserInfo((prev) => ({
           ...prev,
-          userNickname,
+          userPrevPassword: '',
+          userChangedPassword: '',
         }));
         setDefaultUserInfo((prev) => ({
           ...prev,
-          userNickname,
+          userPrevPassword: '',
+          userChangedPassword: '',
         }));
-
-        // store내에 있는 개인 정보도 변경 필요
-        dispatch(reloadUser({ userNickname }));
         break;
-      case 'failure':
+      case 'fail':
         commonFailRes(dispatch, persistor, navigate, code);
         setChangedPasswordHelperCode(code);
         break;
@@ -256,7 +256,9 @@ function Profile() {
   const handleSubmitToWithdraw = async () => {
     if (!withdrawCheck) return;
 
-    const apiRes = await postWithdrawUser();
+    const apiRes = await deleteWithdrawUser(
+      sessionStorage.getItem('accessToken'),
+    );
 
     if (!apiRes) {
       navigate('/error', {
@@ -270,18 +272,18 @@ function Profile() {
     switch (apiRes.data.status) {
       case 'success':
         dispatch(logoutUser());
-        navigate('/', {
+        navigate('/signin', {
           replace: true,
         });
-        break;
-      case 'failure':
+        return;
+      case 'fail':
         commonFailRes(dispatch, persistor, navigate, code);
         dispatch(logoutUser());
         dispatch(openModal({ modalCode: 5 }));
         navigate('/signin', {
           replace: true,
         });
-        break;
+        return;
       case 'error':
         commonErrorRes(navigate, code);
         break;
@@ -317,12 +319,14 @@ function Profile() {
               <CommonLine
                 property="이메일"
                 name="userEmail"
+                handleChange={handleChange}
                 content={userInfo.userEmail}
                 disabled
               />
               <CommonLine
                 property="유저등급"
                 name="userGrade"
+                handleChange={handleChange}
                 content={changeUserRoleToGrade(userInfo.userRoleCd)}
                 disabled
               />
@@ -357,15 +361,17 @@ function Profile() {
             >
               <CommonLine
                 property="현재 비밀번호"
-                name="prevPassword"
+                name="userPrevPassword"
                 helperMsgObj={prevUserPwhelperObj}
-                content=""
+                content={userInfo.userPrevPassword}
+                handleChange={handleChange}
               />
               <CommonLine
                 property="새 비밀번호"
-                name="changedPassword"
+                name="userChangedPassword"
                 helperMsgObj={changedUserPwObj}
-                content=""
+                content={userInfo.userChangedPassword}
+                handleChange={handleChange}
               />
               <Stack
                 justifyContent="flex-end"
@@ -445,17 +451,19 @@ const StyledProfileButton = styled(Button)`
 function CommonLine(props) {
   const { property, content, name, helperMsgObj, disabled, handleChange } =
     props;
-
   return (
     <StyledContentStack>
       <Typography variant="h6">{property}</Typography>
       <TextField
         size="small"
+        error={helperMsgObj.code % 10 !== 0}
         helperText={commonMsgText(helperMsgObj.code, helperMsgObj.arg1)}
         name={name}
-        value={content}
+        value={content || ''}
         disabled={disabled}
-        onChange={(e) => handleChange(e, name)}
+        onChange={(e) => {
+          handleChange(e, name);
+        }}
       />
     </StyledContentStack>
   );
@@ -469,7 +477,7 @@ const StyledContentStack = styled(Stack)`
 
 CommonLine.propTypes = {
   property: PropTypes.string.isRequired,
-  content: PropTypes.string.isRequired,
+  content: PropTypes.string,
   name: PropTypes.string.isRequired,
   helperMsgObj: PropTypes.shape({
     code: PropTypes.number.isRequired,
@@ -480,6 +488,7 @@ CommonLine.propTypes = {
 };
 
 CommonLine.defaultProps = {
+  content: '',
   disabled: false,
   handleChange: () => {},
   helperMsgObj: { code: 0 },
