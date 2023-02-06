@@ -29,4 +29,27 @@ export default {
     );
     return userUpdateResult;
   },
+  update: async (updateReq) => {
+    // 닉네임 업데이트
+    const userList = await User.findOne(updateReq.getUserId, 'userId');
+
+    if (userList.length === 0) {
+      throw new AppError('Not Found', 404, 'E404AD');
+    }
+
+    const targetUser = userList[0];
+
+    // 전 닉네임과 동일한 경우
+    if (targetUser.userNickname === updateReq.userNickname) {
+      throw new AppError('Bad Request', 400, 'E400AG');
+    }
+
+    const profileUpdateRes = User.updateOne(
+      updateReq.getUserId,
+      updateReq.getUserNickname,
+      'userNickname',
+    );
+
+    return profileUpdateRes;
+  },
 };
