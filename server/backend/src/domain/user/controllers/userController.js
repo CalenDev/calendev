@@ -15,6 +15,7 @@ export default {
     return res.status(200).json({
       status: 'success',
       data: {
+        userEmail: userProfile.userEmail,
         userNickname: userProfile.userNickname,
       },
     });
